@@ -1,6 +1,6 @@
 import { createContext, useEffect, useReducer } from "react";
 import {  onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../utils/firebase';
+import { auth, db } from '../utils/firebase';
 import AuthReducer from "./AuthReducer";
 
 const INITIAL_STATE = {
@@ -17,6 +17,8 @@ export const AuthContextProvider = ({ children }) => {
             if (user) {
                 localStorage.setItem("user", JSON.stringify(user));
                 dispatch({ type: "LOGIN", payload: user });
+                //console.log(user.uid)
+                
             } else {
                 localStorage.removeItem("user");
                 dispatch({ type: "LOGOUT" });

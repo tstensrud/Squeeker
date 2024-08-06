@@ -1,4 +1,4 @@
-function Post() {
+function Post({subPageId}) {
     return (
         <>
             <div className="content-card">

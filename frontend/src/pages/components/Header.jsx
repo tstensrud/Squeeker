@@ -1,7 +1,14 @@
+import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+
 import { signOut } from "firebase/auth";
 import { auth } from '../../utils/firebase';
 
-function Header() {
+import { AuthContext } from '../../context/AuthContext';
+
+function Header({userData}) {
+
+    const {currentUser} = useContext(AuthContext);
 
     const logOut = async (e) => {
         e.preventDefault();
@@ -18,18 +25,27 @@ function Header() {
                 <div className="left-aligned-container">
                     <ul className="horizontal-list">
                         <li className="horizontal-list-item">
-                            Some
-                        </li>
+                            Some</li>
                         <li className="horizontal-list-item">
                             Popular
                         </li>
                         <li className="horizontal-list-item">
                             Subpages
                         </li>
+                        <li className="horizontal-list-item">
+                            - <Link to="/subpage/create">Create new subpage</Link>
+                        </li>
                     </ul>
                 </div>
                 <div className="right-aligned-container">
-                    <button className="logout-button" onClick={logOut}>Log out</button>
+                <ul className="horizontal-list">
+                    <li className="horizontal-list-item">
+                        {userData.name}
+                    </li>
+                    <li className="horizontal-list-item">
+                        <button className="logout-button" onClick={logOut}>Log out</button>
+                    </li>
+                </ul>
                 </div>
             </div>
         </>

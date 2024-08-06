@@ -41,6 +41,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a {
+  color: var(--link);
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
 .app-container {
   display: flex;
   height: 100%;
