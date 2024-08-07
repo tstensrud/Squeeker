@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function Login() {
@@ -43,12 +43,12 @@ function Login() {
                 <div className="login-card">
                     <form onSubmit={handleLogin}>
                         <input onChange={handleUsernameChange} type="text" placeholder="E-mail" />
-
+                        <br />
                         <input onChange={handlePasswordChange} type="password" placeholder="Password" />
                         <br />
                         <button type="submit">Log in</button>
                     </form>
-
+                    <span>Click <Link to="/register">here</Link> to register.</span>
                     {error && <span>Wrong username and/or email</span>}
 
                 </div>

@@ -7,4 +7,78 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     username = db.Column(db.String(100), nullable=False)
 
+    posts = db.relationship("Post", backref="user", lazy=True)
 
+
+class Subpage(db.Model):
+    __tablename__ = 'Subpage'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uid = db.Column(db.String(255), unique=True, nullable=False)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    description = db.Column(db.String(500), nullable=False)
+    public = db.Column(db.Boolean, default=True)
+    active = db.Column(db.Boolean, default=True)
+    nsfw = db.Column(db.Boolean, default=False)
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "uid": self.uid,
+            "name": self.name,
+            "description": self.description,
+            "public": self.public,
+            "active": self.active,
+            "nsfw": self.nsfw
+        }
+
+class Post(db.Model):
+    __tablename__ = "Post"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uid = db.Column(db.String(255), unique=True, nullable=False)
+    author_uuid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
+    author_name = db.Column(db.String(100))
+    title = db.Column(db.String(50), nullable=False)
+    post = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.String(100))
+    total_votes = db.Column(db.Integer)
+    upvotes = db.Column(db.Integer)
+    downvotes = db.Column(db.Integer)
+
+    comments = db.relationship("Comment")
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'uid': self.uid,
+            'author_uuid': self.author_uuid,
+            'author_name': self.author_name,
+            'title': self.title,
+            'post': self.post,
+            'timestamp': self.timestamp,
+            'total_votes': self.total_votes,
+            'upvotes': self.upvotes,
+            'downvotes': self.downvotes
+        }
+
+class Comment(db.Model):
+    __tablename__ = "Comment"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uid = db.Column(db.String(255), unique=True, nullable=False)
+    post_uid = db.Column(db.String(255), db.ForeignKey('Post.uid'), nullable=False)
+    parent_comment_uid = db.Column(db.String(255), nullable=True)
+    timestamp = db.Column(db.String(100))
+    total_votes = db.Column(db.Integer)
+    upvotes = db.Column(db.Integer)
+    downvotes = db.Column(db.Integer)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'uid': self.uid,
+            'post_uid': self.post_uid,
+            'parent_comment_uid': self.parent_comment_uid,
+            'timestamp': self.timestamp,
+            'total_votes': self.total_votes,
+            'upvotes': self.upvotes,
+            'downvotes': self.downvotes
+        }

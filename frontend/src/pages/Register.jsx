@@ -1,13 +1,17 @@
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../utils/firebase';
 import { useState } from "react";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../utils/firebase';
+
+import useRegister from '../hooks/useRegister';
+import {BASE_URL} from '../utils/globalVariables';
+
 
 function Register() {
 
     const [userData, setUserData] = useState({});
     const [error, setError] = useState("");
-
+    const {data, loading, error: registerError, registerUser} = useRegister(`${BASE_URL}/api/register/`);
+    
     const handleInputChange = (e) => {
         setUserData({
             ...userData,
@@ -17,32 +21,40 @@ function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-
-        //const auth = getAuth();
         try {
-            const res = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
-            // add new user to mysql
+           const res = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+           const newUuid = res.user.uid;
+           //console.log(res.user.uid);
+           setUserData(prevState => {
+                const updatedData = {
+                    ...prevState,
+                    uuid: newUuid,
+            };
+            registerUser(updatedData);
+        });
+           
         } catch (err) {
             console.log(err)
             setError(err.message);
         }
-
     }
 
     return (
         <>
             <div className="login-container">
                 <div className="login-card">
-                    Register <br />
+                    <span>Register</span> <br />
                     <form onSubmit={handleRegister}>
                         <input id="email" onChange={handleInputChange} type="text" placeholder="E-mail" />
-
+                        <br />
                         <input id="password" onChange={handleInputChange} type="password" placeholder="Password" />
-
-                        <input id="name" onChange={handleInputChange} type="text" placeholder="Name" />
+                        <br />
+                        <input id="username" onChange={handleInputChange} type="text" placeholder="Username" />
                         <br />
                         <button type="submit">Register</button>
                     </form>
+                    <br />
+                    {registerError && registerError}
                     <br />
                     {error && error}
                 </div>

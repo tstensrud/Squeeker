@@ -11,7 +11,7 @@ function FrontPage() {
   //console.log("IDTOKEN:", idToken);
   //console.log("CURRENTUSER", currentUser);
   
-  const {data, loading, error} = useFetch("http://127.0.0.1:5000/api/test/", idToken);
+  const {data, loading, error} = useFetch(`${BASE_URL}/api/test/`, idToken);
 
 return (
   <>
