@@ -1,6 +1,6 @@
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { db, auth } from '../utils/firebase';
+import { auth } from '../utils/firebase';
 import { useState } from "react";
 
 function Register() {
@@ -21,11 +21,7 @@ function Register() {
         //const auth = getAuth();
         try {
             const res = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
-            await setDoc(doc(db, "users", res.user.uid), {
-                email: userData.email,
-                name: userData.name,
-                timeStamp: serverTimestamp(),
-            });
+            // add new user to mysql
         } catch (err) {
             console.log(err)
             setError(err.message);

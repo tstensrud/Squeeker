@@ -6,7 +6,7 @@ import { auth } from '../../utils/firebase';
 
 import { AuthContext } from '../../context/AuthContext';
 
-function Header({userData}) {
+function Header(props) {
 
     const {currentUser} = useContext(AuthContext);
 
@@ -40,7 +40,7 @@ function Header({userData}) {
                 <div className="right-aligned-container">
                 <ul className="horizontal-list">
                     <li className="horizontal-list-item">
-                        {userData.name}
+                        username
                     </li>
                     <li className="horizontal-list-item">
                         <button className="logout-button" onClick={logOut}>Log out</button>

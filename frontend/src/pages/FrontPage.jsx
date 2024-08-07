@@ -1,41 +1,32 @@
 import { Outlet } from "react-router-dom";
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../utils/firebase';
+import useFetch from '../hooks/useFetch';
 
 import Header from "./components/Header";
 
 function FrontPage() {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, idToken } = useContext(AuthContext);
   const [userData, setUserData] = useState({});
-
-  useEffect(() => {
-    getUserData();
-  },[])
-
-  const getUserData = async () => {
-    const docRef = doc(db, "users", currentUser.uid);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      setUserData(userData);
-      //console.log("Document data:", docSnap.data());
-    } else {
-      console.log("No such document!");
-    }
-  }
+  //console.log("IDTOKEN:", idToken);
+  //console.log("CURRENTUSER", currentUser);
+  
+  const {data, loading, error} = useFetch("http://127.0.0.1:5000/api/test/", idToken);
 
 return (
   <>
     <div className="page-wrapper">
       <div className="header-container">
-        <Header userData={userData} />
+        <Header/>
       </div>
       <div className="content-container">
         <Outlet />
+        loading: {loading && loading}
+        <br/>
+        data: {data && data.message}
+        <br/>
+        error: {error && error}
+        <br/>
       </div>
     </div>
   </>
