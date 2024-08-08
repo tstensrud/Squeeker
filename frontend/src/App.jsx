@@ -27,7 +27,7 @@ function App() {
           <Route path="/">
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
-            <Route index element={<RequireAuth><FrontPage /></RequireAuth>}/>
+            <Route index element={/* <RequireAuth> */<FrontPage />/* </RequireAuth> */}/>
             <Route path="subpage/create" element={<CreateSubPage />}/>
             <Route path="subpage/:subPageName" element={<SubPage />} />
             <Route path="subpage/:subpageName/:postId" element={<SubPagePost />}/>
