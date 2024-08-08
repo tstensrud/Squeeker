@@ -21,6 +21,7 @@
   --svg-icon-color: #00FFA7;
   --marked-row: #49494959;
   --form-elements-border-radius: 6px;
+  --card-border-radius: 10px;
   --grey-text: rgba(212, 212, 212, 0.473);
 }
 
@@ -127,6 +128,15 @@ a:hover {
   overflow-y: auto;
 }
 
+.content-card-flex {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--table-background-color);
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: var(--card-border-radius);
+}
+
 .content-card {
   display: grid;
   column-gap: 10px;
@@ -136,7 +146,7 @@ a:hover {
   margin-top: 20px;
   margin-bottom: 20px;
   background-color: var(--table-background-color);
-  border-radius: 10px;
+  border-radius: var(--card-border-radius);
 }
 
 .content-card-grid-item-header {
@@ -180,4 +190,9 @@ a:hover {
 .horizontal-list-item {
   display: inline;
   margin-right: 10px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
 }

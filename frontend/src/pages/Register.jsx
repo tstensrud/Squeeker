@@ -7,7 +7,6 @@ import {BASE_URL} from '../utils/globalVariables';
 
 
 function Register() {
-
     const [userData, setUserData] = useState({});
     const [error, setError] = useState("");
     const {data, loading, error: registerError, registerUser} = useRegister(`${BASE_URL}/api/register/`);

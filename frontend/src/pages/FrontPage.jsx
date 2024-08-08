@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import useFetch from '../hooks/useFetch';
 
+import { BASE_URL } from '../utils/globalVariables';
 import Header from "./components/Header";
 
 function FrontPage() {
@@ -21,12 +22,6 @@ return (
       </div>
       <div className="content-container">
         <Outlet />
-        loading: {loading && loading}
-        <br/>
-        data: {data && data.message}
-        <br/>
-        error: {error && error}
-        <br/>
       </div>
     </div>
   </>

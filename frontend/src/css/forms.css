@@ -5,11 +5,12 @@ input {
     color: var(--app-content-main-color);
     padding: 10px;
     margin-bottom: 10px;
+    margin-top: 5px;
     box-sizing: border-box;
     font-size: 14px;
     border-radius: var(--form-elements-border-radius);
     height: 40px;
-    width: 150px;
+    width: 300px;
   }
 
 input:focus {
@@ -23,6 +24,13 @@ input:hover {
 input:placeholder {
     color: var(--app-content-main-color);
     font-size: 14px;
+}
+
+input[type="checkbox"] {
+  outline: 0;
+  background: #f2f2f2;
+  border: 1px solid black;
+  width: 13px;
 }
 
 button{
