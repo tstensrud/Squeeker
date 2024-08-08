@@ -8,6 +8,14 @@ class User(db.Model):
     username = db.Column(db.String(100), nullable=False)
 
     posts = db.relationship("Post", backref="user", lazy=True)
+    subscriptions = db.Relationship('UserSubscription', backref="user", lazy=True)
+
+class UserSubscription(db.Model):
+    __tablename__ = 'Usersubscription'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
+    subpage_uid = db.Column(db.String(255), nullable=False)
+    timestamp = db.Column(db.String(100))
 
 
 class Subpage(db.Model):
