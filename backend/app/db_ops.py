@@ -18,3 +18,50 @@ def register_new_user(data) -> bool:
         db.session.rollback()
         print(e)
         return False
+
+def get_user(uuid) -> models.User:
+    user = db.session.query(models.User).filter(models.User.uuid == uuid).first()
+    return user
+
+def create_subpage(data) -> bool:
+    uid = uuid4()
+    name = data["name"]
+    description = data["description"]
+    public = data["public"]
+    active = data["active"]
+    nsfw = data["nsfw"]
+
+    new_subpage = models.Subpage(uid=uid,
+                                 name=name,
+                                 description=description,
+                                 public=public,
+                                 active=active,
+                                 nsfw=nsfw)
+    try:
+        db.session.add(new_subpage)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Could not create subpage: {e}")
+        db.session.rollback()
+        return False
+
+def get_subpage(subpage_uid) -> models.Subpage:
+    subpage = db.session.query(models.Subpage).filter(models.Subpage.uid == subpage_uid).first()
+    return subpage
+
+def get_subpage_data(subpage_uid) -> dict:
+    subpage = get_subpage(subpage_uid)
+    subpage_data = subpage.to_json()
+    return subpage_data
+
+def get_subpage_subscribers(subpage_uid) -> list[str]:
+    subscriber_uuids = db.session.query(models.UserSubscription.user_uid).filter(models.UserSubscription.subpage_uid == subpage_uid).all()
+    if subscriber_uuids:
+        subscribers = []
+        for sub in subscriber_uuids:
+            user = get_user(subscriber_uuids)
+            username = user.username
+            subscribers.append(username)
+        return subscribers
+

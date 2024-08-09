@@ -22,7 +22,8 @@
   --marked-row: #49494959;
   --form-elements-border-radius: 6px;
   --card-border-radius: 10px;
-  --grey-text: rgba(212, 212, 212, 0.473);
+  --header-link: rgba(180, 180, 180, 0.774);
+  --header-link-hover: white;
 }
 
 
@@ -35,8 +36,8 @@ body, html {
 
 body {
   overflow: hidden;
-  /* font-family: "Roboto", sans-serif; */
-  font-family: "Inter", sans-serif;
+  font-family: "Roboto", sans-serif;
+  /* font-family: "Inter", sans-serif; */
   /* font-family: "Poppins", sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -44,10 +45,20 @@ body {
 
 a {
   color: var(--link);
+  text-decoration: none;
 }
 
 a:hover {
   color: var(--link-hover);
+}
+
+.a-header-menu {
+  color: var(--header-link);
+}
+
+.a-header-menu:hover {
+  color: var(--header-link-hover);
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .app-container {
@@ -103,7 +114,6 @@ a:hover {
   display: flex;
   align-items: start;
   background-color: var(--table-footer);
-  padding: 5px;
   font-size: 13px;
 }
 
@@ -112,6 +122,7 @@ a:hover {
   padding-left: 20px;
   justify-content: start;
   width: 50%;
+  height: 100%;
 }
 
 .right-aligned-container {
@@ -119,6 +130,7 @@ a:hover {
   justify-content: end;
   width: 50%;
   padding-right: 20px;
+  height: 100%;
 }
 
 .content-container {
@@ -181,15 +193,21 @@ a:hover {
   font-size: 13px;
 }
 
-.horizontal-list {
+.header-menu-list {
   padding: 0;
   list-style-type: none;
-  margin: 0;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
-.horizontal-list-item {
+.header-menu-list-item {
   display: inline;
   margin-right: 10px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  font-family: Inter, sans-serif;
+  letter-spacing: 0.00938em;
 }
 
 .checkbox-container {

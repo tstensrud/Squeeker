@@ -10,6 +10,14 @@ class User(db.Model):
     posts = db.relationship("Post", backref="user", lazy=True)
     subscriptions = db.Relationship('UserSubscription', backref="user", lazy=True)
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "uuid": self.uuid,
+            "email": self.email,
+            "username": self.username
+        }
+
 class UserSubscription(db.Model):
     __tablename__ = 'Usersubscription'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

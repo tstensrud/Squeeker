@@ -50,13 +50,6 @@ button:hover {
     border-color: var(--navbar-active-link);
 }
 
-.logout-button {
-  font-size: 14px;
-  padding: 0;
-  border: 0;
-  background-color: var(--table-footer);
-  margin: 0;
-}
 
 .form-text-area {
   background-color: var(--app-content-secondary-color);
@@ -78,4 +71,33 @@ border-color: var(--navbar-active-link);
 .form-text-area:focus {
 border-color: var(--navbar-active-link);
 outline: none;
+}
+
+.header-button-left {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  margin: 0;
+}
+
+.header-button {
+  margin: 0;
+  border-radius: 0;
+}
+
+.header-button-right {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  margin: 0;
+}
+
+.header-button-left, .header-button, .header-button-right {
+  border: 1px solid var(--grey-text);
+}
+
+.header-button-left:hover, .header-button:hover, .header-button-right:hover {
+  border: 1px solid var(--svg-icon-color);
 }

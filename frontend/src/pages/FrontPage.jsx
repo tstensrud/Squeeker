@@ -18,7 +18,7 @@ return (
   <>
     <div className="page-wrapper">
       <div className="header-container">
-        <Header/>
+        <Header idToken={idToken}/>
       </div>
       <div className="content-container">
         <Outlet />
