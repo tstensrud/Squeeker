@@ -4,7 +4,8 @@ import { AuthContext } from '../context/AuthContext';
 import useFetch from '../hooks/useFetch';
 
 import { BASE_URL } from '../utils/globalVariables';
-import Header from "./components/Header";
+import Navbar from "./components/Navbar";
+import HeaderComponent from "./components/HeaderComponent";
 
 function FrontPage() {
   const { currentUser, idToken } = useContext(AuthContext);
@@ -17,8 +18,8 @@ function FrontPage() {
 return (
   <>
     <div className="page-wrapper">
-      <div className="header-container">
-        <Header idToken={idToken}/>
+      <div className="navbar-container">
+        <Navbar idToken={idToken}/>
       </div>
       <div className="content-container">
         <Outlet />

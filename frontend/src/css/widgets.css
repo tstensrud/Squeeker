@@ -1,0 +1,21 @@
+.loading-spinner {
+    border: 4px solid var(--table-background-color);
+    border-radius: 50%;
+    border-top-color: var(--green);
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+svg.feather {
+    vertical-align: middle;
+    line-height: 0;
+    stroke: var(--svg-icon-color);
+    fill: none;
+}

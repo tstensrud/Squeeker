@@ -14,11 +14,11 @@ input {
   }
 
 input:focus {
-    border-color: var(--navbar-active-link);
+    border-color: var(--form-elements-active);
   }
 
 input:hover {
-    border-color: var(--navbar-active-link);
+    border-color: var(--form-elements-active);
   }
 
 input:placeholder {
@@ -31,6 +31,10 @@ input[type="checkbox"] {
   background: #f2f2f2;
   border: 1px solid black;
   width: 13px;
+  margin-left: 20;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0;
 }
 
 button{
@@ -47,7 +51,7 @@ button{
 }
 
 button:hover {
-    border-color: var(--navbar-active-link);
+    border-color: var(--form-elements-active);
 }
 
 

@@ -4,6 +4,7 @@ import { AuthContext } from './context/AuthContext';
 
 
 import FrontPage from './pages/FrontPage.jsx';
+import FrontPageContent from './pages/FrontpageContent.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import Login from './pages/Login.jsx';
 import SubPagePost from './pages/SubPagePost.jsx';
@@ -25,6 +26,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<FrontPage />}>
+            <Route path="/" element={<FrontPageContent />}/>
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             {/* <Route index element={ <RequireAuth> <FrontPage /> </RequireAuth>}/> */}
