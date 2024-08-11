@@ -55,10 +55,10 @@ function Navbar(props) {
                             <li key={index} className={selectedIndex === index ? "navbar-list-item-active" : "navbar-list-item"}>
                                 <Link to={item.url} onClick={() => handleNavbarClick(index)}>
                                     <div className="navbar-item-container">
-                                        <div className="navbar-item-container">
+                                        <div className="navbar-item-icon-container">
                                             {item.svg}
                                         </div>
-                                        <div className="navbar-item-container">
+                                        <div className="navbar-item-label-container">
                                             {item.name}
                                         </div>
                                     </div>
@@ -74,12 +74,12 @@ function Navbar(props) {
                         <>
                             <ul className="navbar-list">
                                 <li className="navbar-list-item">
-                                    <Link to="/">
+                                    <Link to="#">
                                         <div className="navbar-item-container">
-                                            <div className="navbar-item-container">
+                                            <div className="navbar-item-icon-container">
                                                 <User />
                                             </div>
-                                            <div className="navbar-item-container">
+                                            <div className="navbar-item-label-container">
                                                 username
                                             </div>
                                         </div>
@@ -87,12 +87,12 @@ function Navbar(props) {
                                 </li>
 
                                 <li className="navbar-list-item">
-                                    <Link to="#">
-                                        <div className="navbar-item-container" onClick={logOut}>
-                                            <div className="navbar-item-container">
+                                    <Link to="#" onClick={logOut}>
+                                        <div className="navbar-item-container">
+                                            <div className="navbar-item-icon-container">
                                                 <Logout />
                                             </div>
-                                            <div className="navbar-item-container" onClick={logOut}>
+                                            <div className="navbar-item-label-container">
                                                 Log out
                                             </div>
                                         </div>
@@ -104,16 +104,35 @@ function Navbar(props) {
                         <>
                             <ul className="navbar-list">
                                 <li className="navbar-list-item">
-                                    <div className="navbar-item-container">
-                                        <Login />
-                                    </div>
-                                    <div className="navbar-item-container">
-                                        <Link className="a-header-menu" to="/subpage/create">Log in</Link>
-                                    </div>
+                                    <Link to="/login">
+                                        <div className="navbar-item-container">
+                                            <div className="navbar-item-icon-container">
+                                                <Login />
+                                            </div>
+                                            <div className="navbar-item-label-container">
+                                                Log in
+                                            </div>
+                                        </div>
+                                    </Link>
                                 </li>
+
+                                <li className="navbar-list-item">
+                                    <Link to="/register">
+                                        <div className="navbar-item-container">
+                                            <div className="navbar-item-icon-container">
+                                                <Login />
+                                            </div>
+                                            <div className="navbar-item-label-container">
+                                                Register
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </li>
+
                             </ul>
-                        </>)}
-            </div>
+                        </>)
+                }
+            </div >
         </>
     );
 }

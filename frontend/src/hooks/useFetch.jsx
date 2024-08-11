@@ -23,6 +23,8 @@ const useFetch = (url, idToken) => {
                     throw new Error (`Error: ${response.statusText}`);
                 }
                 const result = await response.json();
+                console.log(result);
+                console.log(response)
                 setData(result);
             } catch (error) {
                 setError(error.message);

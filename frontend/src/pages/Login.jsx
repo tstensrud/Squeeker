@@ -41,6 +41,7 @@ function Login() {
         <>
             <div className="login-container">
                 <div className="login-card">
+                    <h3>Log in</h3>
                     <form onSubmit={handleLogin}>
                         <input onChange={handleUsernameChange} type="text" placeholder="E-mail" />
                         <br />
@@ -48,8 +49,11 @@ function Login() {
                         <br />
                         <button type="submit">Log in</button>
                     </form>
-                    <span>Click <Link to="/register">here</Link> to register.</span>
-                    {error && <span>Wrong username and/or email</span>}
+                    <p>
+                        {error && <>Wrong username and/or email. <br/>
+                        <Link className="link-card" to="/reset">Forgot password?</Link></>}
+                    </p>
+                    
 
                 </div>
             </div>

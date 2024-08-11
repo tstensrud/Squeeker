@@ -15,6 +15,7 @@ input {
 
 input:focus {
     border-color: var(--form-elements-active);
+    outline: none;
   }
 
 input:hover {

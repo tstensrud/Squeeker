@@ -50,11 +50,25 @@ def create_subpage():
             if key == "name" or key == "description":
                 escaped_data[key] = escape(value.strip())
             else:
-                escaped_data[key] = escape(value)
-        print (escaped_data)
-        return jsonify({"success": True, "message": "Subpage created"})
+                escaped_data[key] = value
+        if db.find_subpage_name(escaped_data['name']):
+            return jsonify({"success": False, "message": "A subpage with that name already exist"})
+        
+        if db.create_subpage(escaped_data):
+            return jsonify({"success": True, "message": "Subpage created"})
+        else:
+            return jsonify({"success": False, "message": "Could not create sub page"})
     else:
         return jsonify({"success": False, "message": "No data received"})
+
+@api.route('/subpage/<subpage_name>/', methods=['GET'])
+def get_subpage(subpage_name):
+    print(f"Fetching data for {subpage_name}")
+    subpage = db.get_subpage(subpage_name)
+    if subpage is False:
+        return jsonify({"success": False, "message": "This subpage does not exist"})
+    subpage_data = subpage.to_json()
+    return jsonify({"success": True, "message": "Fetched subpage data", "data": subpage_data})
 
 @api.route('/test/', methods=['GET'])
 @firebase_auth_required

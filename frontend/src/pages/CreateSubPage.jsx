@@ -2,16 +2,16 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import useRegisterSubpage from '../hooks/useRegisterSubpage';
 import { BASE_URL } from '../utils/globalVariables';
+import { useNavigate } from 'react-router-dom';
 
 function CreateSubPage() {
     const { currentUser, idToken } = useContext(AuthContext);
     const [pageData, setPageData] = useState({ "public": true, "nsfw": false });
-    //const [error, setError] = useState("");
+    const [creationError, setCreationError] = useState("");
     const { data, loading, error, registerSubpage } = useRegisterSubpage(`${BASE_URL}/api/subpage/create/`, idToken);
     const [publicChecked, setPublicChecked] = useState(true);
     const [nsfwChecked, setNsfwChecked] = useState(false);
-
-    console.log(BASE_URL)
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         setPageData({
@@ -41,8 +41,13 @@ function CreateSubPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(pageData);
-        registerSubpage(pageData)
+        await registerSubpage(pageData);
+        console.log(data)
+        if (data.success === true) {
+            navigate(`/subpage/${pageData.name}`);
+        } else {
+            setCreationError(data.message);
+        }
     }
 
     return (
@@ -53,8 +58,10 @@ function CreateSubPage() {
                     idToken ? (
                         <>
                             <form onSubmit={handleSubmit}>
+                                &nbsp;Subpage name <span className="grey-info-text">(max 50 chars)</span><br/>
                                 <input id="name" onChange={handleInputChange} type="text" placeholder="Subpage name" />
                                 <br />
+                                &nbsp;Description <span className="grey-info-text">(Max 500 chars)</span> <br/>
                                 <input id="description" onChange={handleInputChange} type="text" placeholder="Subpage description" />
                                 <br />
                                 <ul className="horizontal-list">
@@ -76,7 +83,10 @@ function CreateSubPage() {
                                 <button type="submit">Create!</button>
                             </form>
                             <br />
-                            {error && error}
+                            <p>
+                                {creationError && creationError}
+                                {error && error}
+                            </p>
                             {/* fetchError && JSON.stringify(fetchError) */}
                         </>
                     ) : (

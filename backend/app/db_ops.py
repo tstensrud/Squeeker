@@ -23,12 +23,19 @@ def get_user(uuid) -> models.User:
     user = db.session.query(models.User).filter(models.User.uuid == uuid).first()
     return user
 
+def find_subpage_name(subpage_name: str) -> bool:
+    subpage = db.session.query(models.Subpage).filter(models.Subpage.name == subpage_name).first()
+    if subpage:
+        return True
+    else:
+        return False
+    
 def create_subpage(data) -> bool:
-    uid = uuid4()
+    uid = str(uuid4())
     name = data["name"]
     description = data["description"]
     public = data["public"]
-    active = data["active"]
+    active = True
     nsfw = data["nsfw"]
 
     new_subpage = models.Subpage(uid=uid,
@@ -48,7 +55,10 @@ def create_subpage(data) -> bool:
 
 def get_subpage(subpage_uid) -> models.Subpage:
     subpage = db.session.query(models.Subpage).filter(models.Subpage.uid == subpage_uid).first()
-    return subpage
+    if subpage:
+        return subpage
+    else:
+        return False
 
 def get_subpage_data(subpage_uid) -> dict:
     subpage = get_subpage(subpage_uid)

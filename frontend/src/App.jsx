@@ -11,6 +11,7 @@ import SubPagePost from './pages/SubPagePost.jsx';
 import Register from './pages/Register.jsx';
 import SubPage from './pages/SubPage.jsx';
 import CreateSubPage from './pages/CreateSubPage.jsx';
+import ForgottenPassword from './pages/ForgottenPassword.jsx';
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
             <Route path="/" element={<FrontPageContent />}/>
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="reset" element={<ForgottenPassword />}/>
             {/* <Route index element={ <RequireAuth> <FrontPage /> </RequireAuth>}/> */}
             <Route path="subpage/create" element={<CreateSubPage />}/>
             <Route path="subpage/:subPageName" element={<SubPage />} />

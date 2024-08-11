@@ -49,6 +49,15 @@ a {
   text-decoration: none;
 }
 
+.link-card {
+  color: var(--form-elements-active);
+  text-decoration: none;
+}
+
+.link-card:hover {
+  text-decoration: underline;
+}
+
 .app-container {
   display: flex;
   height: 100%;
@@ -148,4 +157,9 @@ a {
 .checkbox-container {
   display: flex;
   align-items: center;
+}
+
+.grey-info-text {
+  color: grey;
+  font-size: 12px;
 }

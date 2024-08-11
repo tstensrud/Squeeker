@@ -13,7 +13,7 @@ function FrontPage() {
   //console.log("IDTOKEN:", idToken);
   //console.log("CURRENTUSER", currentUser);
   
-  const {data, loading, error} = useFetch(`${BASE_URL}/api/test/`, idToken);
+  //  const {data, loading, error} = useFetch(`${BASE_URL}/api/test/`, idToken);
 
 return (
   <>
@@ -22,6 +22,7 @@ return (
         <Navbar idToken={idToken}/>
       </div>
       <div className="content-container">
+        
         <Outlet />
       </div>
     </div>

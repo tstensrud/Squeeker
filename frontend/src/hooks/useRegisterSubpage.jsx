@@ -5,7 +5,7 @@ const useRegisterSubpage = (url, idToken) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const registerSubpage = async (userData) => {
+    const registerSubpage = async (subpageData) => {
         setLoading(false);
         setError(null);
         
@@ -16,7 +16,7 @@ const useRegisterSubpage = (url, idToken) => {
                         Authorization: `Bearer ${idToken}`,
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(userData),
+                    body: JSON.stringify(subpageData),
                 });
                 if (!response.ok) {
                     throw new Error (`Error: ${response.statusText}`);
