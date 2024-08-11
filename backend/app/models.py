@@ -8,7 +8,7 @@ class User(db.Model):
     username = db.Column(db.String(100), nullable=False)
 
     posts = db.relationship("Post", backref="user", lazy=True)
-    subscriptions = db.Relationship('UserSubscription', backref="user", lazy=True)
+    subscriptions = db.relationship('UserSubscription', backref="user", lazy=True)
 
     def to_json(self):
         return {

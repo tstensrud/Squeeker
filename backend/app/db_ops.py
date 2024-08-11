@@ -53,8 +53,20 @@ def create_subpage(data) -> bool:
         db.session.rollback()
         return False
 
-def get_subpage(subpage_uid) -> models.Subpage:
-    subpage = db.session.query(models.Subpage).filter(models.Subpage.uid == subpage_uid).first()
+def get_all_subpages() -> list[str]:
+    subpages = db.session.query(models.Subpage).all()
+    if subpages:
+        subpage_titles_and_descriptions = {}
+        for subpage in subpages:
+            subpage_titles_and_descriptions[subpage.name] = subpage.description
+        return subpage_titles_and_descriptions
+    else:
+        return None
+    
+
+
+def get_subpage(subpage_name) -> models.Subpage:
+    subpage = db.session.query(models.Subpage).filter(models.Subpage.name == subpage_name).first()
     if subpage:
         return subpage
     else:

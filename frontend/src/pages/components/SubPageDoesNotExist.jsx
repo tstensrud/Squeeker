@@ -12,7 +12,7 @@ function SubPageDoesNotExist(props) {
 
                 </div>
                 <div className="content-card-grid-item-snippet">
-                    <Link to="/subpage/create/">Click here</Link> to create a new subpage.
+                    <Link className="link-card" to="/subpage/create/">Click here</Link> to create a new subpage.
 
                 </div>
                 <div className="content-card-grid-item-sub-footer">

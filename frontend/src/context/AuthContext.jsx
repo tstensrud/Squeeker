@@ -21,7 +21,6 @@ export const AuthContextProvider = ({ children }) => {
                 dispatch({ type: "LOGIN", payload: {user, idToken} });
                 //console.log(idToken);
                 //console.log(user);
-                
             } else {
                 localStorage.removeItem("user");
                 dispatch({ type: "LOGOUT" });

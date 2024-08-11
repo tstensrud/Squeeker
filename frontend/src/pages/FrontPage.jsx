@@ -9,25 +9,28 @@ import HeaderComponent from "./components/HeaderComponent";
 
 function FrontPage() {
   const { currentUser, idToken } = useContext(AuthContext);
-  const [userData, setUserData] = useState({});
+  const { data: userData, loading: userDataLoading, error: userDataError } = useFetch(
+    currentUser ? `${BASE_URL}/api/user/${currentUser.uid}/` : null,
+    idToken,
+    [currentUser, idToken]
+  );
+
+
   //console.log("IDTOKEN:", idToken);
   //console.log("CURRENTUSER", currentUser);
-  
-  //  const {data, loading, error} = useFetch(`${BASE_URL}/api/test/`, idToken);
 
-return (
-  <>
-    <div className="page-wrapper">
-      <div className="navbar-container">
-        <Navbar idToken={idToken}/>
+  return (
+    <>
+      <div className="page-wrapper">
+        <div className="navbar-container">
+          <Navbar userData={userData} idToken={idToken} />
+        </div>
+        <div className="content-container">
+          <Outlet />
+        </div>
       </div>
-      <div className="content-container">
-        
-        <Outlet />
-      </div>
-    </div>
-  </>
-);
+    </>
+  );
 }
 
 export default FrontPage;

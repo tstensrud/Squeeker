@@ -10,7 +10,6 @@ const AuthReducer = (state, action) => {
             return {
                 currentUser: null,
                 idToken: null,
-                
             };
         }
         default:

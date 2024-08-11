@@ -1,12 +1,19 @@
 .loading-spinner {
     border: 4px solid var(--table-background-color);
     border-radius: 50%;
-    border-top-color: var(--green);
+    border-top-color: var(--form-elements-active);
     width: 20px;
     height: 20px;
     animation: spin 1s linear infinite;
 }
 
+.loading-spinner-container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
 @keyframes spin {
     to {
         transform: rotate(360deg);

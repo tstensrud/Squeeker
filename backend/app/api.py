@@ -25,6 +25,16 @@ def firebase_auth_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@api.route('/user/<uuid>/', methods=["GET"])
+@firebase_auth_required
+def get_userdata(uuid):
+    user = db.get_user(uuid)
+    if user:
+        user_data = user.to_json()
+        return jsonify({"success": True, "message": "User found", "data": user_data})
+    else:
+        return jsonify({"success": False, "message": "Could not find user"})
+
 @api.route('/register/', methods=['POST'])
 def register():
     data = request.get_json()
@@ -60,6 +70,14 @@ def create_subpage():
             return jsonify({"success": False, "message": "Could not create sub page"})
     else:
         return jsonify({"success": False, "message": "No data received"})
+
+@api.route('/subpage/all/', methods=['GET'])
+def get_subpages():
+    subpages = db.get_all_subpages()
+    if subpages:
+        return jsonify({"success": True, "message": "All subpages", "data": subpages})
+    else:
+        return jsonify({"success": False, "message": "No subpages were found"})
 
 @api.route('/subpage/<subpage_name>/', methods=['GET'])
 def get_subpage(subpage_name):

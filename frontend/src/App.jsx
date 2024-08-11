@@ -12,6 +12,7 @@ import Register from './pages/Register.jsx';
 import SubPage from './pages/SubPage.jsx';
 import CreateSubPage from './pages/CreateSubPage.jsx';
 import ForgottenPassword from './pages/ForgottenPassword.jsx';
+import Subpages from './pages/Subpages.jsx';
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
             <Route path="register" element={<Register />} />
             <Route path="reset" element={<ForgottenPassword />}/>
             {/* <Route index element={ <RequireAuth> <FrontPage /> </RequireAuth>}/> */}
+            <Route path="subpages" element={<Subpages />}/>
             <Route path="subpage/create" element={<CreateSubPage />}/>
             <Route path="subpage/:subPageName" element={<SubPage />} />
             <Route path="subpage/:subpageName/:postId" element={<SubPagePost />}/>

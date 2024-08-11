@@ -1,5 +1,5 @@
-import { useContext, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { signOut } from "firebase/auth";
 import { auth } from '../../utils/firebase';
@@ -17,18 +17,23 @@ import NewSubpage from '../../assets/svg/NewSubpage.svg?react';
 
 function Navbar(props) {
 
-    const { currentUser } = useContext(AuthContext);
+    const { dispatch, currentUser, idToken } = useContext(AuthContext);
     const [selectedIndex, setSelectexIndex] = useState(0);
+    const navigate = useNavigate();
+    let userData = props.userData && props.userData;
 
+    console.log("userdata aladbfladfl:", userData);
+    //console.log("userData", userData);
     const mainNavbarItems = [
         { name: "Frontpage", url: "/", svg: <HomeIcon /> },
-        { name: "Subpages", url: "#", svg: <ArrowDown /> },
+        { name: "Subpages", url: "/subpages", svg: <ArrowDown /> },
         { name: "Create new subpage", url: "/subpage/create", svg: <NewSubpage /> }
     ];
 
     const logOut = async (e) => {
         e.preventDefault();
         await signOut(auth).then(() => {
+            dispatch({type:"LOGOUT"});
             navigate("/");
         }).catch((error) => {
             console.log(error);
@@ -51,7 +56,6 @@ function Navbar(props) {
                 <ul className="navbar-list">
                     {
                         mainNavbarItems.map((item, index) => (
-
                             <li key={index} className={selectedIndex === index ? "navbar-list-item-active" : "navbar-list-item"}>
                                 <Link to={item.url} onClick={() => handleNavbarClick(index)}>
                                     <div className="navbar-item-container">
@@ -68,9 +72,10 @@ function Navbar(props) {
                     }
                 </ul>
             </div>
+            
             <div className="navbar-section-container">
                 {
-                    props.idToken ? (
+                    idToken !== null && props.idToken === idToken ? (
                         <>
                             <ul className="navbar-list">
                                 <li className="navbar-list-item">
@@ -80,7 +85,7 @@ function Navbar(props) {
                                                 <User />
                                             </div>
                                             <div className="navbar-item-label-container">
-                                                username
+                                                {userData && userData.data.username}
                                             </div>
                                         </div>
                                     </Link>
@@ -128,10 +133,9 @@ function Navbar(props) {
                                         </div>
                                     </Link>
                                 </li>
-
                             </ul>
-                        </>)
-                }
+                        </>
+                    )}
             </div >
         </>
     );

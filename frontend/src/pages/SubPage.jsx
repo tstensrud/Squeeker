@@ -7,6 +7,7 @@ import NewPost from './components/NewPost';
 import SubPageDoesNotExist from './components/SubPageDoesNotExist';
 import useFetch from '../hooks/useFetch';
 import { BASE_URL } from '../utils/globalVariables';
+import HeaderComponent from './components/HeaderComponent';
 
 function SubPage() {
     const { subPageName } = useParams();
@@ -15,7 +16,8 @@ function SubPage() {
     const { currentUser, idToken } = useContext(AuthContext);
 
     const { data, loading, error } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken)
-    
+
+  
 
 
     return (
@@ -25,7 +27,10 @@ function SubPage() {
                 data && data.success === false ? (
                     <><SubPageDoesNotExist subPageName={subPageName} /></>
                 ) : (
-                    <><NewPost subPageName={subPageName} /></>
+                    <>
+                        <HeaderComponent title={subPageName} description={data && data.data.description} />
+                        <NewPost subPageName={subPageName} />
+                    </>
                 )
             }
         </>
