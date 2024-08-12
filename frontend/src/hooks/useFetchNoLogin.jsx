@@ -1,16 +1,12 @@
 import { useState, useEffect} from 'react';
 
-function useFetch (url, idToken)  {
+function useFetchNoLogin (url)  {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!idToken) {
-                setLoading(false);
-                return;
-            }
             if (!url) {
                 setLoading(false);
                 return;
@@ -19,9 +15,6 @@ function useFetch (url, idToken)  {
             try {
                 const response = await fetch(url, {
                     method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${idToken}`,
-                    },
                 });
                 if (!response.ok) {
                     throw new Error (`Error: ${response.statusText}`);
@@ -38,9 +31,9 @@ function useFetch (url, idToken)  {
         };
 
         fetchData();
-    },[url, idToken])
+    },[url])
 
     return {data, loading, error};
 }
 
-export default useFetch;
+export default useFetchNoLogin;

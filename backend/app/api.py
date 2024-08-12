@@ -25,8 +25,8 @@ def firebase_auth_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@api.route('/user/<uuid>/', methods=["GET"])
 @firebase_auth_required
+@api.route('/user/<uuid>/', methods=["GET"])
 def get_userdata(uuid):
     user = db.get_user(uuid)
     if user:
@@ -50,8 +50,8 @@ def register():
     else:
         return jsonify({"success": False, "message": "No data received"})
 
-@api.route('/subpage/create/', methods=['POST'])
 @firebase_auth_required
+@api.route('/subpage/create/', methods=['POST'])
 def create_subpage():
     data = request.get_json()
     if data:
@@ -73,6 +73,7 @@ def create_subpage():
 
 @api.route('/subpage/all/', methods=['GET'])
 def get_subpages():
+    print("All subpages")
     subpages = db.get_all_subpages()
     if subpages:
         return jsonify({"success": True, "message": "All subpages", "data": subpages})
@@ -81,15 +82,38 @@ def get_subpages():
 
 @api.route('/subpage/<subpage_name>/', methods=['GET'])
 def get_subpage(subpage_name):
-    print(f"Fetching data for {subpage_name}")
     subpage = db.get_subpage(subpage_name)
     if subpage is False:
         return jsonify({"success": False, "message": "This subpage does not exist"})
     subpage_data = subpage.to_json()
     return jsonify({"success": True, "message": "Fetched subpage data", "data": subpage_data})
 
-@api.route('/test/', methods=['GET'])
+@api.route('/subpage/<subpage_uid>/posts/', methods=['GET'])
+def get_subpage_posts(subpage_uid):
+    posts = db.get_subpage_posts(10, subpage_uid)
+    if posts:
+        return jsonify({"success": True, "message": "Posts returned", "data": posts})
+    else:
+        return jsonify({"success": False, "message": "This subpage has no posts yet."})
+
 @firebase_auth_required
+@api.route('/subpage/<subpage_uid>/new_post/', methods=['POST'])
+def new_subpage_post(subpage_uid):
+    data = request.get_json()
+    if data:
+        processed_data = {}
+        for key, value in data.items():
+            processed_data[key] = escape(value).strip()
+        if db.new_post(processed_data):
+            return jsonify({"success": True, "message": "Post added"})
+        else:
+            return jsonify({"success": False, "message": "Could not add post"})
+    else:
+        return jsonify({"success": False, "message": "No data received"})
+
+
+@firebase_auth_required
+@api.route('/test/', methods=['GET'])
 def test():
     user = request.user
     return jsonify({"message": f"Authorized {user['uid']}"}), 200

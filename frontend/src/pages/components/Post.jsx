@@ -1,43 +1,45 @@
-function Post({subPageId}) {
+import { Link } from 'react-router-dom';
+
+// SVG import
+import ArrowUp from '../../assets/svg/ArrowUp.svg?react';
+import ArrowDown from '../../assets/svg/ArrowDown.svg?react';
+
+function Post({postData}) {
     return (
         <>
             <div className="content-card">
                 <div className="content-card-grid-item-header">
-                    Post title
+                    {postData.title}
                 </div>
                 <div className="content-card-grid-item-score">
-                    <div>+</div>
-                    <div>pts</div>
-                    <div>-</div>
+                    <div><ArrowUp /></div>
+                    <div>{postData.total_votes}</div>
+                    <div><ArrowDown /></div>
                 </div>
                 <div className="content-card-grid-item-snippet">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi maiores voluptatum dolore animi quia perferendis, doloribus quae nisi dolorem consequatur. Deserunt vero tempora maxime necessitatibus temporibus ullam ipsam harum explicabo! <br />
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint natus alias blanditiis, sapiente sequi, laboriosam voluptates dolorem eius ipsa cum voluptas optio veritatis similique quaerat provident quod in tempore. Voluptatem... <br />
-
+                    {postData.post}
                 </div>
                 <div className="content-card-grid-item-sub-footer">
                     <ul className="horizontal-list">
                         <li className="horizontal-list-item">
-                            timestamp
+                            <span className="grey-info-text">Submitted at: {postData.timestamp}</span>
                         </li>
                         <li className="horizontal-list-item">
-                            author
+                            <span className="grey-info-text">Posted by: {postData.author_name}</span>
                         </li>
                         <li className="horizontal-list-item">
-                            subpage
+                            <span className="grey-info-text">Posted to: {postData.subpage_name}</span>
                         </li>
                     </ul>
                 </div>
                 <div className="content-card-grid-item-footer">
                     <ul className="horizontal-list">
-
-                    
-                    <li className="horizontal-list-item">
-                        Comments
-                    </li>
-                    <li className="horizontal-list-item">
-                        Share
-                    </li>
+                        <li className="horizontal-list-item">
+                            <Link className="link-card" to="">Comments</Link>
+                        </li>
+                        <li className="horizontal-list-item">
+                            <Link className="link-card" to="">Share</Link>
+                        </li>
                     </ul>
                 </div>
             </div>

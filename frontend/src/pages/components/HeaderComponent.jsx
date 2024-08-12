@@ -1,10 +1,11 @@
-function HeaderComponent(props) {
+function HeaderComponent({subpageData}) {
+    
     return (
         <>
             <div className="content-card-flex">
-                <h2>Welcome to {props.title}!</h2>
+                <h2>Welcome to {subpageData && subpageData.name}!</h2>
                 <p>
-                    {props.description}
+                    {subpageData && subpageData.description}
                 </p>
             </div>
         </>

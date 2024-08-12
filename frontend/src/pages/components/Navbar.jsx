@@ -22,8 +22,6 @@ function Navbar(props) {
     const navigate = useNavigate();
     let userData = props.userData && props.userData;
 
-    console.log("userdata aladbfladfl:", userData);
-    //console.log("userData", userData);
     const mainNavbarItems = [
         { name: "Frontpage", url: "/", svg: <HomeIcon /> },
         { name: "Subpages", url: "/subpages", svg: <ArrowDown /> },
@@ -50,7 +48,8 @@ function Navbar(props) {
                 <div className="navbar-header-icon-container">
                     <AppIcon />
                 </div>
-                <h3>Squeek!</h3>
+                ASDFASD
+                <h3>The lodge</h3>
             </div>
             <div className="navbar-section-container">
                 <ul className="navbar-list">

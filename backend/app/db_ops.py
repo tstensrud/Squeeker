@@ -87,3 +87,47 @@ def get_subpage_subscribers(subpage_uid) -> list[str]:
             subscribers.append(username)
         return subscribers
 
+def new_post(data) -> bool:
+    author_uid = data["author"]
+    author_object = get_user(author_uid)
+    uid = str(uuid4())
+    subpage_uid = data["subpageUid"]
+    author_name = author_object.username
+    subpage_name = data["subpageName"]
+    title = data["title"]
+    post = data["content"]
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    total_votes = data["pts"]
+    upvotes = data["upvotes"]
+    downvotes = data["downvotes"]
+
+    new_post = models.Post(uid=uid,
+                           subpage_uid=subpage_uid,
+                           subpage_name=subpage_name,
+                           author_uuid=author_uid,
+                           author_name=author_name,
+                           title=title,
+                           post=post,
+                           timestamp=timestamp,
+                           total_votes=total_votes,
+                           upvotes=upvotes,
+                           downvotes=downvotes)
+    try:
+        db.session.add(new_post)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error creating new post {e}")
+        db.session.rollback()
+        return False
+
+
+def get_subpage_posts(total_posts: int, subpage_uid: str):
+    posts = db.session.query(models.Post).filter(models.Post.subpage_uid == subpage_uid).order_by(models.Post.timestamp).all()
+    if posts:
+        post_dict = {}
+        for post in posts:
+            post_dict[post.uid] = post.to_json()
+        return post_dict
+    else:
+        return None

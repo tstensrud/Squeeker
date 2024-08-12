@@ -51,6 +51,8 @@ class Post(db.Model):
     __tablename__ = "Post"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uid = db.Column(db.String(255), unique=True, nullable=False)
+    subpage_uid = db.Column(db.String(255), db.ForeignKey('Subpage.uid'), nullable=False)
+    subpage_name = db.Column(db.String(50))
     author_uuid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
     author_name = db.Column(db.String(100))
     title = db.Column(db.String(50), nullable=False)
@@ -66,6 +68,8 @@ class Post(db.Model):
         return {
             'id': self.id,
             'uid': self.uid,
+            "subpage_uid": self.subpage_uid,
+            "subpage_name": self.subpage_name,
             'author_uuid': self.author_uuid,
             'author_name': self.author_name,
             'title': self.title,
