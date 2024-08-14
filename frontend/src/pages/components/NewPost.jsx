@@ -3,13 +3,16 @@ import { AuthContext } from '../../context/AuthContext';
 
 import { BASE_URL } from '../../utils/globalVariables';
 import useSubpagePost from '../../hooks/useSubpagePost';
+import { useNavigate } from 'react-router-dom';
 
 function NewPost(props) {
 
     const { currentUser, idToken } = useContext(AuthContext);
     const [postContent, setPostContent] = useState("");
     const subpageUid = props.subPageUid;
-    const { loading, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/${subpageUid}/new_post/`, idToken);
+    const { loading, data, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/${subpageUid}/new_post/`, idToken);
+    const navigate = useNavigate();
+    const subpageName = props.subPageName;
 
     const handleInputChange = (e) => {
         setPostContent({
@@ -34,12 +37,20 @@ function NewPost(props) {
             ...prevContent,
             subpageUid: subpageUid,
         }));
-    }, [subpageUid])
+    }, [subpageUid]);
+
+    useEffect(() => {
+        if(data && data.success === true) {
+            //navigate(`/subpage/${subpageName}/post/${data.data.post_uid}/`)
+        }
+    },[data])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        subpagePost(postContent);
+        await subpagePost(postContent);
+        //navigate to the new post, with the uid receved from this method
     }
+
     return (
         <>
             <div className="flex-box-column">

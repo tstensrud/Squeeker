@@ -34,7 +34,7 @@ function SubPage() {
                             subpageDataLoading === true ? (
                             <>
                                 <>
-                                    <LoadingSpinner />
+                                    <LoadingSpinner key={"loading1"} />
                                 </>
                             </>
                             ):(
@@ -45,13 +45,13 @@ function SubPage() {
                         }
                         
                         {
-                            idToken && currentUser && idToken !== null && currentUser !== null ? (<><NewPost author={currentUser} subPageName={subPageName} subPageUid={subpageData && subpageData.data.uid} /></>) : ("")
+                            idToken && currentUser && idToken !== null && currentUser !== null ? (<><NewPost key={"newpost"} author={currentUser} subPageName={subPageName} subPageUid={subpageData && subpageData.data.uid} /></>) : ("")
                         }
 
                         {
                             subpagePostDataLoading && subpagePostDataLoading === true ? (
                                 <>
-                                    <LoadingSpinner />
+                                    <LoadingSpinner key={"loading2"} />
                                 </>
                             ) : (
                                 <>
@@ -59,7 +59,7 @@ function SubPage() {
                                         subpagePostDataLoading && subpagePostDataLoading === true ? (
                                             <>
                                                 <>
-                                                    <LoadingSpinner />
+                                                    <LoadingSpinner key={"loading3"} />
                                                 </>
                                             </>
                                         ) : (

@@ -36,7 +36,7 @@ function App() {
             <Route path="subpages" element={<Subpages />}/>
             <Route path="subpage/create" element={<CreateSubPage />}/>
             <Route path="subpage/:subPageName" element={<SubPage />} />
-            <Route path="subpage/:subpageName/:postId" element={<SubPagePost />}/>
+            <Route path="subpage/:subPageName/post/:postId" element={<SubPagePost />}/>
           </Route>
           <Route path="*" element={<ErrorPage />} />
         </Routes>

@@ -87,7 +87,7 @@ def get_subpage_subscribers(subpage_uid) -> list[str]:
             subscribers.append(username)
         return subscribers
 
-def new_post(data) -> bool:
+def new_post(data):
     author_uid = data["author"]
     author_object = get_user(author_uid)
     uid = str(uuid4())
@@ -115,12 +115,18 @@ def new_post(data) -> bool:
     try:
         db.session.add(new_post)
         db.session.commit()
-        return True
+        return uid
     except Exception as e:
         print(f"Error creating new post {e}")
         db.session.rollback()
         return False
 
+def get_post(post_uid: str) -> models.Post:
+    post = db.session.query(models.Post).filter(models.Post.uid == post_uid).first()
+    if post:
+        return post
+    else:
+        return None
 
 def get_subpage_posts(total_posts: int, subpage_uid: str):
     posts = db.session.query(models.Post).filter(models.Post.subpage_uid == subpage_uid).order_by(models.Post.timestamp).all()

@@ -5,6 +5,7 @@ import ArrowUp from '../../assets/svg/ArrowUp.svg?react';
 import ArrowDown from '../../assets/svg/ArrowDown.svg?react';
 
 function Post({postData}) {
+    //console.log(postData)
     return (
         <>
             <div className="content-card">
@@ -35,7 +36,7 @@ function Post({postData}) {
                 <div className="content-card-grid-item-footer">
                     <ul className="horizontal-list">
                         <li className="horizontal-list-item">
-                            <Link className="link-card" to="">Comments</Link>
+                            <Link className="link-card" to={`/subpage/${postData.subpage_name}/post/${postData.uid}/`}>Comments</Link>
                         </li>
                         <li className="horizontal-list-item">
                             <Link className="link-card" to="">Share</Link>

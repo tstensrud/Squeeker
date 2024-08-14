@@ -96,6 +96,16 @@ def get_subpage_posts(subpage_uid):
     else:
         return jsonify({"success": False, "message": "This subpage has no posts yet."})
 
+@api.route('/subpage/post/<post_uid>/')
+def get_post(post_uid):
+    post = db.get_post(post_uid)
+    if post:
+        post_data = post.to_json()
+        return jsonify({"success": True, "message": "Post found", "data": post_data})
+    else:
+        return jsonify({"success": False, "message": "Could not find post"})
+
+
 @firebase_auth_required
 @api.route('/subpage/<subpage_uid>/new_post/', methods=['POST'])
 def new_subpage_post(subpage_uid):
@@ -104,8 +114,11 @@ def new_subpage_post(subpage_uid):
         processed_data = {}
         for key, value in data.items():
             processed_data[key] = escape(value).strip()
-        if db.new_post(processed_data):
-            return jsonify({"success": True, "message": "Post added"})
+        new_post = db.new_post(processed_data)
+        new_data = {}
+        new_data["post_uid"] = new_post
+        if new_post is not False: # return the uid of the post
+            return jsonify({"success": True, "message": "Post added", "data": new_data})
         else:
             return jsonify({"success": False, "message": "Could not add post"})
     else:
