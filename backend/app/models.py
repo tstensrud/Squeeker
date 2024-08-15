@@ -84,8 +84,10 @@ class Comment(db.Model):
     __tablename__ = "Comment"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uid = db.Column(db.String(255), unique=True, nullable=False)
+    author = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
     post_uid = db.Column(db.String(255), db.ForeignKey('Post.uid'), nullable=False)
     parent_comment_uid = db.Column(db.String(255), nullable=True)
+    comment = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.String(100))
     total_votes = db.Column(db.Integer)
     upvotes = db.Column(db.Integer)
@@ -95,9 +97,11 @@ class Comment(db.Model):
         return {
             'id': self.id,
             'uid': self.uid,
+            "author": self.author,
             'post_uid': self.post_uid,
             'parent_comment_uid': self.parent_comment_uid,
             'timestamp': self.timestamp,
+            "comment": self.comment,
             'total_votes': self.total_votes,
             'upvotes': self.upvotes,
             'downvotes': self.downvotes

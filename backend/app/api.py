@@ -96,7 +96,7 @@ def get_subpage_posts(subpage_uid):
     else:
         return jsonify({"success": False, "message": "This subpage has no posts yet."})
 
-@api.route('/subpage/post/<post_uid>/')
+@api.route('/subpage/post/<post_uid>/', methods=['GET'])
 def get_post(post_uid):
     post = db.get_post(post_uid)
     if post:
@@ -104,6 +104,14 @@ def get_post(post_uid):
         return jsonify({"success": True, "message": "Post found", "data": post_data})
     else:
         return jsonify({"success": False, "message": "Could not find post"})
+
+@api.route('/subpage/post/<post_uid>/comments/', methods=['GET'])
+def get_post_comments(post_uid):
+    comments = db.get_post_comments(post_uid)
+    if comments:
+        return jsonify({"success": True, "message": f"Comments for post {post_uid}", "data": comments})
+    else:
+        return jsonify({"success": False, "message": "No comments found for post"})
 
 
 @firebase_auth_required
@@ -124,6 +132,25 @@ def new_subpage_post(subpage_uid):
     else:
         return jsonify({"success": False, "message": "No data received"})
 
+@firebase_auth_required
+@api.route('/subpage/comment/new/', methods=['POST'])
+def new_comment():
+    data = request.get_json()
+    if data:
+        subpage_name = escape(data["subPageName"])
+        find_subpage = db.get_subpage(subpage_name)
+        if find_subpage is False:
+            return({"success": False, "message": f"Subpage {subpage_name} does not exist"})
+        author = escape(data["author"])
+        postUid = escape(data["postId"])
+        comment = escape(data["comment"]).strip()
+        new_comment = db.new_comment(postUid, author, comment, "")
+        if new_comment is True:
+            return ({"success": True, "message": "Comment added"})
+        else:
+            return({"success": False, "message": f"Could not add comment: {new_comment}"})
+    else:
+        return({"success": False, "message": "No comment data received"})
 
 @firebase_auth_required
 @api.route('/test/', methods=['GET'])
