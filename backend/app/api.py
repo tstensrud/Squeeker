@@ -88,6 +88,7 @@ def get_subpage(subpage_name):
     subpage_data = subpage.to_json()
     return jsonify({"success": True, "message": "Fetched subpage data", "data": subpage_data})
 
+# Get posts from a specific sub page
 @api.route('/subpage/<subpage_uid>/posts/', methods=['GET'])
 def get_subpage_posts(subpage_uid):
     posts = db.get_subpage_posts(10, subpage_uid)
@@ -96,6 +97,7 @@ def get_subpage_posts(subpage_uid):
     else:
         return jsonify({"success": False, "message": "This subpage has no posts yet."})
 
+# Get data about specific post
 @api.route('/subpage/post/<post_uid>/', methods=['GET'])
 def get_post(post_uid):
     post = db.get_post(post_uid)
@@ -105,6 +107,7 @@ def get_post(post_uid):
     else:
         return jsonify({"success": False, "message": "Could not find post"})
 
+# Retrieve comments from a specific post
 @api.route('/subpage/post/<post_uid>/comments/', methods=['GET'])
 def get_post_comments(post_uid):
     comments = db.get_post_comments(post_uid)
@@ -113,6 +116,16 @@ def get_post_comments(post_uid):
     else:
         return jsonify({"success": False, "message": "No comments found for post"})
 
+# Get specific comment
+@api.route('/subpage/get_comment/<comment_uid>/', methods=['GET'])
+def get_comment(comment_uid):
+    print("Get comment")
+    comment = db.get_comment(comment_uid)
+    if comment:
+        comment_data = comment.to_json()
+        return jsonify({"success": True, "message": "Comment fetched", "data": comment_data})
+    else:
+        return jsonify({"success": False, "message": "Could not find comment"})
 
 @firebase_auth_required
 @api.route('/subpage/<subpage_uid>/new_post/', methods=['POST'])
@@ -140,17 +153,17 @@ def new_comment():
         subpage_name = escape(data["subPageName"])
         find_subpage = db.get_subpage(subpage_name)
         if find_subpage is False:
-            return({"success": False, "message": f"Subpage {subpage_name} does not exist"})
+            return jsonify({"success": False, "message": f"Subpage {subpage_name} does not exist"})
         author = escape(data["author"])
         postUid = escape(data["postId"])
         comment = escape(data["comment"]).strip()
         new_comment = db.new_comment(postUid, author, comment, "")
-        if new_comment is True:
-            return ({"success": True, "message": "Comment added"})
+        if new_comment is not False:
+            return jsonify({"success": True, "message": "Comment added", "data": new_comment})
         else:
-            return({"success": False, "message": f"Could not add comment: {new_comment}"})
+            return jsonify({"success": False, "message": f"Could not add comment: {new_comment}"})
     else:
-        return({"success": False, "message": "No comment data received"})
+        return jsonify({"success": False, "message": "No comment data received"})
 
 @firebase_auth_required
 @api.route('/test/', methods=['GET'])

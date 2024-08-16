@@ -7,7 +7,7 @@
   --app-content-secondary-color: rgb(12, 18, 25);
   --app-content-main-color: white;
   --default-border: 1px solid rgb(43, 53, 64);
-  --link: #78D3F8;
+  --link: #00FFA7;
   --link-hover: #3C697C;
   --table-header: rgb(18, 28, 38);
   --table-footer: #161F29;
@@ -26,7 +26,7 @@
   --header-link: rgba(180, 180, 180, 0.774);
   --header-link-hover: white;
   --form-elements-active:  #00FFA7;
-
+  --grey-text: grey;
 }
 
 
@@ -136,6 +136,50 @@ a {
   margin-top: 20px;
   margin-bottom: 20px;
   padding: 10px;
+}
+
+.comment-card {
+  display: grid;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: var(--table-background-color);
+  border-radius: var(--card-border-radius);
+  grid-template-columns: 70px auto auto auto;
+}
+
+.comment-card-score {
+  display: flex;
+  flex-direction: column;
+  grid-row-start: 1;
+  grid-row-end: 3;
+}
+
+.comment-card-header {
+  grid-column-start: 2;
+  grid-column-end: 5;
+  font-size: 13px;
+  color: var(--grey-text);
+}
+
+.comment-card-content {
+  grid-column-start: 2;
+  grid-column-end: 5;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.comment-card-footer {
+  grid-column-start: 2;
+  grid-column-end: 5;
+  color: var(--grey-text);
+}
+
+.link-comment-card {
+  color: var(--link);
+}
+.link-comment-card:hover {
+  text-decoration: underline;
 }
 
 .content-card {

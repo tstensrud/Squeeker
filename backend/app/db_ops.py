@@ -138,7 +138,7 @@ def get_subpage_posts(total_posts: int, subpage_uid: str):
     else:
         return None
 
-def new_comment(post_uid: str, author_uid: str, comment: str, parent_comment_uid: str) -> bool:
+def new_comment(post_uid: str, author_uid: str, comment: str, parent_comment_uid: str):
     uid = str(uuid4())
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     new_comment = models.Comment(uid=uid,
@@ -154,15 +154,22 @@ def new_comment(post_uid: str, author_uid: str, comment: str, parent_comment_uid
     try:
         db.session.add(new_comment)
         db.session.commit()
-        return True
+        return uid
+    
     except Exception as e:
         print(f"Could not add comment: {e}")
         db.session.rollback()
-        return e
+        return False
 
-def get_post_comments(post_uid: str) -> list[models.Comment]:
-    comments = db.session.query(models.Comment).filter(models.Comment.post_uid == post_uid).all()
+def get_comment(comment_uid: str) -> models.Comment:
+    comment = db.session.query(models.Comment).filter(models.Comment.uid == comment_uid).first()
+    if comment:
+        return comment
+    else:
+        return None
     
+def get_post_comments(post_uid: str) -> list[models.Comment]:
+    comments = db.session.query(models.Comment).filter(models.Comment.post_uid == post_uid).order_by(models.Comment.total_votes).all()
     if comments:
         comment_list = {comment.uid: comment.to_json() for comment in comments}
         return comment_list

@@ -40,10 +40,10 @@ function NewPost(props) {
     }, [subpageUid]);
 
     useEffect(() => {
-        if(data && data.success === true) {
+        if (data && data.success === true) {
             //navigate(`/subpage/${subpageName}/post/${data.data.post_uid}/`)
         }
-    },[data])
+    }, [data])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -54,17 +54,24 @@ function NewPost(props) {
     return (
         <>
             <div className="flex-box-column">
-                <span>
-                    <h4>Create new post</h4>
-                </span>
-                <form onSubmit={handleSubmit}>
-                    <input onChange={handleInputChange} id="title" type="text" placeholder="Post title" />
-                    <textarea onChange={handleInputChange} id="content" className="form-text-area" placeholder="Write something here.."></textarea>
-                    <p>
-                        <button type="submit">Post</button>
-                    </p>
-                    
-                </form>
+                
+                    <h4>Create new discussion topic</h4>
+                
+                <div>
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <input onChange={handleInputChange} id="title" type="text" placeholder="Post title" />
+                        </div>
+                        <div>
+                            <textarea onChange={handleInputChange} id="content" className="form-text-area" placeholder="Write something here.."></textarea>
+                        </div>
+
+                        <p>
+                            <button type="submit">Post</button>
+                        </p>
+
+                    </form>
+                </div>
             </div>
             <p>
                 {error && error}

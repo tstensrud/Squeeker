@@ -9,6 +9,7 @@ class User(db.Model):
 
     posts = db.relationship("Post", backref="user", lazy=True)
     subscriptions = db.relationship('UserSubscription', backref="user", lazy=True)
+    comments = db.relationship("Comment", backref='user', lazy=True)
 
     def to_json(self):
         return {
@@ -94,10 +95,13 @@ class Comment(db.Model):
     downvotes = db.Column(db.Integer)
 
     def to_json(self):
+        author_object = db.session.query(User).filter(User.uuid == self.author).first()
+        author_name = author_object.username
         return {
             'id': self.id,
             'uid': self.uid,
             "author": self.author,
+            "author_name": author_name,
             'post_uid': self.post_uid,
             'parent_comment_uid': self.parent_comment_uid,
             'timestamp': self.timestamp,

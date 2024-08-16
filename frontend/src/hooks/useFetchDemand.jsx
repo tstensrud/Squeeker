@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback} from 'react';
 
-function useFetch(url, idToken) {
+function useFetchDemand (url, idToken)  {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
+
+        const fetchData = useCallback(async () => {
             if (!idToken) {
                 setLoading(false);
                 return;
@@ -15,8 +15,10 @@ function useFetch(url, idToken) {
                 setLoading(false);
                 return;
             }
+
             setLoading(true);
             setError(null);
+
             try {
                 const response = await fetch(url, {
                     method: "GET",
@@ -25,7 +27,7 @@ function useFetch(url, idToken) {
                     },
                 });
                 if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
+                    throw new Error (`Error: ${response.statusText}`);
                 }
                 const result = await response.json();
                 //console.log(result);
@@ -36,12 +38,9 @@ function useFetch(url, idToken) {
             } finally {
                 setLoading(false);
             }
-        };
+        },[url, idToken]);
 
-        fetchData();
-    }, [url, idToken])
-
-    return { data, loading, error };
+    return {data, loading, error, fetchData};
 }
 
-export default useFetch;
+export default useFetchDemand;
