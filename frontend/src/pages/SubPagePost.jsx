@@ -66,7 +66,7 @@ function SubPagePost() {
             {
                 postDataLoading && postDataLoading === true ? (
                     <>
-                        <LoadingSpinner />
+                        <LoadingSpinner key={"loadingspinner1"}/>
                     </>) : (
                     <>
                         <div className="content-card">
@@ -106,14 +106,14 @@ function SubPagePost() {
             {
                 commentDataLoading && commentDataLoading === true ? (
                     <>
-                        <LoadingSpinner />
+                        <LoadingSpinner key={"loadingspinner2"} />
                     </>
                 ) : (
                     <>
                         {
                             latestCommentData && latestCommentData !== null && latestCommentData !== undefined ? (
                                 <>
-                                    <Comment msgToParent={handleChildMsg} key={"new"} data={latestCommentData.data} />
+                                    <Comment msgToParent={handleChildMsg} key={latestCommentData.data.uid} data={latestCommentData.data} />
                                 </>
                             ) : (
                                 <>

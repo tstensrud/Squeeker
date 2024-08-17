@@ -26,7 +26,7 @@
   --header-link: rgba(180, 180, 180, 0.774);
   --header-link-hover: white;
   --form-elements-active:  #00FFA7;
-  --grey-text: grey;
+  --grey-text: #808080;
 }
 
 
@@ -118,7 +118,6 @@ a {
   
 }
 
-
 .content-card-flex {
   display: flex;
   flex-direction: column;
@@ -126,6 +125,12 @@ a {
   margin-top: 20px;
   padding: 10px;
   border-radius: var(--card-border-radius);
+}
+
+.header-container {
+  display: flex;
+  flex-direction: row;
+  height: 100px;
 }
 
 .flex-box-column {
@@ -139,41 +144,35 @@ a {
 }
 
 .comment-card {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   padding: 10px;
   margin-top: 20px;
   margin-bottom: 20px;
   background-color: var(--table-background-color);
   border-radius: var(--card-border-radius);
-  grid-template-columns: 70px auto auto auto;
 }
 
-.comment-card-score {
+.comment-reply-container {
   display: flex;
+  padding: 10px;
   flex-direction: column;
-  grid-row-start: 1;
-  grid-row-end: 3;
+  background-color: var(--app-content-secondary-color);
 }
 
-.comment-card-header {
-  grid-column-start: 2;
-  grid-column-end: 5;
-  font-size: 13px;
-  color: var(--grey-text);
+.comment-children-container {
+  display: flex;
+  margin-top: 10px;
+  margin-left: 50px;
+  padding: 5px;
+  border-bottom-left-radius: var(--card-border-radius);
+  border-left: var(--default-border);
+  border-bottom:  var(--default-border);
+/*   background-color: var(--app-content-secondary-color); */
 }
 
-.comment-card-content {
-  grid-column-start: 2;
-  grid-column-end: 5;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
 
-.comment-card-footer {
-  grid-column-start: 2;
-  grid-column-end: 5;
-  color: var(--grey-text);
-}
 
 .link-comment-card {
   color: var(--link);

@@ -54,11 +54,10 @@ function NewPost(props) {
     return (
         <>
             <div className="flex-box-column">
-                
-                    <h4>Create new discussion topic</h4>
-                
-                <div>
-                    <form onSubmit={handleSubmit}>
+
+                <h4>Create new discussion topic</h4>
+                <form onSubmit={handleSubmit}>
+                    <div className="flex-box-column">
                         <div>
                             <input onChange={handleInputChange} id="title" type="text" placeholder="Post title" />
                         </div>
@@ -66,12 +65,11 @@ function NewPost(props) {
                             <textarea onChange={handleInputChange} id="content" className="form-text-area" placeholder="Write something here.."></textarea>
                         </div>
 
-                        <p>
+                        <div>
                             <button type="submit">Post</button>
-                        </p>
-
-                    </form>
-                </div>
+                        </div>
+                    </div>
+                </form>
             </div>
             <p>
                 {error && error}

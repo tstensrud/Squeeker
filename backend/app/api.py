@@ -88,6 +88,52 @@ def get_subpage(subpage_name):
     subpage_data = subpage.to_json()
     return jsonify({"success": True, "message": "Fetched subpage data", "data": subpage_data})
 
+# User subscribe to subpage
+@firebase_auth_required
+@api.route('/subpage/subscribe/', methods=['POST'])
+def subscribe():
+    data = request.get_json()
+    if data:
+        client_uid = escape(data["clientUid"])
+        subpage_uid = escape(data["subpageUid"])
+        
+        # If the user is alreadu subbed, unsub
+        is_subed = db.check_for_user_sub(client_uid, subpage_uid)
+        if is_subed is True:
+            removed = db.remove_subscription_from_user(client_uid, subpage_uid)
+            if removed is True:
+                return jsonify({"success": True, "message": "Unsubscribed user"})
+            else:
+                return jsonify({"success": False, "message": "Could not unsubscribed user"})
+            
+
+        # If user is not subbed, sub
+        else:
+            sub = db.add_subscription_to_user(client_uid, subpage_uid)
+            if sub is True:
+                return jsonify({"success": True, "message": "Subscription added"})
+            else:
+                return jsonify({"success": False, "message": "Could not add subscription"})    
+    else:
+        return jsonify({"success": False, "message": "No data received"})
+
+# Get total subs of subpage
+@api.route('/subpage/total_subs/<sub_uid>/', methods=['GET'])
+def get_total_subs(sub_uid):
+    subs = db.get_total_subs_of_subpage(sub_uid)
+    return jsonify({"success": True, "message": "Total subs found", "data": subs})
+
+# Check if user is subscribed to subpage
+@firebase_auth_required
+@api.route('/subpage/is_subscribed/<sub_page_uid>/<uuid>/', methods=['GET'])
+def is_client_subscribed(sub_page_uid, uuid):
+    sub = db.check_for_user_sub(uuid, sub_page_uid)
+    if sub is True:
+        return jsonify({"success": True, "message": "User is subscribed", "data": True})
+    else:
+        return jsonify({"success": True, "message": "User is not subscribed", "data": False})
+
+    
 # Get posts from a specific sub page
 @api.route('/subpage/<subpage_uid>/posts/', methods=['GET'])
 def get_subpage_posts(subpage_uid):
@@ -127,6 +173,7 @@ def get_comment(comment_uid):
     else:
         return jsonify({"success": False, "message": "Could not find comment"})
 
+# New post to subpage
 @firebase_auth_required
 @api.route('/subpage/<subpage_uid>/new_post/', methods=['POST'])
 def new_subpage_post(subpage_uid):
@@ -145,6 +192,7 @@ def new_subpage_post(subpage_uid):
     else:
         return jsonify({"success": False, "message": "No data received"})
 
+# New comment
 @firebase_auth_required
 @api.route('/subpage/comment/new/', methods=['POST'])
 def new_comment():
@@ -157,13 +205,43 @@ def new_comment():
         author = escape(data["author"])
         postUid = escape(data["postId"])
         comment = escape(data["comment"]).strip()
-        new_comment = db.new_comment(postUid, author, comment, "")
+        new_comment = db.new_comment(postUid, author, comment, None)
         if new_comment is not False:
             return jsonify({"success": True, "message": "Comment added", "data": new_comment})
         else:
             return jsonify({"success": False, "message": f"Could not add comment: {new_comment}"})
     else:
         return jsonify({"success": False, "message": "No comment data received"})
+
+# New reply to comment
+@firebase_auth_required
+@api.route('/subpage/comment/reply/new/', methods=['POST'])
+def new_reply():
+    data = request.get_json()
+    print(data)
+    if data:
+        author_uid = escape(data["authorUid"])
+        parent_comment_uid = escape(data["parentComment"])
+        post_uid = escape(data["postUid"])
+        comment = escape(data["comment"]).strip()
+        new_comment = db.new_comment(post_uid, author_uid, comment, parent_comment_uid)
+        #new_comment = False
+        if new_comment is not False:
+            return jsonify({"success": True, "message": "Reply added", "data": new_comment})
+        else:
+            return jsonify({"success": False, "message": "Could not add reply"})
+    else:
+        return jsonify({"success": False, "message": "No data received"})
+
+# Get all children from a comment
+@api.route('/subpage/comment/children/<comment_uid>/', methods=['GET'])
+def get_comment_children(comment_uid):
+    children_data = db.get_comment_children(comment_uid)
+    if children_data is not None:
+        return jsonify({"success": True, "message": "Children comments retrieved", "data": children_data})
+    else:
+        return jsonify({"success": False, "message": "Parent comment has no children"})
+
 
 @firebase_auth_required
 @api.route('/test/', methods=['GET'])

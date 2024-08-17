@@ -17,6 +17,7 @@ function SubPage() {
     const { currentUser, idToken } = useContext(AuthContext);
 
     const { data: subpageData, loading: subpageDataLoading, error } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
+    
     const { data: subpagePostData, loading: subpagePostDataLoading, error: subpagePostDataError } = useFetch(
         subpageData ? `${BASE_URL}/api/subpage/${subpageData.data.uid}/posts/` : null,
         idToken
@@ -67,7 +68,7 @@ function SubPage() {
                                             {
                                                 subpagePostData && subpagePostData.data !== undefined && Object.keys(subpagePostData.data).map((key, index) => (
                                                     <>
-                                                        <Post postData={subpagePostData.data[key]} key={index} />
+                                                        <Post postData={subpagePostData.data[key]} key={`${subpagePostData.data[key].uid} + ${index}`} />
                                                     </>
                                                 ))
                                             }

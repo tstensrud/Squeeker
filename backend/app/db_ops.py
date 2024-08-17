@@ -1,7 +1,10 @@
 import datetime
 from . import models, db
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
 from uuid import uuid4
+
+def get_timestamp():
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
 def register_new_user(data) -> bool:
     print(data)
@@ -167,11 +170,73 @@ def get_comment(comment_uid: str) -> models.Comment:
         return comment
     else:
         return None
+
+def get_comment_children(comment_uid: str) -> list[models.Comment]:
+    children = db.session.query(models.Comment).filter(models.Comment.parent_comment_uid == comment_uid).all()
+    if children:
+        children_data = {}
+        for child in children:
+            children_data[child.uid] = child.to_json()
+        return children_data
+    else:
+        return None
     
 def get_post_comments(post_uid: str) -> list[models.Comment]:
-    comments = db.session.query(models.Comment).filter(models.Comment.post_uid == post_uid).order_by(models.Comment.total_votes).all()
+    comments = db.session.query(models.Comment).filter(and_(models.Comment.post_uid == post_uid, or_( models.Comment.parent_comment_uid == None, models.Comment.parent_comment_uid == ""))).order_by(models.Comment.total_votes).all()
     if comments:
         comment_list = {comment.uid: comment.to_json() for comment in comments}
         return comment_list
     else:
         return None
+
+
+#############################
+# SUBSCRIPTIONS             #
+#############################
+def get_user_sub(user_uid: str, sub_uid: str) -> models.UserSubscription:
+    sub = db.session.query(models.UserSubscription).filter(and_(models.UserSubscription.user_uid == user_uid, models.UserSubscription.subpage_uid == sub_uid)).first()
+    if sub:
+        return sub
+    else:
+        return None
+    
+def add_subscription_to_user(user_uid: str, sub_uid: str) -> bool:
+    timestamp = get_timestamp()
+    subscription = models.UserSubscription(user_uid=user_uid, subpage_uid=sub_uid, timestamp=timestamp)
+    try:
+        db.session.add(subscription)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Could not add subscription: {e}")
+        db.session.rollback()
+        return False
+
+def remove_subscription_from_user(user_uid: str, sub_uid: str) -> bool:
+    sub = get_user_sub(user_uid, sub_uid)
+    if sub:
+        try:
+            db.session.delete(sub)
+            db.session.commit()
+            return True
+        except Exception as e:
+            print(f"Could not unsubscribe: {e}")
+            db.session.rollback()
+            return False
+    else:
+        return None
+
+def check_for_user_sub(user_uid: str, sub_uid: str) -> bool:
+    sub = db.session.query(models.UserSubscription).filter(and_(models.UserSubscription.user_uid == user_uid, models.UserSubscription.subpage_uid == sub_uid)).first()
+    if sub:
+        return True
+    else:
+        return False
+
+def get_total_subs_of_subpage(sub_uid: str) -> int:
+    total_subs = db.session.query(func.count(models.UserSubscription.subpage_uid)).filter(models.UserSubscription.subpage_uid == sub_uid).scalar()
+    print(total_subs)
+    if total_subs is not None:
+        return total_subs
+    else:
+        return 0

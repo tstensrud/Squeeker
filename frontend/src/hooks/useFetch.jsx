@@ -1,47 +1,46 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 function useFetch(url, idToken) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [trigger, setTrigger] = useState(0); // Used to trigger refetch
+
+    const fetchData = useCallback(async () => {
+        if (!idToken || !url) {
+            setLoading(false);
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const result = await response.json();
+            setData(result);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }, [url, idToken]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (!idToken) {
-                setLoading(false);
-                return;
-            }
-            if (!url) {
-                setLoading(false);
-                return;
-            }
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${idToken}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-                const result = await response.json();
-                //console.log(result);
-                //console.log(response)
-                setData(result);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
-    }, [url, idToken])
+    }, [fetchData, trigger]);
 
-    return { data, loading, error };
+    const refetch = () => {
+        setTrigger(prev => prev + 1); // Change trigger state to force refetch
+    };
+
+    return { data, loading, error, refetch };
 }
 
 export default useFetch;
