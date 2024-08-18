@@ -21,10 +21,10 @@ function SubPagePost() {
     const { currentUser, idToken } = useContext(AuthContext);
     const [subpageUid, setSubpageUid] = useState("");
     const [newCommentUid, setNewCommentUid] = useState(null);
-    
+
     // Initial fetches
     const { data: subpageData, loading: subpageDataLoading, error: subpageDataError } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
-    const { data: commentData, loading: commentDataLoading, error: commentDataError } = useFetch(`${BASE_URL}/api/subpage/post/${postId}/comments/`, idToken);
+    const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(`${BASE_URL}/api/subpage/post/${postId}/comments/`, idToken);
     const { data: postData, loading: postDataLoading, error: postDataError } = useFetch(
         postId ? `${BASE_URL}/api/subpage/post/${postId}/` : null, idToken);
 
@@ -56,7 +56,7 @@ function SubPagePost() {
         }
         fetchLatestComment();
 
-    },[newCommentUid]);
+    }, [newCommentUid]);
 
     //console.log("Comment datakj: ", commentData);
 
@@ -64,24 +64,23 @@ function SubPagePost() {
     return (
         <>
             {
-                postDataLoading && postDataLoading === true ? (
+                postDataLoading && postDataLoading === true ? (<LoadingSpinner key={"loadingspinner1"} />
+                ) : (
                     <>
-                        <LoadingSpinner key={"loadingspinner1"}/>
-                    </>) : (
-                    <>
-                        <div className="content-card">
-                            <div className="content-card-grid-item-header">
-                                {postData && postData.data.title}
-                            </div>
-                            <div className="content-card-grid-item-score">
+                        <div className="subpage-post-header-container">
+                            <div className="subpage-post-header-pts">
                                 <div><ArrowUp /></div>
                                 <div>{postData && postData.data.total_votes}</div>
                                 <div><ArrowDown /></div>
                             </div>
-                            <div className="content-card-grid-item-snippet">
-                                {postData && postData.data.post}
-                            </div>
-                            <div className="content-card-grid-item-sub-footer">
+                            <div style={{display: "flex", flexDirection: "column"}}>
+                                <div className="subpage-post-header-post-title">
+                                    {postData && postData.data.title}
+                                </div>
+                                <div className="subpage-post-header-post-content">
+                                    {postData && postData.data.post}
+                                </div>
+                                <div>
                                 <ul className="horizontal-list">
                                     <li className="horizontal-list-item">
                                         <span className="grey-info-text">Submitted at: {postData && postData.data.timestamp}</span>
@@ -90,15 +89,23 @@ function SubPagePost() {
                                         <span className="grey-info-text">Posted by: {postData && postData.data.author_name}</span>
                                     </li>
                                     <li className="horizontal-list-item">
-                                        <span className="grey-info-text">Posted to: {subPageName}</span>
+                                        <span className="grey-info-text">Posted to: <Link to={`/subpage/${subPageName}`} className="link-card">{subPageName}</Link></span>
                                     </li>
                                 </ul>
-                            </div>
-                            <div className="content-card-grid-item-footer">
-
+                                </div>
                             </div>
                         </div>
-                        <NewComment msgToParent={handleChildMsg} subpageUid={subpageUid} postId={postId} subPageName={subPageName} />
+                        {
+                            currentUser && idToken ? (
+                                <>
+                                    <NewComment commentDataRefech={commentDataRefech} subpageUid={subpageUid} postId={postId} subPageName={subPageName} />
+                                </>
+                            ) : (
+                                <>
+                                
+                                </>
+                            )
+                        }
                     </>
                 )
             }
@@ -112,9 +119,7 @@ function SubPagePost() {
                     <>
                         {
                             latestCommentData && latestCommentData !== null && latestCommentData !== undefined ? (
-                                <>
-                                    <Comment msgToParent={handleChildMsg} key={latestCommentData.data.uid} data={latestCommentData.data} />
-                                </>
+                                <Comment msgToParent={handleChildMsg} key={latestCommentData.data.uid} data={latestCommentData.data} />
                             ) : (
                                 <>
                                 </>
@@ -122,12 +127,12 @@ function SubPagePost() {
                         }
 
                         {
-
                             commentData && commentData.data !== undefined && Object.keys(commentData.data).map((key, index) => (
-                                <>
-                                    <Comment msgToParent={handleChildMsg} key={index} data={commentData.data[key]} />
-                                </>
+                                <Comment msgToParent={handleChildMsg} key={index} data={commentData.data[key]} />
                             ))
+                        }
+                        {
+                            commentData && commentData.success === false ? <>No comments yet</> : ""
                         }
                     </>
                 )

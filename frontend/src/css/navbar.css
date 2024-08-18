@@ -117,3 +117,15 @@
     font-weight: 400;
     letter-spacing: 0.00938em;
 }
+
+.horizontal-list-small {
+    display: inline;
+}
+
+.horizontal-list-item-small {
+    display: inline;
+    margin-right: 10px;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.00938em;
+}

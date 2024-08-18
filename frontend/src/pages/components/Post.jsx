@@ -36,7 +36,7 @@ function Post({postData}) {
                 <div className="content-card-grid-item-footer">
                     <ul className="horizontal-list">
                         <li className="horizontal-list-item">
-                            <Link className="link-card" to={`/subpage/${postData.subpage_name}/post/${postData.uid}/`}>Comments</Link>
+                            <Link className="link-card" to={`/room/${postData.subpage_name}/post/${postData.uid}/`}>Comments</Link>
                         </li>
                         <li className="horizontal-list-item">
                             <Link className="link-card" to="">Share</Link>

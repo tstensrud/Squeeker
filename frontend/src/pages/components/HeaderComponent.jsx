@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useOutletContext } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 
 import { AuthContext } from '../../context/AuthContext';
@@ -9,14 +9,18 @@ import useFetchDemand from '../../hooks/useFetchDemand';
 
 function HeaderComponent({ subpageData }) {
     const { currentUser, idToken } = useContext(AuthContext);
+    const { userSubscriptionsRefetch } = useOutletContext();
+
     const subData = subpageData;
     const subpageUid = subData && subData.uid
-    const clientUid = currentUser.uid;
+    const clientUid = currentUser && currentUser.uid;
 
 
     // Fetches and posts
     const { loading, data, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/subscribe/`, idToken);
-    const { data: isSubedData, refetch } = useFetch(`${BASE_URL}/api/subpage/is_subscribed/${subpageUid}/${clientUid}/`, idToken);
+    const { data: isSubedData, refetch } = useFetch(
+        clientUid ? `${BASE_URL}/api/subpage/is_subscribed/${subpageUid}/${clientUid}/` : null, idToken);
+
     const { data: totalSubsData, refetch: refetchSubs } = useFetch(`${BASE_URL}/api/subpage/total_subs/${subpageUid}/`, idToken);
     //const {data: refetchSubedData } = useFetchDemand(`${BASE_URL}/api/subpage/is_subscribed/${subpageUid}/${clientUid}/`, idToken);
 
@@ -52,6 +56,7 @@ function HeaderComponent({ subpageData }) {
         await subpagePost(subscribeData);
         refetch();
         refetchSubs();
+        userSubscriptionsRefetch();
     }
 
     return (

@@ -12,7 +12,8 @@ def firebase_auth_required(f):
         id_token = request.headers.get('Authorization')
         #print(f"ID_TOKEN: {id_token}")
         if id_token is None:
-            return jsonify({"error": "Unauthorized"}), 401
+            print("Unauthorize access atempted")
+            return jsonify({"success": False, "error": "Unauthorized"}), 401
         token = id_token.split(" ")[1]
         try:
             #print("Verifying token")
@@ -25,8 +26,9 @@ def firebase_auth_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@firebase_auth_required
+
 @api.route('/user/<uuid>/', methods=["GET"])
+@firebase_auth_required
 def get_userdata(uuid):
     user = db.get_user(uuid)
     if user:
@@ -35,23 +37,30 @@ def get_userdata(uuid):
     else:
         return jsonify({"success": False, "message": "Could not find user"})
 
-@api.route('/register/', methods=['POST'])
-def register():
+@api.route('/register/<uuid>/', methods=['POST'])
+def register(uuid):
     data = request.get_json()
-    #print(data)
+    print(f"Data: {data}. UUID: {uuid}")
     if data:
-        escaped_data = {}
-        for key, value in data.items():
-            escaped_data[key] = escape(value.strip())
-        if db.register_new_user(escaped_data):
+        username = escape(data["username"]).strip()
+        email = escape(data["email"]).strip()
+        new_uuid = uuid
+        if db.register_new_user(new_uuid, username, email):
             return jsonify({"success": True, "message": "User created"})
         else:
             return jsonify({"success": False, "message": "Could not create user"})
     else:
         return jsonify({"success": False, "message": "No data received"})
 
+# Front page for logged in user
+@api.route('/frontpage/<uuid>/', methods=['GET'])
 @firebase_auth_required
+def frontpage_logged_in(uuid):
+
+    return jsonify({"success": True, "message": "Frontpage logged in", "data": ""})
+
 @api.route('/subpage/create/', methods=['POST'])
+@firebase_auth_required
 def create_subpage():
     data = request.get_json()
     if data:
@@ -82,15 +91,15 @@ def get_subpages():
 
 @api.route('/subpage/<subpage_name>/', methods=['GET'])
 def get_subpage(subpage_name):
-    subpage = db.get_subpage(subpage_name)
+    subpage = db.get_subpage(subpage_name, None)
     if subpage is False:
         return jsonify({"success": False, "message": "This subpage does not exist"})
     subpage_data = subpage.to_json()
     return jsonify({"success": True, "message": "Fetched subpage data", "data": subpage_data})
 
 # User subscribe to subpage
-@firebase_auth_required
 @api.route('/subpage/subscribe/', methods=['POST'])
+@firebase_auth_required
 def subscribe():
     data = request.get_json()
     if data:
@@ -124,8 +133,8 @@ def get_total_subs(sub_uid):
     return jsonify({"success": True, "message": "Total subs found", "data": subs})
 
 # Check if user is subscribed to subpage
-@firebase_auth_required
 @api.route('/subpage/is_subscribed/<sub_page_uid>/<uuid>/', methods=['GET'])
+@firebase_auth_required
 def is_client_subscribed(sub_page_uid, uuid):
     sub = db.check_for_user_sub(uuid, sub_page_uid)
     if sub is True:
@@ -133,11 +142,20 @@ def is_client_subscribed(sub_page_uid, uuid):
     else:
         return jsonify({"success": True, "message": "User is not subscribed", "data": False})
 
-    
+# Get user subscriptions
+@api.route('/user/subs/<uuid>/', methods=['GET'])
+@firebase_auth_required
+def get_user_subs(uuid):
+    subs = db.get_user_subscriptions(uuid, True)
+    if subs is not None:
+        return jsonify({"success": True, "message": "User subscriptions", "data": subs})
+    else:
+        return jsonify({"success": False, "message": "No user subscriptions"})
+
 # Get posts from a specific sub page
 @api.route('/subpage/<subpage_uid>/posts/', methods=['GET'])
 def get_subpage_posts(subpage_uid):
-    posts = db.get_subpage_posts(10, subpage_uid)
+    posts = db.get_subpage_posts(10, subpage_uid, "votes")
     if posts:
         return jsonify({"success": True, "message": "Posts returned", "data": posts})
     else:
@@ -174,8 +192,8 @@ def get_comment(comment_uid):
         return jsonify({"success": False, "message": "Could not find comment"})
 
 # New post to subpage
-@firebase_auth_required
 @api.route('/subpage/<subpage_uid>/new_post/', methods=['POST'])
+@firebase_auth_required
 def new_subpage_post(subpage_uid):
     data = request.get_json()
     if data:
@@ -193,15 +211,16 @@ def new_subpage_post(subpage_uid):
         return jsonify({"success": False, "message": "No data received"})
 
 # New comment
-@firebase_auth_required
 @api.route('/subpage/comment/new/', methods=['POST'])
+@firebase_auth_required
 def new_comment():
     data = request.get_json()
     if data:
         subpage_name = escape(data["subPageName"])
-        find_subpage = db.get_subpage(subpage_name)
+        find_subpage = db.get_subpage(subpage_name, None)
         if find_subpage is False:
             return jsonify({"success": False, "message": f"Subpage {subpage_name} does not exist"})
+        
         author = escape(data["author"])
         postUid = escape(data["postId"])
         comment = escape(data["comment"]).strip()
@@ -209,13 +228,13 @@ def new_comment():
         if new_comment is not False:
             return jsonify({"success": True, "message": "Comment added", "data": new_comment})
         else:
-            return jsonify({"success": False, "message": f"Could not add comment: {new_comment}"})
+            return jsonify({"success": False, "message": f"Could not add comment"})
     else:
         return jsonify({"success": False, "message": "No comment data received"})
 
 # New reply to comment
-@firebase_auth_required
 @api.route('/subpage/comment/reply/new/', methods=['POST'])
+@firebase_auth_required
 def new_reply():
     data = request.get_json()
     print(data)
@@ -243,9 +262,8 @@ def get_comment_children(comment_uid):
         return jsonify({"success": False, "message": "Parent comment has no children"})
 
 
-@firebase_auth_required
 @api.route('/test/', methods=['GET'])
+@firebase_auth_required
 def test():
-    user = request.user
-    return jsonify({"message": f"Authorized {user['uid']}"}), 200
+    return jsonify({"message": f"Hello"}), 200
 

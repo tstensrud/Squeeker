@@ -15,9 +15,9 @@ function Subpages() {
     return (
         <>
             <div className="content-card-flex">
-                <h2>Welcome to Subpages!</h2>
+                <h2>This lodge has many rooms..</h2>
                 <p>
-                    Chose a subpage that suites your interests
+                    Each alike, but occupied by different souls, night after night.
                 </p>
             </div>
             <div className="content-card-flex">
@@ -33,15 +33,15 @@ function Subpages() {
                             {
                                 subpageData ? (
                                     <>
-                                        <h3>Most populare subpages</h3>
+                                        <h3>Most populare rooms</h3>
                                         <ul className="undecorated-list">
                                             {
                                                 subpageData && subpageData !== null && Object.entries(subpageData).map(([key, value], index) => (
-                                                    <>
+                                                    
                                                         <li key={index}>
-                                                            <Link className="link-card" to={`/subpage/${key}`}>{key}</Link> / <span className="grey-info-text">{value}</span>
+                                                            <Link className="link-card" to={`/room/${key}`}>{key}</Link> / <span className="grey-info-text">{value}</span>
                                                         </li>
-                                                    </>
+                                                    
                                                 ))
                                             }
                                         </ul>

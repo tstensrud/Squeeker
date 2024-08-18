@@ -1,10 +1,10 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
 import { BASE_URL } from '../../utils/globalVariables';
 import useSubpagePost from '../../hooks/useSubpagePost';
 
-function NewComment({postId, subpageUid, subPageName, msgToParent}) {
+function NewComment({commentDataRefech, postId, subpageUid, subPageName, msgToParent}) {
 
     const { currentUser, idToken } = useContext(AuthContext);
     const [comment, setComment] = useState("");
@@ -12,20 +12,12 @@ function NewComment({postId, subpageUid, subPageName, msgToParent}) {
 
     useEffect(() => {
         if(data !== null && data !== undefined) {
-            handleMsgToParent();
+            commentDataRefech();
+            commentRef.current.value = "";
         }
     },[data]);
-
+    
     // Handlers
-    const handleMsgToParent = () => {
-        const newPostUid = data && data.data;
-        const msg = {
-            "msg": "fetch_latest_comment",
-            "uid": newPostUid
-        };
-        msgToParent(msg);
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         await subpagePost(comment);
@@ -40,13 +32,18 @@ function NewComment({postId, subpageUid, subPageName, msgToParent}) {
     }
 
     useEffect(() => {
-        setComment({
-            author: currentUser.uid,
-            postId: postId,
-            subpageUid: subpageUid,
-            subPageName: subPageName,
-        });
+        if (currentUser) {
+            setComment({
+                author: currentUser.uid,
+                postId: postId,
+                subpageUid: subpageUid,
+                subPageName: subPageName,
+            });
+        }
     },[]);
+
+    // Textarea ref
+    const commentRef = useRef(null);
 
     return (
         <>
@@ -55,7 +52,7 @@ function NewComment({postId, subpageUid, subPageName, msgToParent}) {
                     <h4>Leave a comment</h4>
                 </span>
                 <form onSubmit={handleSubmit}>
-                    <textarea onChange={handleInputChange} name="comment" className="form-text-area" placeholder="Write a comment"></textarea>
+                    <textarea ref={commentRef} onChange={handleInputChange} name="comment" className="form-text-area" placeholder="Write a comment"></textarea>
                     <p>
                         <button type="submit">Post</button>
                     </p>
@@ -64,6 +61,7 @@ function NewComment({postId, subpageUid, subPageName, msgToParent}) {
             </div>
             <p>
                 {error && error}
+                {data && data.error ? (<>{data.error}</>):(<></>)}
             </p>
         </>
     );

@@ -41,7 +41,8 @@ function NewPost(props) {
 
     useEffect(() => {
         if (data && data.success === true) {
-            //navigate(`/subpage/${subpageName}/post/${data.data.post_uid}/`)
+            //props.refetchSubpageData();
+            navigate(`/subpage/${subpageName}/post/${data.data.post_uid}/`)
         }
     }, [data])
 
@@ -54,8 +55,9 @@ function NewPost(props) {
     return (
         <>
             <div className="flex-box-column">
-
-                <h4>Create new discussion topic</h4>
+                <div className="card-title">
+                    <strong>Create new discussion topic</strong>
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="flex-box-column">
                         <div>

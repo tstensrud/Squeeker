@@ -9,8 +9,11 @@ const useSubpagePost = (url, idToken) => {
         setLoading(false);
         setError(null);
             if (!idToken) {
+                setError({"error": "You are not authorized for this action"})
                 return;
             }
+
+           //console.log("ID TOKEN: ", idToken)
             try {
                 const response = await fetch(url, {
                     method: "POST",
@@ -20,10 +23,12 @@ const useSubpagePost = (url, idToken) => {
                     },
                     body: JSON.stringify(subpageData),
                 });
+                //console.log("Response: ", response);
                 if (!response.ok) {
                     throw new Error (`Error: ${response.statusText}`);
                 }
                 const result = await response.json();
+                //console.log("Result: ", result);
                 setData(result);
                 //console.log(result);
             } catch (error) {
@@ -32,7 +37,7 @@ const useSubpagePost = (url, idToken) => {
                 setLoading(false);
             }
         };
-
+        
     return {data, setData, loading, error, subpagePost};
 }
 

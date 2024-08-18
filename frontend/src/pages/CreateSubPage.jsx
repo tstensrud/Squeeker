@@ -53,16 +53,16 @@ function CreateSubPage() {
     return (
         <>
             <div className="content-card-flex">
-                <h3>Create new subpage</h3>
+                <h3>Create a new room</h3>
                 {
                     idToken ? (
                         <>
                             <form onSubmit={handleSubmit}>
-                                &nbsp;Subpage name <span className="grey-info-text">(max 50 chars)</span><br/>
-                                <input id="name" onChange={handleInputChange} type="text" placeholder="Subpage name" />
+                                &nbsp;Room name <span className="grey-info-text">(max 50 chars)</span><br/>
+                                <input id="name" onChange={handleInputChange} type="text" placeholder="The great timber room.." />
                                 <br />
                                 &nbsp;Description <span className="grey-info-text">(Max 500 chars)</span> <br/>
-                                <input id="description" onChange={handleInputChange} type="text" placeholder="Subpage description" />
+                                <input id="description" onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
                                 <br />
                                 <ul className="horizontal-list">
                                     <li className="horizontal-list-item">

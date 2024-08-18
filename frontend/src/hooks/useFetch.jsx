@@ -4,22 +4,31 @@ function useFetch(url, idToken) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [trigger, setTrigger] = useState(0); // Used to trigger refetch
+    const [trigger, setTrigger] = useState(0);
 
     const fetchData = useCallback(async () => {
-        if (!idToken || !url) {
+        if (!url) {
             setLoading(false);
             return;
         }
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${idToken}`,
-                },
-            });
+            let response;
+            if (!idToken) {
+                response = await fetch(url, {
+                    method: "GET",
+                });
+
+            } else {
+                response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${idToken}`,
+                    },
+                });
+            }
+
             if (!response.ok) {
                 throw new Error(`Error: ${response.statusText}`);
             }
