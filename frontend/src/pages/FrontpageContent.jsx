@@ -20,6 +20,7 @@ function FrontpageContent() {
                 ):(
                 // If not logged in
                     <>
+                    
                     </>
                 )
             }

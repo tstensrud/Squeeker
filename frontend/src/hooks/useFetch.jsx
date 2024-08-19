@@ -4,10 +4,10 @@ function useFetch(url, idToken) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [trigger, setTrigger] = useState(0);
 
     const fetchData = useCallback(async () => {
         if (!url) {
+            console.log("Url was not provided", url)
             setLoading(false);
             return;
         }
@@ -32,6 +32,7 @@ function useFetch(url, idToken) {
             if (!response.ok) {
                 throw new Error(`Error: ${response.statusText}`);
             }
+
             const result = await response.json();
             setData(result);
         } catch (error) {
@@ -43,13 +44,9 @@ function useFetch(url, idToken) {
 
     useEffect(() => {
         fetchData();
-    }, [fetchData, trigger]);
+    }, [url, idToken, fetchData]);
 
-    const refetch = () => {
-        setTrigger(prev => prev + 1); // Change trigger state to force refetch
-    };
-
-    return { data, loading, error, refetch };
+    return { data, loading, error, refetch: fetchData };
 }
 
 export default useFetch;

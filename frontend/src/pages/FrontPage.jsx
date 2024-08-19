@@ -18,7 +18,6 @@ import RegisterContainer from './components/RegisterContainer.jsx';
 // SVG imports
 import AppIcon from '../assets/svg/AppIcon.svg?react'
 import HomeIcon from '../assets/svg/HomeIcon';
-import ArrowDown from '../assets/svg/ArrowDown.svg?react';
 import Login from '../assets/svg/Login.svg?react';
 import Logout from '../assets/svg/Logout.svg?react';
 import User from '../assets/svg/User.svg?react';
@@ -47,6 +46,13 @@ function FrontPage() {
     idToken
   );
 
+  useEffect(() => {
+    if (idToken) {
+      refetchUserData();
+      userSubscriptionsRefetch();
+    }
+  },[idToken, refetchUserData, userSubscriptionsRefetch]);
+
   // To track active navbar item for styling
   const [selectedIndex, setSelectexIndex] = useState(0);
 
@@ -56,9 +62,6 @@ function FrontPage() {
     { name: "Create new room", url: "/room/create", svg: <NewSubpage /> },
     { name: "About the Lodge", url: "/about", svg: <AboutIcon /> }
   ];
-
-  //console.log(currentUser.uid)
-  //console.log(userData);
 
   // Handlers
   const logOut = async (e) => {
@@ -83,14 +86,13 @@ function FrontPage() {
     setShowRegisterContainer(true);
   }
 
+
   return (
     <>
       <div className="page-wrapper">
         {
           showLoginContainer && showLoginContainer === true ? (
-
             <LoginContainer userSubscriptionsRefetch={userSubscriptionsRefetch} refetchUserData={refetchUserData} setShowLoginCointainer={setShowLoginCointainer} />
-
           ) : (
             <>
             </>
@@ -99,9 +101,7 @@ function FrontPage() {
 
         {
           showRegisterContainer && showRegisterContainer === true ? (
-
             <RegisterContainer refetchUserData={refetchUserData} setShowRegisterContainer={setShowRegisterContainer} />
-
           ) : (
             <>
             </>
@@ -224,7 +224,7 @@ function FrontPage() {
                     userSubscriptionsData && userSubscriptionsData.data !== undefined && userSubscriptionsData.data.map((sub, index) =>
 
                       <li key={sub} className="horizontal-list-item-small">
-                        <Link key={`${sub}+${index}`} className="link-card" to={`/subpage/${sub}/`}>{sub}</Link>&nbsp;/
+                        <Link key={`${sub}+${index}`} className="link-card" to={`/room/${sub}/`}>{sub}</Link>&nbsp;/
                       </li>
                     )
                   }

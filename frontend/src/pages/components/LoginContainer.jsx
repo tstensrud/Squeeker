@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -9,7 +9,8 @@ function LoginContainer({ userSubscriptionsRefetch, refetchUserData, setShowLogi
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
     const { dispatch } = useContext(AuthContext);
-
+    
+    // Handlers
     const handleUsernameChange = (e) => {
         setEmail(e.target.value);
     }
@@ -26,15 +27,12 @@ function LoginContainer({ userSubscriptionsRefetch, refetchUserData, setShowLogi
                 const user = userCredential.user;
                 dispatch({ type: "LOGIN", payload: user })
                 setShowLoginCointainer(false);
-                window.location.reload();
-                refetchUserData();
-                userSubscriptionsRefetch();
             })
             .catch((error) => {
                 const errorCode = error.code;
-                console.log(errorCode);
+                //console.log(errorCode);
                 const errorMessage = error.message;
-                console.log(errorMessage)
+                //console.log(errorMessage)
                 setError(true);
             });
     }
@@ -42,6 +40,7 @@ function LoginContainer({ userSubscriptionsRefetch, refetchUserData, setShowLogi
     const closeLoginContainer = () => {
         setShowLoginCointainer(false);
     }
+
 
     return (
         <>
