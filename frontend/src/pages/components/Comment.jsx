@@ -7,7 +7,10 @@ import useFetch from '../../hooks/useFetch';
 
 import { BASE_URL } from '../../utils/globalVariables';
 import { AuthContext } from '../../context/AuthContext';
+
+// Components
 import LoadingSpinner from './LoadingSpinner';
+import VoteBox from './VoteBox';
 
 // SVG import
 import ArrowUp from '../../assets/svg/ArrowUp.svg?react';
@@ -62,8 +65,6 @@ function Comment({ data }) {
         }));
     }
 
-    //console.log(childrenCommentData);
-
     return (
         <>
 
@@ -71,8 +72,7 @@ function Comment({ data }) {
 
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <div style={{ display: "flex", flexDirection: "column", width: "50px" }}>
-                        <div><ArrowUp /></div>
-                        <div><ArrowDown /></div>
+                        <VoteBox post={false} postData={data} />
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column", flex: "1", margin: "0" }}>

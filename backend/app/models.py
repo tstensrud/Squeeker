@@ -100,7 +100,7 @@ class Comment(db.Model):
         return {
             'id': self.id,
             'uid': self.uid,
-            "author": self.author,
+            "author_uuid": self.author,
             "author_name": author_name,
             'post_uid': self.post_uid,
             'parent_comment_uid': self.parent_comment_uid,
@@ -110,3 +110,13 @@ class Comment(db.Model):
             'upvotes': self.upvotes,
             'downvotes': self.downvotes
         }
+
+class Vote(db.Model):
+    __tablename__ = "Vote"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uid = db.Column(db.String(255), unique=True, nullable=False)
+    post_uid = db.Column(db.String(255), db.ForeignKey('Post.uid'), nullable=True)
+    comment_uid = db.Column(db.String(255), db.ForeignKey('Comment.uid'), nullable=True)
+    author_uuid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
+    upvote = db.Column(db.Boolean)
+    downvote = db.Column(db.Boolean)

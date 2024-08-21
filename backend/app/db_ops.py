@@ -288,3 +288,56 @@ def get_comment_children(comment_uid: str) -> list[models.Comment]:
     else:
         return None
     
+#############################
+# VOTING                    #
+#############################
+
+def get_vote_record(vote_object_uid: str, author_uuid: str, post: bool) -> models.Vote:
+    if post:
+        vote_object = db.session.query(models.Vote).filter(and_(models.Vote.post_uid == vote_object_uid, models.Vote.author_uuid == author_uuid)).first()
+    else:
+        vote_object = db.session.query(models.Vote).filter(and_(models.Vote.comment_uid == vote_object_uid, models.Vote.author_uuid == author_uuid)).first()
+
+    if vote_object:
+        return vote_object
+    else:
+        return None
+    
+def set_vote(author_uuid: str,  upvote=False, downvote=False, post_uid=None, comment_uid=None, ) -> bool:
+    if post_uid:
+        vote_object = get_vote_record(post_uid, author_uuid, True)
+    elif comment_uid:
+        vote_object = get_vote_record(comment_uid, author_uuid, False)
+
+    # If user has already voted for this post/comment
+    if vote_object:
+        # Check if vote cast are identical to the orignal votes. Returns if so
+        if vote_object.upvote == upvote and vote_object.downvote == downvote:
+            return False
+        vote_object.upvote = upvote
+        vote_object.downvote = downvote
+        try:
+            db.session.commit()
+            return True
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+            return False
+    
+    # If user has not voted for this post/comment yet
+    else:
+        uid = str(uuid4())
+        new_vote_object = models.Vote(uid = uid,
+                                      post_uid = post_uid,
+                                      comment_uid = comment_uid,
+                                      author_uuid=author_uuid,
+                                      upvote=upvote,
+                                      downvote=downvote)
+        try:
+            db.session.add(new_vote_object)
+            db.session.commit()
+            return True
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+            return False

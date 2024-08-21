@@ -7,10 +7,12 @@ function useFetch(url, idToken) {
 
     const fetchData = useCallback(async () => {
         if (!url) {
-            console.log("Url was not provided", url)
+            //console.log("Url was not provided", url)
             setLoading(false);
             return;
         }
+/*         console.log("URL:", url)
+        console.log("ID TOKEN:", idToken) */
         setLoading(true);
         setError(null);
         try {

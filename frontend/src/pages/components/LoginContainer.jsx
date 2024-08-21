@@ -3,13 +3,14 @@ import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../../context/AuthContext";
 
-function LoginContainer({ userSubscriptionsRefetch, refetchUserData, setShowLoginCointainer }) {
+function LoginContainer({ setShowLoginCointainer }) {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const { dispatch } = useContext(AuthContext);
-    
+
     // Handlers
     const handleUsernameChange = (e) => {
         setEmail(e.target.value);
@@ -30,10 +31,9 @@ function LoginContainer({ userSubscriptionsRefetch, refetchUserData, setShowLogi
             })
             .catch((error) => {
                 const errorCode = error.code;
-                //console.log(errorCode);
                 const errorMessage = error.message;
-                //console.log(errorMessage)
                 setError(true);
+                setErrorMessage(errorMessage)
             });
     }
 
@@ -57,7 +57,7 @@ function LoginContainer({ userSubscriptionsRefetch, refetchUserData, setShowLogi
                             <button type="submit">Log in</button>
                         </form>
                         <p>
-                            {error && <>Wrong username and/or email. <br />
+                            {error && <>{errorMessage} <br />
                                 <Link className="link-card" to="/reset">Forgot password?</Link></>}
                         </p>
                         <div>

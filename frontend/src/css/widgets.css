@@ -29,6 +29,17 @@ svg.feather {
     fill: none;
 }
 
+svg.upvote-arrow {
+    vertical-align: middle;
+    line-height: 0;
+    stroke: var(--upvote-arrow);
+    fill: none;
+}
+
+svg.upvote-arrow:hover {
+    stroke: var(--upvote-arrow-hover);
+}
+
 /* Loading bar */
 .loading-bar-container {
     width: 100%;

@@ -16,31 +16,29 @@ import About from './pages/About.jsx';
 
 function App() {
 
-    const {currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
-    const RequireAuth = ({children}) => {
-      return (currentUser ? (children) : <Navigate to="/login" />);
-    }
+  const RequireAuth = ({ children }) => {
+    return (currentUser ? (children) : <Navigate to="/" />);
+  }
 
 
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<FrontPage />}>
-            <Route path="/" element={<FrontPageContent />}/>
-            <Route path="about" element={<About />}/>
-            <Route path="reset" element={<ForgottenPassword />}/>
-            {/* <Route index element={ <RequireAuth> <FrontPage /> </RequireAuth>}/> */}
-            <Route path="rooms" element={<Subpages />}/>
-            <Route path="room/create" element={<CreateSubPage />}/>
-            <Route path="room/:subPageName" element={<SubPage />} />
-            <Route path="room/:subPageName/post/:postId" element={<SubPagePost />}/>
-          </Route>
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<FrontPage />}>
+          <Route path="/" element={<FrontPageContent />} />
+          <Route path="about" element={<About />} />
+          <Route path="reset" element={<ForgottenPassword />} />
+          {/* <Route index element={ <RequireAuth> <FrontPage /> </RequireAuth>}/> */}
+          <Route path="rooms" element={<Subpages />} />
+          <Route path="room/create" element={<CreateSubPage />} />
+          <Route path="room/:subPageName" element={<SubPage />} />
+          <Route path="room/:subPageName/post/:postId" element={<SubPagePost />} />
+        </Route>
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

@@ -12,7 +12,7 @@ def firebase_auth_required(f):
         id_token = request.headers.get('Authorization')
         #print(f"ID_TOKEN: {id_token}")
         if id_token is None:
-            print("Unauthorize access atempted")
+            #print("Unauthorize access atempted")
             return jsonify({"success": False, "error": "Unauthorized"}), 401
         token = id_token.split(" ")[1]
         try:
@@ -21,7 +21,7 @@ def firebase_auth_required(f):
             #print(f"decoded token: {decoded_token}")
             request.user = decoded_token
         except Exception as e:
-            #print("Failed to verify token")
+            #print(f"Failed to verify token: {e}")
             return jsonify({"error": str(e)}), 401
         return f(*args, **kwargs)
     return decorated_function
@@ -210,6 +210,48 @@ def new_subpage_post(subpage_uid):
     else:
         return jsonify({"success": False, "message": "No data received"})
 
+@api.route('/subpage/post/vote/<post_uid>/<direction>/', methods=["PATCH"])
+@firebase_auth_required
+def upvote_post(post_uid, direction):
+    data = request.get_json()
+    print(data)
+
+    if data:
+        # Set vote direction
+        upvote = False
+        downvote = False
+        if direction == "up":
+            upvote = True
+        elif direction == "down":
+            downvote = True
+        
+        voter = escape(data["voter"])
+        is_subpage_post = escape(data["post"])
+        
+        if is_subpage_post == "True":
+            post = db.get_post(post_uid)
+            print(f"Post object: {post}")
+            if post:
+                vote = db.set_vote(voter, upvote, downvote, post_uid=post_uid)
+                if vote:
+                    return jsonify({"success": True, "message": "Vote for post received"})
+                else:
+                    return jsonify({"success": False, "message": "Could not cast vote"})
+        
+        # If data["post"] is false, the vote is for a comment and not a subpage post
+        elif is_subpage_post == "False":
+            comment = db.get_comment(post_uid)
+            if comment:
+                vote = db.set_vote(voter, upvote, downvote, comment_uid=post_uid)
+                if vote:
+                    return jsonify({"success": True, "message": "Vote for comment received"})
+                else:
+                    return jsonify({"success": False, "message": "Could not cast vote"})
+        else:
+            return jsonify({"success": False, "message": "Post/comment not found"})
+    else:
+        return jsonify({"success": False, "message": "No data received"})
+    
 # New comment
 @api.route('/subpage/comment/new/', methods=['POST'])
 @firebase_auth_required

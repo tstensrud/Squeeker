@@ -10,6 +10,7 @@ import { BASE_URL } from '../utils/globalVariables';
 import NewComment from './components/NewComment';
 import LoadingSpinner from './components/LoadingSpinner';
 import Comment from './components/Comment';
+import Votebox from './components/VoteBox';
 
 // SVG import
 import ArrowUp from '../assets/svg/ArrowUp.svg?react';
@@ -55,11 +56,7 @@ function SubPagePost() {
             }
         }
         fetchLatestComment();
-
     }, [newCommentUid]);
-
-    //console.log("Comment datakj: ", commentData);
-
 
     return (
         <>
@@ -69,9 +66,7 @@ function SubPagePost() {
                     <>
                         <div className="subpage-post-header-container">
                             <div className="subpage-post-header-pts">
-                                <div><ArrowUp /></div>
-                                <div>{postData && postData.data.total_votes}</div>
-                                <div><ArrowDown /></div>
+                                <Votebox post={true} postData={postData && postData.data} />
                             </div>
                             <div style={{display: "flex", flexDirection: "column"}}>
                                 <div className="subpage-post-header-post-title">
@@ -89,7 +84,7 @@ function SubPagePost() {
                                         <span className="grey-info-text">Posted by: {postData && postData.data.author_name}</span>
                                     </li>
                                     <li className="horizontal-list-item">
-                                        <span className="grey-info-text">Posted to: <Link to={`/subpage/${subPageName}`} className="link-card">{subPageName}</Link></span>
+                                        <span className="grey-info-text">Posted to: <Link to={`/room/${subPageName}`} className="link-card">{subPageName}</Link></span>
                                     </li>
                                 </ul>
                                 </div>

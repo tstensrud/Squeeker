@@ -29,6 +29,16 @@
   --form-elements-active:  #00FFA7;
   --grey-text: #808080;
   --post-content-color: rgb(206, 206, 206);
+  --upvote-arrow: rgba(180, 180, 180, 0.774);
+  --upvote-arrow-hover: #00FFA7;
+  --upvote-arrow-upvoted: #7F3F3D;
+  /*
+  #3C697C
+  #78D3F8
+
+  #7F3F3D
+  #FF7F7B
+  */
 }
 
 
@@ -59,6 +69,7 @@ a {
 .link-card:hover {
   text-decoration: underline;
 }
+
 
 .app-container {
   display: flex;

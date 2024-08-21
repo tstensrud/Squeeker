@@ -30,7 +30,7 @@ import LoadingBar from './components/LoadingBar';
 
 function FrontPage() {
   const { currentUser, idToken, dispatch } = useContext(AuthContext);
-
+  
   // Login and register states
   const [showLoginContainer, setShowLoginCointainer] = useState(false);
   const [showRegisterContainer, setShowRegisterContainer] = useState(false);
@@ -45,14 +45,7 @@ function FrontPage() {
     currentUser ? `${BASE_URL}/api/user/subs/${currentUser.uid}/` : null,
     idToken
   );
-
-  useEffect(() => {
-    if (idToken) {
-      refetchUserData();
-      userSubscriptionsRefetch();
-    }
-  },[idToken, refetchUserData, userSubscriptionsRefetch]);
-
+  
   // To track active navbar item for styling
   const [selectedIndex, setSelectexIndex] = useState(0);
 
@@ -92,7 +85,7 @@ function FrontPage() {
       <div className="page-wrapper">
         {
           showLoginContainer && showLoginContainer === true ? (
-            <LoginContainer userSubscriptionsRefetch={userSubscriptionsRefetch} refetchUserData={refetchUserData} setShowLoginCointainer={setShowLoginCointainer} />
+            <LoginContainer setShowLoginCointainer={setShowLoginCointainer} />
           ) : (
             <>
             </>

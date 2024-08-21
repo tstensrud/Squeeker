@@ -42,7 +42,7 @@ function NewPost(props) {
     useEffect(() => {
         if (data && data.success === true) {
             //props.refetchSubpageData();
-            navigate(`/subpage/${subpageName}/post/${data.data.post_uid}/`)
+            navigate(`/room/${subpageName}/post/${data.data.post_uid}/`)
         }
     }, [data])
 
