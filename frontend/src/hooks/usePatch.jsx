@@ -6,7 +6,7 @@ const usePatch = (url, idToken) => {
     const [error, setError] = useState(null);
 
     const updateData = async (patchData) => {
-        console.log(patchData);
+        //console.log(patchData);
         setLoading(false);
         setError(null);
             if (!idToken) {

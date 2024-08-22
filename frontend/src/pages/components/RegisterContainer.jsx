@@ -18,9 +18,9 @@ function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
 
     useEffect(() => {
         if (firebaseUserData) {
-            console.log("Firebase userdata changed: ", firebaseUserData)
+            //console.log("Firebase userdata changed: ", firebaseUserData)
             registerUser(userData);
-            console.log("Registered userdata: ", userData)
+            //console.log("Registered userdata: ", userData)
             setShowRegisterContainer(false);
             refetchUserData();
         }
@@ -44,7 +44,7 @@ function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
         e.preventDefault();
         try {
             const res = await createUserWithEmailAndPassword(auth, userData.email, password);
-            console.log(res);
+            //console.log(res);
             const newUuid = res.user.uid;
             //console.log(res.user.uid);
             setFirebaseUserdata({
@@ -52,7 +52,7 @@ function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
             });
 
         } catch (err) {
-            console.log(err)
+            //console.log(err)
             setError(err.message);
         }
     }

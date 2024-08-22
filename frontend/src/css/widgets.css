@@ -36,6 +36,13 @@ svg.upvote-arrow {
     fill: none;
 }
 
+svg.upvoted {
+    vertical-align: middle;
+    line-height: 0;
+    stroke: var(--upvote-arrow-hover);
+    fill: none;
+}
+
 svg.upvote-arrow:hover {
     stroke: var(--upvote-arrow-hover);
 }

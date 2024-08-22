@@ -5,7 +5,7 @@ import ArrowUp from '../../assets/svg/ArrowUp.svg?react';
 import ArrowDown from '../../assets/svg/ArrowDown.svg?react';
 
 function Post({postData}) {
-    //console.log(postData)
+
     return (
         <>
             <div className="content-card">
@@ -13,9 +13,9 @@ function Post({postData}) {
                     {postData.title}
                 </div>
                 <div className="content-card-grid-item-score">
-                    <div><ArrowUp /></div>
+                    <div></div>
                     <div>{postData.total_votes}</div>
-                    <div><ArrowDown /></div>
+                    <div>pts</div>
                 </div>
                 <div className="content-card-grid-item-snippet">
                     {postData.post}

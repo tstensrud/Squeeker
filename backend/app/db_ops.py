@@ -182,8 +182,8 @@ def get_subpage_subscribers(subpage_uid) -> list[str]:
         return subscribers
 
 def new_post(data):
-    author_uid = data["author"]
-    author_object = get_user(author_uid)
+    author_uuid = data["author"]
+    author_object = get_user(author_uuid)
     uid = str(uuid4())
     subpage_uid = data["subpageUid"]
     author_name = author_object.username
@@ -191,28 +191,29 @@ def new_post(data):
     title = data["title"]
     post = data["content"]
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    total_votes = data["pts"]
-    upvotes = data["upvotes"]
-    downvotes = data["downvotes"]
 
     new_post = models.Post(uid=uid,
                            subpage_uid=subpage_uid,
                            subpage_name=subpage_name,
-                           author_uuid=author_uid,
+                           author_uuid=author_uuid,
                            author_name=author_name,
                            title=title,
                            post=post,
                            timestamp=timestamp,
-                           total_votes=total_votes,
-                           upvotes=upvotes,
-                           downvotes=downvotes)
+                           total_votes=0,
+                           upvotes=0,
+                           downvotes=0)
     try:
         db.session.add(new_post)
         db.session.commit()
-        return uid
     except Exception as e:
         print(f"Error creating new post {e}")
         db.session.rollback()
+        return False
+    vote = set_vote(author_uuid, True, False, uid, None)
+    if vote:
+        return uid
+    else:
         return False
 
 def get_post(post_uid: str) -> models.Post:
@@ -239,8 +240,10 @@ def get_subpage_posts(total_posts: int, subpage_uid: str, order_by: str):
 def get_post_comments(post_uid: str) -> list[models.Comment]:
     comments = db.session.query(models.Comment).filter(and_(models.Comment.post_uid == post_uid, or_( models.Comment.parent_comment_uid == None, models.Comment.parent_comment_uid == ""))).order_by(models.Comment.total_votes).all()
     if comments:
-        comment_list = {comment.uid: comment.to_json() for comment in comments}
-        return comment_list
+        comment_uids = {}
+        for comment in comments:
+            comment_uids[comment.id] = comment.uid
+        return comment_uids
     else:
         return None
 
@@ -248,28 +251,32 @@ def get_post_comments(post_uid: str) -> list[models.Comment]:
 # COMMENT RELATED STUFF     #
 #############################
 
-def new_comment(post_uid: str, author_uid: str, comment: str, parent_comment_uid: str) -> str:
+def new_comment(post_uid: str, author_uuid: str, comment: str, parent_comment_uid: str) -> str:
     uid = str(uuid4())
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     new_comment = models.Comment(uid=uid,
                              post_uid = post_uid,
-                             author=author_uid,
+                             author=author_uuid,
                              parent_comment_uid = parent_comment_uid,
                              comment=comment,
                              timestamp=timestamp,
-                             total_votes = 1,
-                             upvotes=1,
+                             total_votes = 0,
+                             upvotes=0,
                              downvotes=0
                              )
     try:
         db.session.add(new_comment)
         db.session.commit()
-        return uid
-    
     except Exception as e:
         print(f"Could not add comment: {e}")
         db.session.rollback()
         return str(e)
+    
+    vote = set_vote(author_uuid, True, False, None, uid)
+    if vote:
+        return uid
+    else:
+        return False
 
 def get_comment(comment_uid: str) -> models.Comment:
     comment = db.session.query(models.Comment).filter(models.Comment.uid == comment_uid).first()
@@ -283,7 +290,7 @@ def get_comment_children(comment_uid: str) -> list[models.Comment]:
     if children:
         children_data = {}
         for child in children:
-            children_data[child.uid] = child.to_json()
+            children_data[child.id] = child.uid
         return children_data
     else:
         return None
@@ -304,21 +311,29 @@ def get_vote_record(vote_object_uid: str, author_uuid: str, post: bool) -> model
         return None
     
 def set_vote(author_uuid: str,  upvote=False, downvote=False, post_uid=None, comment_uid=None, ) -> bool:
+    change_of_vote = False
+
     if post_uid:
         vote_object = get_vote_record(post_uid, author_uuid, True)
+        #post = get_post(post_uid)
     elif comment_uid:
+        #comment = get_comment(comment_uid)
         vote_object = get_vote_record(comment_uid, author_uuid, False)
 
     # If user has already voted for this post/comment
     if vote_object:
-        # Check if vote cast are identical to the orignal votes. Returns if so
-        if vote_object.upvote == upvote and vote_object.downvote == downvote:
+        change_of_vote = True
+        # Check if vote cast is same as existing vote
+        if upvote and vote_object.upvote == upvote:
             return False
+        elif downvote and vote_object.downvote == downvote:
+            return False
+        
         vote_object.upvote = upvote
         vote_object.downvote = downvote
         try:
             db.session.commit()
-            return True
+            #return True
         except Exception as e:
             print(e)
             db.session.rollback()
@@ -336,8 +351,48 @@ def set_vote(author_uuid: str,  upvote=False, downvote=False, post_uid=None, com
         try:
             db.session.add(new_vote_object)
             db.session.commit()
-            return True
+            #return True
         except Exception as e:
             print(e)
             db.session.rollback()
             return False
+        
+    vote = add_vote_to_post_or_comment(change_of_vote, post_uid, comment_uid, upvote, downvote)
+    if vote:
+        return True
+    else:
+        return False
+
+def add_vote_to_post_or_comment(change_of_vote: bool, post_uid=None, comment_uid=None, upvote=False, downvote=False) -> bool:
+    # Get post or comment depending
+    if post_uid:
+        vote_object = get_post(post_uid)
+    if comment_uid:
+        vote_object = get_comment(comment_uid)
+
+
+    if upvote:
+        if change_of_vote:
+            vote_object.downvotes = vote_object.downvotes - 1
+        vote_object.upvotes = vote_object.upvotes + 1
+    if downvote:
+        if change_of_vote:
+            vote_object.upvotes = vote_object.upvotes - 1
+        vote_object.downvotes = vote_object.downvotes + 1
+    vote_object.total_votes = vote_object.upvotes - vote_object.downvotes
+    try:
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"Could not add votes to post: {e}")
+        return False
+
+def has_upvoted_post(post_uid: str, uuid: str) -> bool:
+    vote_record = get_vote_record(post_uid, uuid, True)
+    if vote_record:
+        if vote_record.upvote is True:
+            return True
+        else:
+            return False
+    return None

@@ -26,7 +26,7 @@ function SubPagePost() {
     // Initial fetches
     const { data: subpageData, loading: subpageDataLoading, error: subpageDataError } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
     const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(`${BASE_URL}/api/subpage/post/${postId}/comments/`, idToken);
-    const { data: postData, loading: postDataLoading, error: postDataError } = useFetch(
+    const { data: postData, loading: postDataLoading, error: postDataError, refetch: refetchPostData } = useFetch(
         postId ? `${BASE_URL}/api/subpage/post/${postId}/` : null, idToken);
 
     // To refetch the uers latest comment
@@ -66,7 +66,7 @@ function SubPagePost() {
                     <>
                         <div className="subpage-post-header-container">
                             <div className="subpage-post-header-pts">
-                                <Votebox post={true} postData={postData && postData.data} />
+                                <Votebox refetch={refetchPostData} post={true} postData={postData && postData.data} />
                             </div>
                             <div style={{display: "flex", flexDirection: "column"}}>
                                 <div className="subpage-post-header-post-title">
@@ -114,7 +114,7 @@ function SubPagePost() {
                     <>
                         {
                             latestCommentData && latestCommentData !== null && latestCommentData !== undefined ? (
-                                <Comment msgToParent={handleChildMsg} key={latestCommentData.data.uid} data={latestCommentData.data} />
+                                <Comment isChild={false} commentDataRefech={commentDataRefech} key={latestCommentData.data} data={latestCommentData.data} />
                             ) : (
                                 <>
                                 </>
@@ -123,11 +123,12 @@ function SubPagePost() {
 
                         {
                             commentData && commentData.data !== undefined && Object.keys(commentData.data).map((key, index) => (
-                                <Comment msgToParent={handleChildMsg} key={index} data={commentData.data[key]} />
+                                <Comment isChild={false} commentDataRefech={commentDataRefech} key={index} data={commentData.data[key]} />
                             ))
                         }
+
                         {
-                            commentData && commentData.success === false ? <>No comments yet</> : ""
+                            commentData && commentData.success === false ? <>No comments yet :(</> : ""
                         }
                     </>
                 )

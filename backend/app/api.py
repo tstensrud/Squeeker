@@ -1,7 +1,6 @@
 from flask import  Blueprint, request, jsonify
 from firebase_admin import auth
 from functools import wraps
-from markupsafe import escape
 from . import db_ops as db
 
 api = Blueprint("api", __name__)
@@ -42,8 +41,8 @@ def register(uuid):
     data = request.get_json()
     print(f"Data: {data}. UUID: {uuid}")
     if data:
-        username = escape(data["username"]).strip()
-        email = escape(data["email"]).strip()
+        username = data["username"].strip()
+        email = data["email"].strip()
         new_uuid = uuid
         if db.register_new_user(new_uuid, username, email):
             return jsonify({"success": True, "message": "User created"})
@@ -67,7 +66,7 @@ def create_subpage():
         escaped_data = {}
         for key, value in data.items():
             if key == "name" or key == "description":
-                escaped_data[key] = escape(value.strip())
+                escaped_data[key] = value.strip()
             else:
                 escaped_data[key] = value
         if db.find_subpage_name(escaped_data['name']):
@@ -103,8 +102,8 @@ def get_subpage(subpage_name):
 def subscribe():
     data = request.get_json()
     if data:
-        client_uid = escape(data["clientUid"])
-        subpage_uid = escape(data["subpageUid"])
+        client_uid = data["clientUid"]
+        subpage_uid = data["subpageUid"]
         
         # If the user is alreadu subbed, unsub
         is_subed = db.check_for_user_sub(client_uid, subpage_uid)
@@ -174,16 +173,15 @@ def get_post(post_uid):
 # Retrieve comments from a specific post
 @api.route('/subpage/post/<post_uid>/comments/', methods=['GET'])
 def get_post_comments(post_uid):
-    comments = db.get_post_comments(post_uid)
-    if comments:
-        return jsonify({"success": True, "message": f"Comments for post {post_uid}", "data": comments})
+    comments_uids = db.get_post_comments(post_uid)
+    if comments_uids:
+        return jsonify({"success": True, "message": f"Comments for post {post_uid}", "data": comments_uids})
     else:
         return jsonify({"success": False, "message": "No comments found for post"})
 
 # Get specific comment
 @api.route('/subpage/get_comment/<comment_uid>/', methods=['GET'])
 def get_comment(comment_uid):
-    print("Get comment")
     comment = db.get_comment(comment_uid)
     if comment:
         comment_data = comment.to_json()
@@ -199,7 +197,7 @@ def new_subpage_post(subpage_uid):
     if data:
         processed_data = {}
         for key, value in data.items():
-            processed_data[key] = escape(value).strip()
+            processed_data[key] = value.strip()
         new_post = db.new_post(processed_data)
         new_data = {}
         new_data["post_uid"] = new_post
@@ -214,7 +212,7 @@ def new_subpage_post(subpage_uid):
 @firebase_auth_required
 def upvote_post(post_uid, direction):
     data = request.get_json()
-    print(data)
+    print(f"Upvote data {data}")
 
     if data:
         # Set vote direction
@@ -225,8 +223,8 @@ def upvote_post(post_uid, direction):
         elif direction == "down":
             downvote = True
         
-        voter = escape(data["voter"])
-        is_subpage_post = escape(data["post"])
+        voter = data["voter"]
+        is_subpage_post = data["post"]
         
         if is_subpage_post == "True":
             post = db.get_post(post_uid)
@@ -251,21 +249,33 @@ def upvote_post(post_uid, direction):
             return jsonify({"success": False, "message": "Post/comment not found"})
     else:
         return jsonify({"success": False, "message": "No data received"})
+
+@api.route('/subpage/post/has_upvoted/<uuid>/<post_uid>/', methods=['GET'])
+@firebase_auth_required
+def has_upvoted(uuid, post_uid):
+    has_voted = db.has_upvoted_post(post_uid, uuid)
+    if has_voted is True:
+        return jsonify({"success": True, "message": "Upvoted", "data": True})
+    if has_voted is False:
+        return jsonify({"success": True, "message": "Upvoted", "data": False})
+    else:
+        return jsonify({"success": False, "message": "Could not find vote record"})
     
+
 # New comment
 @api.route('/subpage/comment/new/', methods=['POST'])
 @firebase_auth_required
 def new_comment():
     data = request.get_json()
     if data:
-        subpage_name = escape(data["subPageName"])
+        subpage_name = data["subPageName"]
         find_subpage = db.get_subpage(subpage_name, None)
         if find_subpage is False:
             return jsonify({"success": False, "message": f"Subpage {subpage_name} does not exist"})
         
-        author = escape(data["author"])
-        postUid = escape(data["postId"])
-        comment = escape(data["comment"]).strip()
+        author = data["author"]
+        postUid = data["postId"]
+        comment = data["comment"].strip()
         new_comment = db.new_comment(postUid, author, comment, None)
         if new_comment is not False:
             return jsonify({"success": True, "message": "Comment added", "data": new_comment})
@@ -281,10 +291,10 @@ def new_reply():
     data = request.get_json()
     print(data)
     if data:
-        author_uid = escape(data["authorUid"])
-        parent_comment_uid = escape(data["parentComment"])
-        post_uid = escape(data["postUid"])
-        comment = escape(data["comment"]).strip()
+        author_uid = data["authorUid"]
+        parent_comment_uid = data["parentComment"]
+        post_uid = data["postUid"]
+        comment = data["comment"].strip()
         new_comment = db.new_comment(post_uid, author_uid, comment, parent_comment_uid)
         #new_comment = False
         if new_comment is not False:
@@ -298,6 +308,7 @@ def new_reply():
 @api.route('/subpage/comment/children/<comment_uid>/', methods=['GET'])
 def get_comment_children(comment_uid):
     children_data = db.get_comment_children(comment_uid)
+    print(children_data)
     if children_data is not None:
         return jsonify({"success": True, "message": "Children comments retrieved", "data": children_data})
     else:

@@ -42,7 +42,7 @@ function CreateSubPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await registerSubpage(pageData);
-        console.log(data)
+        //console.log(data)
         if (data.success === true) {
             navigate(`/subpage/${pageData.name}`);
         } else {

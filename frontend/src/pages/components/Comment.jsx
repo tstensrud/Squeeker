@@ -10,32 +10,29 @@ import { AuthContext } from '../../context/AuthContext';
 
 // Components
 import LoadingSpinner from './LoadingSpinner';
-import VoteBox from './VoteBox';
-
-// SVG import
-import ArrowUp from '../../assets/svg/ArrowUp.svg?react';
-import ArrowDown from '../../assets/svg/ArrowDown.svg?react';
+import VoteboxComment from './VoteBoxComment';
 
 
-function Comment({ data }) {
-
+function Comment({ isChild, commentDataRefech, data }) {
+    const commentUid = data
     const [showReplyContainer, setShowReplyContainer] = useState(false);
     const [reply, setReply] = useState({});
     const { currentUser, idToken } = useContext(AuthContext);
 
     // Fetch and posts
-    const { data: childrenCommentData, loading: childrenCommentDataLoading, error: childrenCommentDataError, refetch: refetchChildrenData } = useFetch(`${BASE_URL}/api/subpage/comment/children/${data.uid}/`, idToken);
+    const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefetch } = useFetch(`${BASE_URL}/api/subpage/get_comment/${commentUid}/`, idToken);
+    const { data: childrenCommentData, loading: childrenCommentDataLoading, error: childrenCommentDataError, refetch: refetchChildrenData } = useFetch(`${BASE_URL}/api/subpage/comment/children/${commentUid}/`, idToken);
     //const { data: replyData, error: replyError, fetchData } = useFetchDemand(`${BASE_URL}/api/subpage/comment/children/${data.uid}/`, idToken);
     const { loading, data: replyData, error: replyError, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/reply/new/`, idToken);
 
     useEffect(() => {
         setReply((prev) => ({
             ...prev,
-            authorUid: data.author,
-            parentComment: data.uid,
-            postUid: data.post_uid,
+            authorUid: commentData && commentData.data && commentData.data.author_uuid,
+            parentComment: commentUid,
+            postUid: commentData && commentData.data && commentData.data.post_uid,
         }));
-    }, []);
+    }, [commentData]);
 
     // Close reply container if response from server is positive
     useEffect(() => {
@@ -50,7 +47,7 @@ function Comment({ data }) {
     const toggleReplySection = (e) => {
         e.preventDefault();
         setShowReplyContainer(!showReplyContainer);
-        
+
     }
 
     const submitReply = async (e) => {
@@ -67,21 +64,27 @@ function Comment({ data }) {
 
     return (
         <>
-
             <div className="comment-card">
-
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <div style={{ display: "flex", flexDirection: "column", width: "50px" }}>
-                        <VoteBox post={false} postData={data} />
+                        <VoteboxComment refetch={commentDataRefetch} postData={commentUid}/>
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column", flex: "1", margin: "0" }}>
-                        <div style={{ color: "#808080", fontSize: "13px" }}>
-                            <strong>{data.total_votes}</strong> pts. Commented at: {data.timestamp} by: <Link className="link-comment-card" to="#">{data.author_name}</Link>
-                        </div>
-                        <div style={{ marginBottom: "10px", marginTop: "10px" }}>
-                            {data.comment}
-                        </div>
+                        {
+                            commentDataLoading && commentDataLoading === true ? (
+                                <LoadingSpinner />
+                            ) : (
+                                <>
+                                    <div style={{ color: "#808080", fontSize: "13px" }}>
+                                        <strong>{commentData && commentData.data && commentData.data.total_votes}</strong> pts. Commented at: {commentData && commentData.data && commentData.data.timestamp} by: <Link className="link-comment-card" to="#">{commentData && commentData.data && commentData.data.author_name}</Link>
+                                    </div>
+                                    <div style={{ marginBottom: "10px", marginTop: "10px" }}>
+                                        {commentData && commentData.data && commentData.data.comment}
+                                    </div>
+                                </>
+                            )
+                        }
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             {
                                 currentUser && idToken ? (
@@ -109,6 +112,7 @@ function Comment({ data }) {
                         }
                     </div>
                 </div>
+
                 {
                     childrenCommentDataLoading && childrenCommentDataLoading === true ? (
                         <LoadingSpinner />
@@ -118,9 +122,9 @@ function Comment({ data }) {
                                 childrenCommentData && childrenCommentData.success === true ? (
                                     <>
                                         {
-                                            Object.keys(childrenCommentData.data).map((key, index) => (
-                                                <div key={`${index}+${childrenCommentData.data[key].uid}`} className="comment-children-container">
-                                                    <Comment msgToParent="" data={childrenCommentData.data[key]} key={childrenCommentData.data[key].uid} />
+                                            childrenCommentData && Object.keys(childrenCommentData.data).map((key, index) => (
+                                                <div key={`${index}+${childrenCommentData.data[key]}`} className="comment-children-container">
+                                                    <Comment commentDataRefech={commentDataRefech} isChild={true} data={childrenCommentData.data[key]} key={index} />
                                                 </div>
                                             ))
                                         }

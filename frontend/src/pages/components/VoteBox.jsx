@@ -3,30 +3,39 @@ import { Link, useParams } from 'react-router-dom';
 
 // Hooks
 import usePatch from '../../hooks/usePatch';
+import useFetch from '../../hooks/useFetch';
 import { BASE_URL } from '../../utils/globalVariables';
 import { AuthContext } from '../../context/AuthContext';
 
 // SVG import
 import ArrowUp from '../../assets/svg/ArrowUp.svg?react';
+import ArrowUpvoted from '../../assets/svg/ArrowUpvoted.svg?react';
 import ArrowDown from '../../assets/svg/ArrowDown.svg?react';
+import ArrowDownvoted from '../../assets/svg/ArrowDownvoted.svg?react';
 
-function Votebox({ post, postData }) {
+function Votebox({ refetch, post, postData }) {
     const { currentUser, idToken } = useContext(AuthContext);
     const [voteData, setVoteData] = useState();
+    const postUid = postData.uid;
 
     // Fetches and patches
-    const {data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData.uid}/up/`, idToken)
-    const {data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData.uid}/down/`, idToken)
-
+    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/up/`, idToken)
+    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/down/`, idToken)
+    const { data: hasUpvoted, refetch: refetchHasUpvoted } = useFetch(`${BASE_URL}/api/subpage/post/has_upvoted/${currentUser.uid}/${postUid}/`, idToken);
 
     // useEffects
     useEffect(() => {
         setVoteData({
             post: post,
-            voter: postData.author_uuid,
+            voter: currentUser.uid,
         });
-
     }, []);
+
+    useEffect(() => {
+        if (upvoteData && upvoteData.success === true || downvoteData && downvoteData.success === true) {
+            refetch();
+        }
+    }, [upvoteData, downvoteData]);
 
     // Handlers
     const handleUpvote = (e) => {
@@ -38,15 +47,20 @@ function Votebox({ post, postData }) {
         e.preventDefault();
         downvote(voteData)
     }
-
-    console.log(upvoteData)
-    console.log(downvoteData)
+    console.log(downvoteData);
     return (
         <>
             <div>
-                <Link onClick={handleUpvote} className="upvote-arrow" to="">
-                    <ArrowUp />
-                </Link>
+
+                {
+                    hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === true ? (
+                        <ArrowUpvoted />
+                    ) : (
+                        <Link onClick={handleUpvote} className="upvote-arrow" to="">
+                            <ArrowUp />
+                        </Link>
+                    )
+                }
             </div>
             <div>
                 {
@@ -62,9 +76,16 @@ function Votebox({ post, postData }) {
 
             </div>
             <div>
-                <Link onClick={handleDownVote} className="upvote-arrow" to="">
-                    <ArrowDown />
-                </Link>
+                {
+                    hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === false ? (
+                        <ArrowDownvoted />
+                    ) : (
+                        <Link onClick={handleDownVote} className="upvote-arrow" to="">
+                            <ArrowDown />
+                        </Link>
+                    )
+                }
+
             </div>
         </>
     );
