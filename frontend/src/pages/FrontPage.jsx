@@ -1,6 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { GlobalContext } from "../context/GlobalContext.jsx";
 
 // Firebase
 import { signOut } from "firebase/auth";
@@ -24,12 +25,14 @@ import User from '../assets/svg/User.svg?react';
 import NewSubpage from '../assets/svg/NewSubpage.svg?react';
 import AboutIcon from '../assets/svg/AboutIcon.svg?react';
 import RoomIcon from '../assets/svg/RoomIcon.svg?react';
+import MessageIcon from '../assets/svg/Message.svg?react';
 
 // widgets
 import LoadingBar from './components/LoadingBar';
 
 function FrontPage() {
   const { currentUser, idToken, dispatch } = useContext(AuthContext);
+  const { test, setTest } = useContext(GlobalContext);
   
   // Login and register states
   const [showLoginContainer, setShowLoginCointainer] = useState(false);
@@ -146,6 +149,19 @@ function FrontPage() {
                             {
                               userDataLoading && userDataLoading === true ? "" : userData && userData.data !== undefined && userData.data.username
                             }
+                          </div>
+                        </div>
+                      </Link>
+                    </li>
+
+                    <li className="navbar-list-item">
+                      <Link to="#">
+                        <div className="navbar-item-container">
+                          <div className="navbar-item-icon-container">
+                            <MessageIcon />
+                          </div>
+                          <div className="navbar-item-label-container">
+                            Messages
                           </div>
                         </div>
                       </Link>

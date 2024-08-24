@@ -200,8 +200,8 @@ def new_post(data):
                            title=title,
                            post=post,
                            timestamp=timestamp,
-                           total_votes=0,
-                           upvotes=0,
+                           total_votes=1,
+                           upvotes=1,
                            downvotes=0)
     try:
         db.session.add(new_post)
@@ -390,6 +390,15 @@ def add_vote_to_post_or_comment(change_of_vote: bool, post_uid=None, comment_uid
 
 def has_upvoted_post(post_uid: str, uuid: str) -> bool:
     vote_record = get_vote_record(post_uid, uuid, True)
+    if vote_record:
+        if vote_record.upvote is True:
+            return True
+        else:
+            return False
+    return None
+
+def has_upvoted_comment(comment_uid: str, uuid: str) -> bool:
+    vote_record = get_vote_record(comment_uid, uuid, False)
     if vote_record:
         if vote_record.upvote is True:
             return True

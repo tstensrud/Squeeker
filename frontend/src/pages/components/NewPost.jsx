@@ -25,9 +25,6 @@ function NewPost(props) {
         setPostContent({
             ...postContent,
             author: props.author.uid,
-            pts: 1,
-            downvotes: 0,
-            upvotes: 1,
             subpageName: props.subPageName,
         });
     }, [])
@@ -51,7 +48,7 @@ function NewPost(props) {
         await subpagePost(postContent);
         //navigate to the new post, with the uid receved from this method
     }
-
+    
     return (
         <>
             <div className="flex-box-column">

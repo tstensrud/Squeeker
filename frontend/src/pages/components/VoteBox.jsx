@@ -21,19 +21,21 @@ function Votebox({ refetch, post, postData }) {
     // Fetches and patches
     const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/up/`, idToken)
     const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/down/`, idToken)
-    const { data: hasUpvoted, refetch: refetchHasUpvoted } = useFetch(`${BASE_URL}/api/subpage/post/has_upvoted/${currentUser.uid}/${postUid}/`, idToken);
+    const { data: hasUpvoted, refetch: refetchHasUpvoted } = useFetch(
+        currentUser ? `${BASE_URL}/api/subpage/post/has_upvoted/${currentUser.uid}/${postUid}/` : null, idToken);
 
     // useEffects
     useEffect(() => {
         setVoteData({
             post: post,
-            voter: currentUser.uid,
+            voter: currentUser && currentUser.uid,
         });
     }, []);
 
     useEffect(() => {
         if (upvoteData && upvoteData.success === true || downvoteData && downvoteData.success === true) {
             refetch();
+            refetchHasUpvoted();
         }
     }, [upvoteData, downvoteData]);
 
@@ -47,20 +49,28 @@ function Votebox({ refetch, post, postData }) {
         e.preventDefault();
         downvote(voteData)
     }
-    console.log(downvoteData);
+
     return (
         <>
             <div>
+                {currentUser && idToken ? (
+                    <>
+                        {
+                            hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === true ? (
+                                <ArrowUpvoted />
+                            ) : (
+                                <Link onClick={handleUpvote} className="upvote-arrow" to="">
+                                    <ArrowUp />
+                                </Link>
+                            )
+                        }
+                    </>
+                ) : (
+                    <>
+                        <ArrowUp />
+                    </>
+                )}
 
-                {
-                    hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === true ? (
-                        <ArrowUpvoted />
-                    ) : (
-                        <Link onClick={handleUpvote} className="upvote-arrow" to="">
-                            <ArrowUp />
-                        </Link>
-                    )
-                }
             </div>
             <div>
                 {
@@ -77,14 +87,23 @@ function Votebox({ refetch, post, postData }) {
             </div>
             <div>
                 {
-                    hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === false ? (
-                        <ArrowDownvoted />
+                    currentUser && idToken ? (
+                        <>
+                            {
+                                hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === false ? (
+                                    <ArrowDownvoted />
+                                ) : (
+                                    <Link onClick={handleDownVote} className="upvote-arrow" to="">
+                                        <ArrowDown />
+                                    </Link>
+                                )
+                            }
+                        </>
                     ) : (
-                        <Link onClick={handleDownVote} className="upvote-arrow" to="">
-                            <ArrowDown />
-                        </Link>
+                        <ArrowDown />
                     )
                 }
+
 
             </div>
         </>

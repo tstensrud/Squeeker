@@ -226,7 +226,7 @@ def upvote_post(post_uid, direction):
         voter = data["voter"]
         is_subpage_post = data["post"]
         
-        if is_subpage_post == "True":
+        if is_subpage_post is True:
             post = db.get_post(post_uid)
             print(f"Post object: {post}")
             if post:
@@ -237,7 +237,7 @@ def upvote_post(post_uid, direction):
                     return jsonify({"success": False, "message": "Could not cast vote"})
         
         # If data["post"] is false, the vote is for a comment and not a subpage post
-        elif is_subpage_post == "False":
+        elif is_subpage_post is False:
             comment = db.get_comment(post_uid)
             if comment:
                 vote = db.set_vote(voter, upvote, downvote, comment_uid=post_uid)
@@ -257,9 +257,21 @@ def has_upvoted(uuid, post_uid):
     if has_voted is True:
         return jsonify({"success": True, "message": "Upvoted", "data": True})
     if has_voted is False:
-        return jsonify({"success": True, "message": "Upvoted", "data": False})
+        return jsonify({"success": True, "message": "Not upvoted", "data": False})
     else:
         return jsonify({"success": False, "message": "Could not find vote record"})
+
+@api.route('/subpage/comment/has_upvoted/<uuid>/<comment_uid>/', methods=['GET'])
+@firebase_auth_required
+def has_upvoted_comment(uuid, comment_uid):
+    has_voted = db.has_upvoted_comment(comment_uid, uuid)
+    if has_voted is True:
+        return jsonify({"success": True, "message": "Upvoted", "data": True})
+    if has_voted is False:
+        return jsonify({"success": True, "message": "Not upvoted", "data": False})
+    else:
+        return jsonify({"success": False, "message": "Could not find vote record"})
+
     
 
 # New comment
@@ -291,11 +303,11 @@ def new_reply():
     data = request.get_json()
     print(data)
     if data:
-        author_uid = data["authorUid"]
+        author_uuid = data["authorUid"]
         parent_comment_uid = data["parentComment"]
         post_uid = data["postUid"]
         comment = data["comment"].strip()
-        new_comment = db.new_comment(post_uid, author_uid, comment, parent_comment_uid)
+        new_comment = db.new_comment(post_uid, author_uuid, comment, parent_comment_uid)
         #new_comment = False
         if new_comment is not False:
             return jsonify({"success": True, "message": "Reply added", "data": new_comment})
