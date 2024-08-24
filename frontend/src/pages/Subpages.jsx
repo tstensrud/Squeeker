@@ -14,13 +14,11 @@ function Subpages() {
 
     return (
         <>
-            <div className="content-card-flex">
-                <h2>This lodge has many rooms..</h2>
-                <p>
-                    Each alike, but occupied by different souls, night after night.
-                </p>
-            </div>
-            <div className="content-card-flex">
+            <h2 className="text-2xl mb-2">This lodge has many rooms..</h2>
+            <p>
+                Each alike, but occupied by different souls, night after night.
+            </p>
+            <div className="flex flex-col mt-5">
                 {
                     loading && loading === true ? (
                         <>
@@ -33,18 +31,23 @@ function Subpages() {
                             {
                                 subpageData ? (
                                     <>
-                                        <h3>Most populare rooms</h3>
-                                        <ul className="undecorated-list">
-                                            {
-                                                subpageData && subpageData !== null && Object.entries(subpageData).map(([key, value], index) => (
-                                                    
-                                                        <li key={index}>
-                                                            <Link className="link-card" to={`/room/${key}`}>{key}</Link> / <span className="grey-info-text">{value}</span>
-                                                        </li>
-                                                    
-                                                ))
-                                            }
-                                        </ul>
+                                        <div className="bg-card-bg-color p-3 rounded-lg">
+                                            <p className="text-xl mb-3">Most populare rooms</p>
+                                            <div className="flex flex-col w-full">
+                                                {
+                                                    subpageData && subpageData !== null && Object.entries(subpageData).map(([key, value], index) => (
+
+                                                        <div className="flex flex-row" key={index}>
+                                                            <div className="w-32 overflow-hidden">
+                                                                <Link  to={`/room/${key}`}>{key}</Link> 
+                                                            </div>
+                                                            <div className="text-grey-text">/ {value}</div>
+                                                        </div>
+
+                                                    ))
+                                                }
+                                            </div>
+                                        </div>
                                     </>
                                 ) : (
                                     <>

@@ -63,9 +63,10 @@ function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
 
     return (
         <>
-            <div className="login-wrapper">
-                <div className="login-container">
-                    <div className="login-card">
+            <div className="fixed h-full w-full justify-center items-center z-50 bg-login-bg ">
+                <div className="w-full h-full flex flex-col justify-center items-center">
+                    <div className="flex flex-col bg-card-bg-color p-6 w-96 h-96 justify-center items-center text-center rounded-lg">
+
                         <h3>Register</h3>
                         {
                             idToken ? (<>
@@ -76,15 +77,20 @@ function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
                             </>) : (
                                 <>
                                     <form onSubmit={handleRegister}>
-                                        <input id="email" onChange={handleInputChange} type="text" placeholder="E-mail" />
-                                        <br />
-                                        <input id="password" onChange={handlePasswordChange} type="password" placeholder="Password" />
-                                        <br />
-                                        <input id="username" onChange={handleInputChange} type="text" placeholder="Username" />
-                                        <br />
-                                        <button type="submit">Register</button>
+                                        <div className="mb-4">
+                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="email" onChange={handleInputChange} type="text" placeholder="E-mail" />
+                                        </div>
+                                        <div className="mb-4">
+                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="password" onChange={handlePasswordChange} type="password" placeholder="Password" />
+                                        </div>
+                                        <div className="mb-4">
+                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="username" onChange={handleInputChange} type="text" placeholder="Username" />
+                                        </div>
+                                        <div className="mb-4">
+                                            <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text transition:all 0.3 ease-in hover:border-link-green" type="submit">Register</button>
+                                        </div>
                                     </form>
-                                    <br />
+
                                     <p>
                                         {registerError && registerError}
                                     </p>
@@ -92,7 +98,7 @@ function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
                                         {error && error}
                                     </p>
                                     <div>
-                                        <Link className="link-card" to="#" onClick={closeContainer}>Close</Link>
+                                        <Link to="#"  onClick={closeContainer}>Close</Link>
                                     </div>
                                 </>
                             )

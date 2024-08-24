@@ -64,29 +64,29 @@ function SubPagePost() {
                 postDataLoading && postDataLoading === true ? (<LoadingSpinner key={"loadingspinner1"} />
                 ) : (
                     <>
-                        <div className="subpage-post-header-container">
-                            <div className="subpage-post-header-pts">
+                        <div className="flex flex-row border border-border-color rounded-lg mt-5 pt-3 pb-3 pr-3">
+                            <div className="flex flex-col w-12 justify-start items-center">
                                 <Votebox refetch={refetchPostData} post={true} postData={postData && postData.data} />
                             </div>
-                            <div style={{display: "flex", flexDirection: "column"}}>
-                                <div className="subpage-post-header-post-title">
+                            <div className="flex flex-col">
+                                <div className="text-xl mb-1">
                                     {postData && postData.data.title}
                                 </div>
-                                <div className="subpage-post-header-post-content">
+                                <div className="text-base text-post-content-color">
                                     {postData && postData.data.post}
                                 </div>
                                 <div>
-                                <ul className="horizontal-list">
-                                    <li className="horizontal-list-item">
-                                        <span className="grey-info-text">Submitted at: {postData && postData.data.timestamp}</span>
-                                    </li>
-                                    <li className="horizontal-list-item">
-                                        <span className="grey-info-text">Posted by: {postData && postData.data.author_name}</span>
-                                    </li>
-                                    <li className="horizontal-list-item">
-                                        <span className="grey-info-text">Posted to: <Link to={`/room/${subPageName}`} className="link-card">{subPageName}</Link></span>
-                                    </li>
-                                </ul>
+                                    <ul className="p-0 m-0 list-none">
+                                        <li className="inline mr-3 text-xs tracking-wide text-grey-text">
+                                            Submitted at: {postData && postData.data.timestamp}
+                                        </li>
+                                        <li className="inline mr-3 text-xs tracking-wide text-grey-text">
+                                            Posted by: {postData && postData.data.author_name}
+                                        </li>
+                                        <li className="inline mr-3 text-xs tracking-wide text-grey-text">
+                                            Posted to: <Link to={`/room/${subPageName}`} className="link-card">{subPageName}</Link>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +97,7 @@ function SubPagePost() {
                                 </>
                             ) : (
                                 <>
-                                
+
                                 </>
                             )
                         }

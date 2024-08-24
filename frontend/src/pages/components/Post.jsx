@@ -1,47 +1,50 @@
 import { Link } from 'react-router-dom';
 
-// SVG import
-import ArrowUp from '../../assets/svg/ArrowUp.svg?react';
-import ArrowDown from '../../assets/svg/ArrowDown.svg?react';
 
-function Post({postData}) {
+function Post({ postData }) {
 
     return (
         <>
-            <div className="content-card">
-                <div className="content-card-grid-item-header">
-                    {postData.title}
-                </div>
-                <div className="content-card-grid-item-score">
-                    <div></div>
+            <div className="flex flex-row bg-card-bg-color rounded-lg pt-3 pb-3 mt-3 mb-3">
+
+                <div className="flex flex-col w-16 items-center">
                     <div>{postData.total_votes}</div>
                     <div>pts</div>
                 </div>
-                <div className="content-card-grid-item-snippet">
-                    {postData.post}
-                </div>
-                <div className="content-card-grid-item-sub-footer">
-                    <ul className="horizontal-list">
-                        <li className="horizontal-list-item">
-                            <span className="grey-info-text">Submitted at: {postData.timestamp}</span>
-                        </li>
-                        <li className="horizontal-list-item">
-                            <span className="grey-info-text">Posted by: {postData.author_name}</span>
-                        </li>
-                        <li className="horizontal-list-item">
-                            <span className="grey-info-text">Posted to: {postData.subpage_name}</span>
-                        </li>
-                    </ul>
-                </div>
-                <div className="content-card-grid-item-footer">
-                    <ul className="horizontal-list">
-                        <li className="horizontal-list-item">
-                            <Link className="link-card" to={`/room/${postData.subpage_name}/post/${postData.uid}/`}>Comments</Link>
-                        </li>
-                        <li className="horizontal-list-item">
-                            <Link className="link-card" to="">Share</Link>
-                        </li>
-                    </ul>
+
+                <div className="flex flex-col">
+
+                    <div className="w-full">
+                        <h3>{postData.title}</h3>
+                    </div>
+
+                    <div className="w-full text-base text-grey-text">
+                        {postData.post}
+                    </div>
+
+                    <div className="w-full text-xs text-grey-text">
+                        <ul className="p-0 list-none m-0">
+                            <li className="inline mr-3 tracking-wide">
+                                <span className="grey-info-text">Submitted at: {postData.timestamp}</span>
+                            </li>
+                            <li className="inline mr-3 tracking-wide">
+                                <span className="grey-info-text">Posted by: {postData.author_name}</span>
+                            </li>
+                            <li className="inline mr-3 tracking-wide">
+                                <span className="grey-info-text">Posted to: {postData.subpage_name}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div className="w-full text-xs text-grey-text">
+                        <ul className="p-0 list-none m-0">
+                            <li className="inline mr-3 tracking-wide">
+                                <Link  to={`/room/${postData.subpage_name}/post/${postData.uid}/`}>Comments</Link>
+                            </li>
+                            <li className="inline mr-3 tracking-wide">
+                                <Link  to="">Share</Link>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </>

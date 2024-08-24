@@ -4,23 +4,17 @@ function SubPageDoesNotExist(props) {
     const subPageName = props.subPageName;
     return (
         <>
-        <div className="content-card">
-                <div className="content-card-grid-item-header">
-                    The subpage "{subPageName}" does not exists.
+            <div className="flex flex-col w-full h-full justify-center items-center text-center">
+                <div>
+                    <h2 className="text-2xl">This room is yet to be built.</h2>
                 </div>
-                <div className="content-card-grid-item-score">
-
+                <div>
+                    {subPageName} does not exists.
                 </div>
-                <div className="content-card-grid-item-snippet">
+                <div>
                     <Link className="link-card" to="/room/create/">Click here</Link> to create a new subpage.
-
                 </div>
-                <div className="content-card-grid-item-sub-footer">
 
-                </div>
-                <div className="content-card-grid-item-footer">
-
-                </div>
             </div>
         </>
     );

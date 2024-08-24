@@ -2,7 +2,7 @@ function About() {
     return (
         <>
             <h2>Welcome to The lodge</h2>
-            <div className="content-card-flex">
+            <div className="flex flex-col bg-card-bg-color mt-5 p-3 rounded-lg">
 
                 <p>
                     This is a discussion forum / content sharing site for sharing online content and discussing topics of your interest.

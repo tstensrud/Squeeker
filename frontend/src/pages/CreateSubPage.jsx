@@ -52,42 +52,63 @@ function CreateSubPage() {
 
     return (
         <>
-            <div className="content-card-flex">
-                <h3>Create a new room</h3>
+            <h2>Create a new room</h2>
+            <div className="flex flex-col bg-card-bg-color mt-5 p-3 rounded-lg">
+
                 {
                     idToken ? (
                         <>
-                            <form onSubmit={handleSubmit}>
-                                &nbsp;Room name <span className="grey-info-text">(max 50 chars)</span><br/>
-                                <input id="name" onChange={handleInputChange} type="text" placeholder="The great timber room.." />
-                                <br />
-                                &nbsp;Description <span className="grey-info-text">(Max 500 chars)</span> <br/>
-                                <input id="description" onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
-                                <br />
-                                <ul className="horizontal-list">
-                                    <li className="horizontal-list-item">
-                                        <div className="checkbox-container">
-                                            Public <input id="public" onChange={handleCheckboxChange} type="checkbox" checked={publicChecked} />
-                                        </div>
-                                    </li>
-                                </ul>
-                                <ul className="horizontal-list">
-                                    <li className="horizontal-list-item">
-                                        <div className="checkbox-container">
-                                            NSFW? <input id="nsfw" onChange={handleCheckboxChange} type="checkbox" checked={nsfwChecked} />
-                                        </div>
-                                    </li>
-                                </ul>
-                                <br />
+                            <div className="mt-4">
+                                <form onSubmit={handleSubmit}>
+                                    <div>
+                                        Room name <span className="text-grey-text text-sm">(max 50 chars)</span><br />
+                                    </div>
+                                    <div className="mb-3 mt-1">
+                                        <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="name" onChange={handleInputChange} type="text" placeholder="The great timber room.." />
+                                    </div>
+                                    <div>
+                                        Description <span className="text-grey-text text-sm">(Max 500 chars)</span> <br />
+                                    </div>
+                                    <div>
+                                        <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
+                                    </div>
+                                    <div className="mt-4">
+                                        <ul className="p-0 list-none m-0">
+                                            <li className="inline mr-3 text-base tracking-wide">
+                                                <div className="flex flex-row">
+                                                    <div className="flex items-center mr-3">
+                                                        Public
+                                                    </div>
+                                                    <div>
+                                                        <input id="public" onChange={handleCheckboxChange} type="checkbox" checked={publicChecked} />
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <ul className="inline p-0 list-none m-0">
+                                            <li className="inline mr-3 text-base tracking-wide">
+                                                <div className="flex flex-row">
+                                                    <div className="flex items-center mr-3">
+                                                        NSFW?
+                                                    </div>
+                                                    <div>
+                                                        <input id="nsfw" onChange={handleCheckboxChange} type="checkbox" checked={nsfwChecked} />
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text hover:border-link-green transition:all 0.3 ease-in" type="submit">Create!</button>
+                                    </div>
+                                </form>
 
-                                <button type="submit">Create!</button>
-                            </form>
-                            <br />
-                            <p>
-                                {creationError && creationError}
-                                {error && error}
-                            </p>
-                            {/* fetchError && JSON.stringify(fetchError) */}
+                                <p>
+                                    {creationError && creationError}
+                                    {error && error}
+                                </p>
+                                {/* fetchError && JSON.stringify(fetchError) */}
+                            </div>
                         </>
                     ) : (
                         <>

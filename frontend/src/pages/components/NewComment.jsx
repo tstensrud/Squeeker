@@ -47,14 +47,14 @@ function NewComment({commentDataRefech, postId, subpageUid, subPageName, msgToPa
 
     return (
         <>
-            <div className="flex-box-column">
+            <div className="flex flex-col bg-card-bg-color rounded-lg mb-5 mt-5 p-3">
                 <span>
-                    <h4>Leave a comment</h4>
+                <h2 className="text-xl mt-2 mb-2">Leave a comment</h2>
                 </span>
                 <form onSubmit={handleSubmit}>
-                    <textarea ref={commentRef} onChange={handleInputChange} name="comment" className="form-text-area" placeholder="Write a comment"></textarea>
+                    <textarea ref={commentRef} onChange={handleInputChange} name="comment" className="bg-app-bg-color border border-border-color outline-none p-2 h-40 w-96 rounded-lg mb-3 hover:border-form-hover focus:border-form-focus" placeholder="Write a comment"></textarea>
                     <p>
-                        <button type="submit">Post</button>
+                        <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-8 w-20 text-grey-text transition:all 0.3 ease-in" type="submit">Post</button>
                     </p>
                     
                 </form>

@@ -1,7 +1,7 @@
 function LoadingSpinner() {
     return (
         <>
-            <div className="loading-spinner-container">
+            <div className="flex w-full h-full justify-center text-center items-center">
                 <div className="loading-spinner">
                 </div>
             </div>

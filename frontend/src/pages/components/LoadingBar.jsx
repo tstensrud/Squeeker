@@ -1,7 +1,7 @@
 function LoadingBar() {
     return (
         <>
-            <div className="loading-bar-container">
+            <div className="w-full h-4 overflow-hidden relative">
                 <div className="loading-bar"></div>
             </div>
         </>

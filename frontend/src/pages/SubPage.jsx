@@ -23,10 +23,9 @@ function SubPage() {
     const { data: subpageData, loading: subpageDataLoading, error, refetch: refetchSubpageData } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
 
     const { data: subpagePostData, loading: subpagePostDataLoading, error: subpagePostDataError } = useFetch(
-        subpageData ? `${BASE_URL}/api/subpage/${subpageData.data.uid}/posts/` : null,
+        subpageData && subpageData.data ? `${BASE_URL}/api/subpage/${subpageData.data.uid}/posts/` : null,
         idToken
     );
-    
     
     return (
         <>

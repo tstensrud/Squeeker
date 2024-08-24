@@ -14,7 +14,10 @@ function FrontpageContentLoggedIn({currentUser, idToken}) {
 
     return (
         <>
-            <LoadingSpinner />
+            
+     asdf
+                <LoadingSpinner />
+            
         </>
     );
 }

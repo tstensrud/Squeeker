@@ -44,25 +44,30 @@ function LoginContainer({ setShowLoginCointainer }) {
 
     return (
         <>
-            <div className="login-wrapper">
-                <div className="login-container">
-                    <div className="login-card">
+            <div className="fixed h-full w-full justify-center items-center z-50 bg-login-bg ">
+                <div className="w-full h-full flex flex-col justify-center items-center">
+                    <div className="flex flex-col bg-card-bg-color p-6 w-96 h-96 justify-center items-center text-center rounded-lg">
 
                         <h3>Log in</h3>
                         <form onSubmit={handleLogin}>
-                            <input onChange={handleUsernameChange} type="text" placeholder="E-mail" />
-                            <br />
-                            <input onChange={handlePasswordChange} type="password" placeholder="Password" />
-                            <br />
-                            <button type="submit">Log in</button>
+                            <div className="mb-4">
+                                <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" onChange={handleUsernameChange} type="text" placeholder="E-mail" />
+                            </div>
+                            <div className="mb-4">
+                                <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" onChange={handlePasswordChange} type="password" placeholder="Password" />
+                            </div>
+                            <div className="mb-4">
+                                <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text transition:all 0.3 ease-in hover:border-link-green" type="submit">Log in</button>
+                            </div>
                         </form>
-                        <p>
-                            {error && <>{errorMessage} <br />
-                                <Link className="link-card" to="/reset">Forgot password?</Link></>}
-                        </p>
-                        <div>
-                            <Link className="link-card" to="#" onClick={closeLoginContainer} >Close</Link>
+
+                        <div className="mb-4">
+                            <Link  to="#" onClick={closeLoginContainer} >Close</Link>
                         </div>
+                        <p>
+                            {error && <>{errorMessage}
+                                <Link to="/reset">Forgot password?</Link></>}
+                        </p>
                     </div>
                 </div>
             </div>

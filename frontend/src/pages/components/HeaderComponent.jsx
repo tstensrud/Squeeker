@@ -61,14 +61,15 @@ function HeaderComponent({ subpageData }) {
 
     return (
         <>
-            <div className="header-container">
-                <div style={{ display: "flex", flexDirection: "column" }}>
+            <div className="flex flex-row h-full mb-5 mt-4">
+                <div className="flex flex-col">
                     <h2>Welcome to {subpageData && subpageData.name}!</h2>
-                    <p>
+                    <p className="text-grey-text">
                         {subpageData && subpageData.description}
                     </p>
                 </div>
-                <div style={{ display: "flex", flex: "1", flexDirection: "column", alignItems: "flex-end", textAlign: "flex-end", justifyContent: "flex-end", height: "100%" }}>
+                
+                <div className="flex flex-1 flex-col items-end text-center justify-end h-full">
                     <div>
                         {
                             isSubedData ? (
@@ -76,23 +77,23 @@ function HeaderComponent({ subpageData }) {
                                     {
                                         isSubedData.data === false ? (
                                             <>
-                                                <ul className="horizontal-list">
-                                                    <li className="horizontal-list-item">
+                                                <ul className="p-0 list-none m-0">
+                                                    <li className="inline mr-3 text-base tracking-wide">
                                                         You are not subscribed.
                                                     </li>
-                                                    <li className="horizontal-list-item">
-                                                        <Link className="link-card" to="#" onClick={handleSubscribe}>Subscribe</Link>
+                                                    <li className="inline mr-3 text-base tracking-wide">
+                                                        <Link  to="#" onClick={handleSubscribe}>Subscribe</Link>
                                                     </li>
                                                 </ul>
                                             </>
                                         ) : (
                                             <>
-                                                <ul className="horizontal-list">
-                                                    <li className="horizontal-list-item">
+                                                <ul className="p-0 list-none m-0">
+                                                    <li className="inline mr-3 text-base tracking-wide">
 
                                                     </li>
-                                                    <li className="horizontal-list-item">
-                                                        <Link className="link-card" to="#" onClick={handleSubscribe}>Unsubscribe</Link>
+                                                    <li className="inline mr-3 text-base tracking-wide">
+                                                        <Link  to="#" onClick={handleSubscribe}>Unsubscribe</Link>
                                                     </li>
                                                 </ul>
                                             </>
@@ -107,11 +108,11 @@ function HeaderComponent({ subpageData }) {
 
                     </div>
                     <div>
-                        <ul className="horizontal-list">
-                            <li className="horizontal-list-item">
+                        <ul className="p-0 list-none m-0">
+                            <li className="inline mr-3 text-base tracking-wide">
                                 Total subs:
                             </li>
-                            <li className="horizontal-list-item">
+                            <li className="inline mr-3 text-base tracking-wide">
                                 {
                                     <>
                                         {totalSubs}

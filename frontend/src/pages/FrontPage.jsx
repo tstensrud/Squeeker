@@ -15,25 +15,17 @@ import { BASE_URL } from '../utils/globalVariables';
 // Components
 import LoginContainer from './components/LoginContainer';
 import RegisterContainer from './components/RegisterContainer.jsx';
+import NavbarListItem from "./components/NavbarListItem.jsx";
 
 // SVG imports
 import AppIcon from '../assets/svg/AppIcon.svg?react'
-import HomeIcon from '../assets/svg/HomeIcon';
-import Login from '../assets/svg/Login.svg?react';
-import Logout from '../assets/svg/Logout.svg?react';
-import User from '../assets/svg/User.svg?react';
-import NewSubpage from '../assets/svg/NewSubpage.svg?react';
-import AboutIcon from '../assets/svg/AboutIcon.svg?react';
-import RoomIcon from '../assets/svg/RoomIcon.svg?react';
-import MessageIcon from '../assets/svg/Message.svg?react';
 
 // widgets
 import LoadingBar from './components/LoadingBar';
 
 function FrontPage() {
   const { currentUser, idToken, dispatch } = useContext(AuthContext);
-  const { test, setTest } = useContext(GlobalContext);
-  
+
   // Login and register states
   const [showLoginContainer, setShowLoginCointainer] = useState(false);
   const [showRegisterContainer, setShowRegisterContainer] = useState(false);
@@ -48,15 +40,51 @@ function FrontPage() {
     currentUser ? `${BASE_URL}/api/user/subs/${currentUser.uid}/` : null,
     idToken
   );
-  
+
   // To track active navbar item for styling
   const [selectedIndex, setSelectexIndex] = useState(0);
 
   const mainNavbarItems = [
-    { name: "Frontpage", url: "/", svg: <HomeIcon /> },
-    { name: "Rooms", url: "/rooms", svg: <RoomIcon /> },
-    { name: "Create new room", url: "/room/create", svg: <NewSubpage /> },
-    { name: "About the Lodge", url: "/about", svg: <AboutIcon /> }
+    {
+      name: "Frontpage", url: "/", svg:
+        <>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </>
+    },
+    {
+      name: "Rooms", url: "/rooms", svg:
+        <>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
+            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+            <line x1="12" y1="22" x2="12" y2="15.5"></line>
+            <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+            <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
+            <line x1="12" y1="2" x2="12" y2="8.5"></line>
+          </svg>
+        </>
+    },
+    {
+      name: "Create new room", url: "/room/create", svg:
+        <>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </>
+    },
+    {
+      name: "About the Lodge", url: "/about", svg:
+        <>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="17" x2="12" y2="17"></line>
+          </svg>
+        </>
+    }
   ];
 
   // Handlers
@@ -85,7 +113,7 @@ function FrontPage() {
 
   return (
     <>
-      <div className="page-wrapper">
+      <div className="flex w-full h-full flex-row">
         {
           showLoginContainer && showLoginContainer === true ? (
             <LoginContainer setShowLoginCointainer={setShowLoginCointainer} />
@@ -104,111 +132,130 @@ function FrontPage() {
           )
         }
 
-        <div className="navbar-container">
-          <div className="navbar-header-container">
-            <div className="navbar-header-icon-container">
+        <div className="flex flex-col items-center sticky w-80 border-r border-border-color min-h-20 left-0">
+          <div className="w-full flex justify-center flex-col text-center mt-3">
+            <div className="flex items-center justify-center w-full">
               <Link to="/">
                 <AppIcon />
               </Link>
             </div>
             <h3>The lodge</h3>
           </div>
-          <div className="navbar-section-container">
-            <ul className="navbar-list">
+          <div className="w-full flex text-xs pr-4 pl-4 border-b border-border-color pb-3">
+            <ul className="list-none mt-4 mb-4 w-full p-0">
               {
                 mainNavbarItems.map((item, index) => (
-                  <li key={index} className={selectedIndex === index ? "navbar-list-item-active" : "navbar-list-item"}>
-                    <Link to={item.url} onClick={() => handleNavbarClick(index)}>
-                      <div className="navbar-item-container">
-                        <div className="navbar-item-icon-container">
+                  <Link key={index} className={selectedIndex === index ? "text-navbar-active-link-text hover:text-navbar-active-link-text no-underline" : "text-header-link hover:text-header-link-hover"} to={item.url} onClick={() => handleNavbarClick(index)}>
+{/*                     <li className={selectedIndex === index ? "flex flex-row mr-3 text-base mt-1 p-1 font-normal stroke-navbar-active-link-text bg-navbar-link-active-bg rounded-md text-navbar-active-link-text tracking-wide" : "group flex flex-row mr-3 mt-1 text-base p-1 font-normal tracking-wide text-header-link hover:text-header-link-hover transition-colors duration-200"}>
+                      <div className="flex flex-row items-center w-full">
+                        <div className="align-middle mr-2 w-6">
                           {item.svg}
                         </div>
-                        <div className="navbar-item-label-container">
+                        <div className="flex-1">
                           {item.name}
                         </div>
                       </div>
-                    </Link>
-                  </li>
+                    </li> */}
+                    <NavbarListItem name={item.name} selectedIndex={selectedIndex} svg={item.svg} index={index} />
+                  </Link>
+                  
                 ))
               }
             </ul>
           </div>
 
-          <div className="navbar-section-container">
+          <div className="w-full flex text-xs mt-3 pr-4 pl-4 pb-3 border-b border-border-color">
             {
               idToken !== null && currentUser !== null ? (
                 <>
-                  <ul className="navbar-list">
-                    <li className="navbar-list-item">
-                      <Link to="#">
-                        <div className="navbar-item-container">
-                          <div className="navbar-item-icon-container">
-                            <User />
+                  <ul className="list-none mt-4 mb-4 w-full p-0">
+                    <Link to="#">
+                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover transition-colors duration-200">
+                        <div className="flex flex-row items-center w-full">
+                          <div className="align-middle mr-2 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
+                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
                           </div>
-                          <div className="navbar-item-label-container">
+                          <div className="flex-1">
                             {
                               userDataLoading && userDataLoading === true ? "" : userData && userData.data !== undefined && userData.data.username
                             }
                           </div>
                         </div>
-                      </Link>
-                    </li>
+                      </li>
+                    </Link>
 
-                    <li className="navbar-list-item">
-                      <Link to="#">
-                        <div className="navbar-item-container">
-                          <div className="navbar-item-icon-container">
-                            <MessageIcon />
+                    <Link to="#">
+                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover transition-colors duration-200">
+                        <div className="flex flex-row items-center w-full">
+                          <div className="align-middle mr-2 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
+                              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                              </path></svg>
                           </div>
-                          <div className="navbar-item-label-container">
+                          <div className="flex-1">
                             Messages
                           </div>
                         </div>
-                      </Link>
-                    </li>
+                      </li>
+                    </Link>
 
-                    <li className="navbar-list-item">
-                      <Link to="#" onClick={logOut}>
-                        <div className="navbar-item-container">
-                          <div className="navbar-item-icon-container">
-                            <Logout />
+                    <Link to="#" onClick={logOut}>
+                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover transition-colors duration-200">
+                        <div className="flex flex-row items-center w-full">
+                          <div className="align-middle mr-2 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
+                              <line x1="20" y1="12" x2="4" y2="12"></line>
+                              <polyline points="10 18 4 12 10 6"></polyline>
+                            </svg>
                           </div>
-                          <div className="navbar-item-label-container">
+                          <div className="flex-1">
                             Log out
                           </div>
                         </div>
-                      </Link>
-                    </li>
+                      </li>
+                    </Link>
+
                   </ul>
                 </>
               ) : (
                 <>
                   <ul className="navbar-list">
-                    <li className="navbar-list-item">
-                      <Link onClick={openLoginContainer} to="#">
-                        <div className="navbar-item-container">
-                          <div className="navbar-item-icon-container">
-                            <Login />
+                    <Link onClick={openLoginContainer} to="#">
+                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover">
+                        <div className="flex flex-row items-center w-full">
+                          <div className="align-middle mr-2 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover">
+                              <path d="M14 22h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-5"></path>
+                              <polyline points="11 16 15 12 11 8"></polyline>
+                              <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
                           </div>
-                          <div className="navbar-item-label-container">
+                          <div className="flex-1">
                             Log in
                           </div>
                         </div>
-                      </Link>
-                    </li>
+                      </li>
+                    </Link>
 
-                    <li className="navbar-list-item">
-                      <Link to="#" onClick={openRegisterContainer}>
-                        <div className="navbar-item-container">
-                          <div className="navbar-item-icon-container">
-                            <Login />
+                    <Link to="#" onClick={openRegisterContainer}>
+                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover">
+                        <div className="flex flex-row items-center w-full">
+                          <div className="align-middle mr-2 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover">
+                              <path d="M14 22h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-5"></path>
+                              <polyline points="11 16 15 12 11 8"></polyline>
+                              <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
                           </div>
-                          <div className="navbar-item-label-container">
+                          <div className="flex-1">
                             Register
                           </div>
                         </div>
-                      </Link>
-                    </li>
+                      </li>
+                    </Link>
                   </ul>
                 </>
               )}
@@ -217,34 +264,29 @@ function FrontPage() {
 
         </div>
 
-        <div className="content-container">
-          <div className="subscribed-subpages-header">
+        <div className="w-full h-full overflow-y-auto">
+          <div className="flex w-full flex-col sticky overflow-hidden top-0 z-20 bg-app-bg-color text-sm border-b border-border-color p-2 m-0">
             {
               userSubscriptionsLoading && userSubscriptionsLoading === true ? (
-
                 <LoadingBar />
-
               ) : (
-                <ul className="horizontal-list-small">
-                  <li className="horizontal-list-item-small">
+                <ul className="inline">
+                  <li className="inline mr-3 text-sm tracking-wide">
                     Subscribed rooms:
                   </li>
                   {
                     userSubscriptionsData && userSubscriptionsData.data !== undefined && userSubscriptionsData.data.map((sub, index) =>
 
-                      <li key={sub} className="horizontal-list-item-small">
-                        <Link key={`${sub}+${index}`} className="link-card" to={`/room/${sub}/`}>{sub}</Link>&nbsp;/
+                      <li key={sub} className="inline mr-3 text-sm tracking-wide">
+                        <Link className="hover:underline" key={`${sub}+${index}`} to={`/room/${sub}/`}>{sub}</Link>&nbsp;/
                       </li>
                     )
                   }
                 </ul>
               )
-
             }
-
           </div>
-
-          <div className="main-content-container">
+          <div className="w-full h-full pr-12 pl-12">
             <Outlet context={{ userSubscriptionsRefetch, refetchUserData }} />
           </div>
         </div>

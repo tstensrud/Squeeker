@@ -64,44 +64,44 @@ function Comment({ isChild, commentDataRefech, data }) {
 
     return (
         <>
-            <div className="comment-card">
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div style={{ display: "flex", flexDirection: "column", width: "50px" }}>
-                        <VoteboxComment refetch={commentDataRefetch} postData={commentUid}/>
+            <div className="flex flex-col w-full p-3 mt-5 mb-4 bg-card-bg-color rounded-lg">
+                <div className="flex flex-row">
+                    <div className="flex flex-col w-12">
+                        <VoteboxComment refetch={commentDataRefetch} postData={commentUid} />
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", flex: "1", margin: "0" }}>
+                    <div className="flex flex-col flex-1 m-0">
                         {
                             commentDataLoading && commentDataLoading === true ? (
                                 <LoadingSpinner />
                             ) : (
                                 <>
-                                    <div style={{ color: "#808080", fontSize: "13px" }}>
-                                        <strong>{commentData && commentData.data && commentData.data.total_votes}</strong> pts. Commented at: {commentData && commentData.data && commentData.data.timestamp} by: <Link className="link-comment-card" to="#">{commentData && commentData.data && commentData.data.author_name}</Link>
+                                    <div className="text-xs text-grey-text">
+                                        <strong>{commentData && commentData.data && commentData.data.total_votes}</strong> pts. Commented at: {commentData && commentData.data && commentData.data.timestamp} by: <Link  to="#">{commentData && commentData.data && commentData.data.author_name}</Link>
                                     </div>
-                                    <div style={{ marginBottom: "10px", marginTop: "10px" }}>
+                                    <div className="mb-3 mt-3">
                                         {commentData && commentData.data && commentData.data.comment}
                                     </div>
                                 </>
                             )
                         }
-                        <div style={{ display: "flex", flexDirection: "row" }}>
+                        <div className="flex flex-row">
                             {
                                 currentUser && idToken ? (
                                     <>
-                                        <button className="comment-button" onClick={toggleReplySection}>Reply</button>
+                                        <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green" onClick={toggleReplySection}>Reply</button>
                                     </>
                                 ) : (<></>)}
-                            <button className="comment-button">Share</button>
+                            <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green">Share</button>
                         </div>
                         {
                             showReplyContainer === true ? (
-                                <div className="comment-reply-container">
-                                    <form onSubmit={submitReply} style={{ display: "flex", flexDirection: "column" }}>
-                                        <textarea name="comment" onChange={handleReplyChange} className="comment-reply-text-area" placeholder="Leave a reply"></textarea>
+                                <div className="flex p-3 flex-col bg-card-bg-color">
+                                    <form onSubmit={submitReply} className="flex flex-col">
+                                        <textarea name="comment" onChange={handleReplyChange} className="bg-app-bg-color border outline-none border-border-color text-base leading-5 p-1 h-20 w-96 mb-3 hover:border-link-green focus:border-link-green " placeholder="Leave a reply"></textarea>
                                         <span>
-                                            <button className="header-button-left">Reply</button>
-                                            <button className="header-button-right" onClick={toggleReplySection}>Cancel</button>
+                                            <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green">Reply</button>
+                                            <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green" onClick={toggleReplySection}>Cancel</button>
                                         </span>
                                         <p>
                                             {replyData && replyData.success === false ? (replyData.message) : (<></>)}
@@ -123,7 +123,7 @@ function Comment({ isChild, commentDataRefech, data }) {
                                     <>
                                         {
                                             childrenCommentData && Object.keys(childrenCommentData.data).map((key, index) => (
-                                                <div key={`${index}+${childrenCommentData.data[key]}`} className="comment-children-container">
+                                                <div key={`${index}+${childrenCommentData.data[key]}`} className="flex mt-3 ml-3 p-1 rounded-bl-lg border-l border-b border-border-color">
                                                     <Comment commentDataRefech={commentDataRefech} isChild={true} data={childrenCommentData.data[key]} key={index} />
                                                 </div>
                                             ))

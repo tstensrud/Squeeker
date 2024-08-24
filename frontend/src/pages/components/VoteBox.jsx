@@ -57,10 +57,16 @@ function Votebox({ refetch, post, postData }) {
                     <>
                         {
                             hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === true ? (
-                                <ArrowUpvoted />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <polyline points="6 10 12 4 18 10"></polyline>
+                                </svg>
                             ) : (
-                                <Link onClick={handleUpvote} className="upvote-arrow" to="">
-                                    <ArrowUp />
+                                <Link onClick={handleUpvote} className="upvote-arrowtext-link-green hover:underline" to="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
+                                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                                        <polyline points="6 10 12 4 18 10"></polyline>
+                                    </svg>
                                 </Link>
                             )
                         }
@@ -91,10 +97,16 @@ function Votebox({ refetch, post, postData }) {
                         <>
                             {
                                 hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === false ? (
-                                    <ArrowDownvoted />
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
+                                        <line x1="12" y1="4" x2="12" y2="20"></line>
+                                        <polyline points="18 14 12 20 6 14"></polyline>
+                                    </svg>
                                 ) : (
-                                    <Link onClick={handleDownVote} className="upvote-arrow" to="">
-                                        <ArrowDown />
+                                    <Link onClick={handleDownVote}  to="">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
+                                            <line x1="12" y1="4" x2="12" y2="20"></line>
+                                            <polyline points="18 14 12 20 6 14"></polyline>
+                                        </svg>
                                     </Link>
                                 )
                             }
