@@ -1,4 +1,5 @@
 from . import db
+from sqlalchemy import func, and_, or_, asc, desc
 
 class User(db.Model):
     __tablename__ = 'Users'
@@ -18,6 +19,14 @@ class User(db.Model):
             "email": self.email,
             "username": self.username
         }
+
+class UserMessage(db.Model):
+    __tablename__ = "UserMessage"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    recipient_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
+    sender_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.String(50))
 
 class UserSubscription(db.Model):
     __tablename__ = 'Usersubscription'
@@ -97,12 +106,16 @@ class Comment(db.Model):
     def to_json(self):
         author_object = db.session.query(User).filter(User.uuid == self.author).first()
         author_name = author_object.username
+        post = db.session.query(Post).filter(Post.uid == self.post_uid).first()
+        subpage_name = post.subpage_name
+        print(subpage_name)
         return {
             'id': self.id,
             'uid': self.uid,
             "author_uuid": self.author,
             "author_name": author_name,
             'post_uid': self.post_uid,
+            "subpage_name": subpage_name,
             'parent_comment_uid': self.parent_comment_uid,
             'timestamp': self.timestamp,
             "comment": self.comment,

@@ -13,6 +13,7 @@ import CreateSubPage from './pages/CreateSubPage.jsx';
 import ForgottenPassword from './pages/ForgottenPassword.jsx';
 import Subpages from './pages/Subpages.jsx';
 import About from './pages/About.jsx';
+import UserAccount from './pages/user/UserAccount.jsx';
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
       <Routes>
         <Route path="/" element={<FrontPage />}>
           <Route path="/" element={<FrontPageContent />} />
+          <Route path="/account" element={<UserAccount />}/>
           <Route path="about" element={<About />} />
           <Route path="reset" element={<ForgottenPassword />} />
           {/* <Route index element={ <RequireAuth> <FrontPage /> </RequireAuth>}/> */}

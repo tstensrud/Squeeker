@@ -24,6 +24,7 @@ function Comment({ isChild, commentDataRefech, data }) {
     const { data: childrenCommentData, loading: childrenCommentDataLoading, error: childrenCommentDataError, refetch: refetchChildrenData } = useFetch(`${BASE_URL}/api/subpage/comment/children/${commentUid}/`, idToken);
     //const { data: replyData, error: replyError, fetchData } = useFetchDemand(`${BASE_URL}/api/subpage/comment/children/${data.uid}/`, idToken);
     const { loading, data: replyData, error: replyError, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/reply/new/`, idToken);
+    const { data: totalVotes, refetch: refetchTotalVotes } = useFetch(`${BASE_URL}/api/subpage/comment/votes/${commentUid}/`, idToken);
 
     useEffect(() => {
         setReply((prev) => ({
@@ -67,7 +68,7 @@ function Comment({ isChild, commentDataRefech, data }) {
             <div className="flex flex-col w-full p-3 mt-5 mb-4 bg-card-bg-color rounded-lg">
                 <div className="flex flex-row">
                     <div className="flex flex-col w-12">
-                        <VoteboxComment refetch={commentDataRefetch} postData={commentUid} />
+                        <VoteboxComment refetchTotalVotes={refetchTotalVotes} postData={commentUid} />
                     </div>
 
                     <div className="flex flex-col flex-1 m-0">
@@ -77,7 +78,7 @@ function Comment({ isChild, commentDataRefech, data }) {
                             ) : (
                                 <>
                                     <div className="text-xs text-grey-text">
-                                        <strong>{commentData && commentData.data && commentData.data.total_votes}</strong> pts. Commented at: {commentData && commentData.data && commentData.data.timestamp} by: <Link  to="#">{commentData && commentData.data && commentData.data.author_name}</Link>
+                                        <strong>{totalVotes && totalVotes.data}</strong> pts. Commented at: {commentData && commentData.data && commentData.data.timestamp} by: <Link  to="#">{commentData && commentData.data && commentData.data.author_name}</Link>
                                     </div>
                                     <div className="mb-3 mt-3">
                                         {commentData && commentData.data && commentData.data.comment}

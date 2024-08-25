@@ -8,16 +8,15 @@ import { BASE_URL } from '../utils/globalVariables';
 import LoadingBar from './components/LoadingBar';
 import LoadingSpinner from './components/LoadingSpinner';
 
-function FrontpageContentLoggedIn({currentUser, idToken}) {
-    
+function FrontpageContentLoggedIn({ currentUser, idToken }) {
+
     const { data, loading, error } = useFetch(`${BASE_URL}/api/frontpage/${currentUser.uid}/`, idToken);
 
     return (
         <>
-            
-     asdf
-                <LoadingSpinner />
-            
+
+            <LoadingSpinner />
+
         </>
     );
 }

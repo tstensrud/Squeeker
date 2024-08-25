@@ -23,7 +23,10 @@ def register_new_user(uuid: str, username: str, email: str) -> bool:
 
 def get_user(uuid) -> models.User:
     user = db.session.query(models.User).filter(models.User.uuid == uuid).first()
-    return user
+    if user:
+        return user
+    else:
+        return None
 
 def front_page_data(user_uid: str):
     subpage_uids = get_user_subscriptions(user_uid, False)
@@ -36,7 +39,41 @@ def front_page_data(user_uid: str):
         return posts
     else:
         return None
-    
+
+def get_all_user_posts(user_uid: str) -> dict:
+    posts = db.session.query(models.Post).filter(models.Post.author_uuid == user_uid).all()
+    if posts:
+        post_data = {}
+        for post in posts:
+            post_data[post.uid] = post.to_json()
+        return post_data
+    else:
+        return None
+
+def get_all_user_comments(user_uid: str) -> dict:
+    comments = db.session.query(models.Comment).filter(models.Comment.author == user_uid).all()
+    if comments:
+        comment_data = {}
+        for comment in comments:
+            comment_data[comment.uid] = comment.to_json()
+        return comment_data
+    else:
+        return None
+
+def get_all_votes_posts_user(user_uid: str, upvotes: bool) -> dict:
+    if upvotes:
+        posts = db.session.query(models.Vote).filter(models.Vote.author_uuid == user_uid, models.Vote.upvote == True, models.Vote.post_uid.isnot(None)).all()
+    else:
+        posts = db.session.query(models.Vote).filter(models.Vote.author_uuid == user_uid, models.Vote.downvote == True, models.Vote.post_uid.isnot(None)).all()
+    if posts:
+        posts_data = {}
+        for post in posts:
+            post_data = get_post(post.post_uid)
+            posts_data[post_data.uid] = post_data.to_json()
+        return posts_data
+    else:
+        return None
+
 
 #############################
 # USER SUBSCRIPTIONS        #
@@ -379,6 +416,7 @@ def add_vote_to_post_or_comment(change_of_vote: bool, post_uid=None, comment_uid
         if change_of_vote:
             vote_object.upvotes = vote_object.upvotes - 1
         vote_object.downvotes = vote_object.downvotes + 1
+    
     vote_object.total_votes = vote_object.upvotes - vote_object.downvotes
     try:
         db.session.commit()

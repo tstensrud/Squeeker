@@ -9,21 +9,20 @@ import { AuthContext } from '../../context/AuthContext';
 
 // SVG import
 import ArrowUp from '../../assets/svg/ArrowUp.svg?react';
-import ArrowUpvoted from '../../assets/svg/ArrowUpvoted.svg?react';
 import ArrowDown from '../../assets/svg/ArrowDown.svg?react';
-import ArrowDownvoted from '../../assets/svg/ArrowDownvoted.svg?react';
 
-function Votebox({ refetch, post, postData }) {
+function Votebox({ post, postData }) {
     const { currentUser, idToken } = useContext(AuthContext);
     const [voteData, setVoteData] = useState();
     const postUid = postData.uid;
-
+    
     // Fetches and patches
-    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/up/`, idToken)
-    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/down/`, idToken)
+    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/up/`, idToken);
+    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/down/`, idToken);
+    const { data: totalVotes, refetch: refetchTotalVotes } = useFetch(`${BASE_URL}/api/subpage/post/votes/${postUid}/`, idToken);
     const { data: hasUpvoted, refetch: refetchHasUpvoted } = useFetch(
         currentUser ? `${BASE_URL}/api/subpage/post/has_upvoted/${currentUser.uid}/${postUid}/` : null, idToken);
-
+    
     // useEffects
     useEffect(() => {
         setVoteData({
@@ -34,8 +33,8 @@ function Votebox({ refetch, post, postData }) {
 
     useEffect(() => {
         if (upvoteData && upvoteData.success === true || downvoteData && downvoteData.success === true) {
-            refetch();
             refetchHasUpvoted();
+            refetchTotalVotes();
         }
     }, [upvoteData, downvoteData]);
 
@@ -50,10 +49,12 @@ function Votebox({ refetch, post, postData }) {
         downvote(voteData)
     }
 
+    
     return (
         <>
             <div>
-                {currentUser && idToken ? (
+                {
+                currentUser && idToken ? (
                     <>
                         {
                             hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === true ? (
@@ -62,7 +63,7 @@ function Votebox({ refetch, post, postData }) {
                                     <polyline points="6 10 12 4 18 10"></polyline>
                                 </svg>
                             ) : (
-                                <Link onClick={handleUpvote} className="upvote-arrowtext-link-green hover:underline" to="">
+                                <Link onClick={handleUpvote} className="upvote-arrowtext-link-green hover:underline">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
                                         <line x1="12" y1="20" x2="12" y2="4"></line>
                                         <polyline points="6 10 12 4 18 10"></polyline>
@@ -72,17 +73,16 @@ function Votebox({ refetch, post, postData }) {
                         }
                     </>
                 ) : (
-                    <>
-                        <ArrowUp />
-                    </>
-                )}
+                    <ArrowUp />
+                )
+                }
 
             </div>
             <div>
                 {
                     post && post === true ? (
                         <>
-                            {postData && postData.total_votes}
+                            { /* postData && postData.total_votes */ totalVotes && totalVotes.data }
                         </>
                     ) : (
                         <>
@@ -102,7 +102,7 @@ function Votebox({ refetch, post, postData }) {
                                         <polyline points="18 14 12 20 6 14"></polyline>
                                     </svg>
                                 ) : (
-                                    <Link onClick={handleDownVote}  to="">
+                                    <Link onClick={handleDownVote}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
                                             <line x1="12" y1="4" x2="12" y2="20"></line>
                                             <polyline points="18 14 12 20 6 14"></polyline>

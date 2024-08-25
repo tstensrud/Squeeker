@@ -32,59 +32,71 @@ function FrontPage() {
 
   // Initial fetch
   const { data: userData, loading: userDataLoading, error: userDataError, refetch: refetchUserData } = useFetch(
-    currentUser ? `${BASE_URL}/api/user/${currentUser.uid}/` : null,
+    currentUser ? `${BASE_URL}/user/${currentUser.uid}/` : null,
     idToken
   );
 
   const { data: userSubscriptionsData, loading: userSubscriptionsLoading, error: userSubscriptionsError, refetch: userSubscriptionsRefetch } = useFetch(
-    currentUser ? `${BASE_URL}/api/user/subs/${currentUser.uid}/` : null,
+    currentUser ? `${BASE_URL}/user/subs/${currentUser.uid}/` : null,
     idToken
   );
 
   // To track active navbar item for styling
   const [selectedIndex, setSelectexIndex] = useState(0);
 
+  // Track logged in navbar items for styling
+  const [selectedUserNavIndex, setSelectedUserNavIndex] = useState(0);
+
   const mainNavbarItems = [
     {
       name: "Frontpage", url: "/", svg:
         <>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
         </>
     },
     {
-      name: "Rooms", url: "/rooms", svg:
+      name: "Rooms", url: "rooms", svg:
         <>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
-            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
-            <line x1="12" y1="22" x2="12" y2="15.5"></line>
-            <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
-            <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
-            <line x1="12" y1="2" x2="12" y2="8.5"></line>
-          </svg>
+          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+          <line x1="12" y1="22" x2="12" y2="15.5"></line>
+          <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+          <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
+          <line x1="12" y1="2" x2="12" y2="8.5"></line>
         </>
     },
     {
-      name: "Create new room", url: "/room/create", svg:
+      name: "Create new room", url: "room/create", svg:
         <>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
         </>
     },
     {
-      name: "About the Lodge", url: "/about", svg:
+      name: "About the Lodge", url: "about", svg:
         <>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="17" x2="12" y2="17"></line>
-          </svg>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="17" x2="12" y2="17"></line>
         </>
     }
+  ];
+
+  const loggedInNavbarItems = [
+    {
+      name: userData && userData.data !== undefined && userData.data.username, url: "account", svg:
+        <>
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </>
+    },
+    {
+      name: "Messages", url: "#", svg:
+        <>
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+          </path>
+        </>
+    },
   ];
 
   // Handlers
@@ -145,20 +157,7 @@ function FrontPage() {
             <ul className="list-none mt-4 mb-4 w-full p-0">
               {
                 mainNavbarItems.map((item, index) => (
-                  <Link key={index} className={selectedIndex === index ? "text-navbar-active-link-text hover:text-navbar-active-link-text no-underline" : "text-header-link hover:text-header-link-hover"} to={item.url} onClick={() => handleNavbarClick(index)}>
-{/*                     <li className={selectedIndex === index ? "flex flex-row mr-3 text-base mt-1 p-1 font-normal stroke-navbar-active-link-text bg-navbar-link-active-bg rounded-md text-navbar-active-link-text tracking-wide" : "group flex flex-row mr-3 mt-1 text-base p-1 font-normal tracking-wide text-header-link hover:text-header-link-hover transition-colors duration-200"}>
-                      <div className="flex flex-row items-center w-full">
-                        <div className="align-middle mr-2 w-6">
-                          {item.svg}
-                        </div>
-                        <div className="flex-1">
-                          {item.name}
-                        </div>
-                      </div>
-                    </li> */}
-                    <NavbarListItem name={item.name} selectedIndex={selectedIndex} svg={item.svg} index={index} />
-                  </Link>
-                  
+                    <NavbarListItem key={item.url} handleNavbarClick={handleNavbarClick} url={item.url} name={item.name} selectedIndex={selectedIndex} svg={item.svg} index={index} />
                 ))
               }
             </ul>
@@ -169,38 +168,16 @@ function FrontPage() {
               idToken !== null && currentUser !== null ? (
                 <>
                   <ul className="list-none mt-4 mb-4 w-full p-0">
-                    <Link to="#">
-                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover transition-colors duration-200">
-                        <div className="flex flex-row items-center w-full">
-                          <div className="align-middle mr-2 w-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
-                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                              <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                          </div>
-                          <div className="flex-1">
-                            {
-                              userDataLoading && userDataLoading === true ? "" : userData && userData.data !== undefined && userData.data.username
-                            }
-                          </div>
-                        </div>
-                      </li>
-                    </Link>
 
-                    <Link to="#">
-                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover transition-colors duration-200">
-                        <div className="flex flex-row items-center w-full">
-                          <div className="align-middle mr-2 w-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
-                              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
-                              </path></svg>
-                          </div>
-                          <div className="flex-1">
-                            Messages
-                          </div>
-                        </div>
-                      </li>
-                    </Link>
+
+                    {
+                      loggedInNavbarItems.map((item, index) => (
+
+                        <NavbarListItem key={item.url} handleNavbarClick={handleNavbarClick} url={item.url} name={item.name} selectedIndex={selectedIndex} svg={item.svg} index={index + mainNavbarItems.length} />
+
+                      ))
+                    }
+
 
                     <Link to="#" onClick={logOut}>
                       <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover transition-colors duration-200">
@@ -286,7 +263,7 @@ function FrontPage() {
               )
             }
           </div>
-          <div className="w-full h-full pr-12 pl-12">
+          <div className="w-full pr-12 pl-12">
             <Outlet context={{ userSubscriptionsRefetch, refetchUserData }} />
           </div>
         </div>

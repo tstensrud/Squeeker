@@ -55,9 +55,9 @@ body {
 
 /* Loading spinner */
 .loading-spinner {
-  border: 4px solid var(--table-background-color);
+  border: 4px solid #121c26;
   border-radius: 50%;
-  border-top-color: var(--form-elements-active);
+  border-top-color: #00FFA7;
   width: 20px;
   height: 20px;
   animation: spin 1s linear infinite;
@@ -73,7 +73,7 @@ body {
 .loading-bar {
   width: 30%;
   height: 10%;
-  background-color: var(--link);
+  background-color: #00FFA7;
   position: absolute;
   top: 0;
   left: 0;

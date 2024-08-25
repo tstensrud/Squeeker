@@ -12,7 +12,7 @@ def firebase_auth_required(f):
         #print(f"ID_TOKEN: {id_token}")
         if id_token is None:
             #print("Unauthorize access atempted")
-            return jsonify({"success": False, "error": "Unauthorized"}), 401
+            return jsonify({"success": False, "message": "Unauthorized"}), 401
         token = id_token.split(" ")[1]
         try:
             #print("Verifying token")
@@ -24,17 +24,6 @@ def firebase_auth_required(f):
             return jsonify({"error": str(e)}), 401
         return f(*args, **kwargs)
     return decorated_function
-
-
-@api.route('/user/<uuid>/', methods=["GET"])
-@firebase_auth_required
-def get_userdata(uuid):
-    user = db.get_user(uuid)
-    if user:
-        user_data = user.to_json()
-        return jsonify({"success": True, "message": "User found", "data": user_data})
-    else:
-        return jsonify({"success": False, "message": "Could not find user"})
 
 @api.route('/register/<uuid>/', methods=['POST'])
 def register(uuid):
@@ -141,16 +130,6 @@ def is_client_subscribed(sub_page_uid, uuid):
     else:
         return jsonify({"success": True, "message": "User is not subscribed", "data": False})
 
-# Get user subscriptions
-@api.route('/user/subs/<uuid>/', methods=['GET'])
-@firebase_auth_required
-def get_user_subs(uuid):
-    subs = db.get_user_subscriptions(uuid, True)
-    if subs is not None:
-        return jsonify({"success": True, "message": "User subscriptions", "data": subs})
-    else:
-        return jsonify({"success": False, "message": "No user subscriptions"})
-
 # Get posts from a specific sub page
 @api.route('/subpage/<subpage_uid>/posts/', methods=['GET'])
 def get_subpage_posts(subpage_uid):
@@ -250,6 +229,24 @@ def upvote_post(post_uid, direction):
     else:
         return jsonify({"success": False, "message": "No data received"})
 
+@api.route('/subpage/post/votes/<post_uid>/', methods=['GET'])
+def get_votes_for_post(post_uid):
+    post = db.get_post(post_uid)
+    if post:
+        votes = post.total_votes
+        return jsonify({"success": True, "message": "Total votes", "data": votes})
+    else:
+        return jsonify({"success": False, "message": "No post found"})
+
+@api.route('/subpage/comment/votes/<comment_uid>/', methods=['GET'])
+def get_votes_for_comment(comment_uid):
+    comment = db.get_comment(comment_uid)
+    if comment:
+        votes = comment.total_votes
+        return jsonify({"success": True, "message": "Total votes", "data": votes})
+    else:
+        return jsonify({"success": False, "message": "No post found"})
+
 @api.route('/subpage/post/has_upvoted/<uuid>/<post_uid>/', methods=['GET'])
 @firebase_auth_required
 def has_upvoted(uuid, post_uid):
@@ -272,7 +269,7 @@ def has_upvoted_comment(uuid, comment_uid):
     else:
         return jsonify({"success": False, "message": "Could not find vote record"})
 
-    
+
 
 # New comment
 @api.route('/subpage/comment/new/', methods=['POST'])
