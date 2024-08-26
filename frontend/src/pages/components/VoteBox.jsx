@@ -86,7 +86,7 @@ function Votebox({ post, postData }) {
                 }
 
             </div>
-            <div>
+            <div className="flex min-w-14 items-center justify-center">
                 {
                     post && post === true ? (
                         <>

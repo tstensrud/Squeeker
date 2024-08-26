@@ -165,7 +165,6 @@ def check_for_user_sub(user_uid: str, sub_uid: str) -> bool:
 
 def get_total_subs_of_subpage(sub_uid: str) -> int:
     total_subs = db.session.query(func.count(models.UserSubscription.subpage_uid)).filter(models.UserSubscription.subpage_uid == sub_uid).scalar()
-    print(total_subs)
     if total_subs is not None:
         return total_subs
     else:
@@ -294,7 +293,9 @@ def get_subpage_posts(total_posts: int, subpage_uid: str, order_by: str):
     if posts:
         post_dict = {}
         for post in posts:
-            post_dict[post.uid] = post.to_json()
+            post_data = post.to_json()
+            post_data["comment_count"] = count_comments_on_post(post.uid)
+            post_dict[post.uid] = post_data
         return post_dict
     else:
         return None
@@ -356,7 +357,11 @@ def get_comment_children(comment_uid: str) -> list[models.Comment]:
         return children_data
     else:
         return None
-    
+
+def count_comments_on_post(post_uid: str) -> int:
+    comment_count = db.session.query(func.count(models.Comment.post_uid)).filter(models.Comment.post_uid == post_uid).scalar()
+    return comment_count
+
 #############################
 # VOTING                    #
 #############################
@@ -462,3 +467,34 @@ def has_upvoted_comment(comment_uid: str, uuid: str) -> bool:
         }
     else:
         return None
+    
+#############################
+# FRONTPAGE                 #
+#############################
+def get_frontpage_posts_logged_in(user_uid: str, limit: int) -> dict:
+    subs = get_user_subscriptions(user_uid, False)
+    if len(subs) == 0:
+        return False
+    try:
+        limit = int(limit)
+    except Exception as e:
+        print(e)
+        return False
+
+    if limit % len(subs) == 0:
+        posts_per_sub = limit / len(subs)
+    else:
+        for lim in range(limit, limit + 10):
+            if lim % len(subs) == 0:
+                posts_per_sub = lim / len(subs)
+                break
+    post_dict = {}
+    for sub in subs:
+        posts = db.session.query(models.Post).filter(models.Post.subpage_uid == sub).order_by(models.Post.timestamp.desc()).limit(posts_per_sub)
+        for post in posts:
+            comment_count = count_comments_on_post(post.uid)
+            post_data = post.to_json()
+            post_data["comment_count"] = comment_count
+            post_dict[post.uid] = post_data
+    return post_dict
+

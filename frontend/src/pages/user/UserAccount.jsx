@@ -156,7 +156,7 @@ function UserAccount(props) {
                                                                         <>
                                                                             {
                                                                                 postData && Object.keys(postData.data).map((key) => (
-                                                                                    <Posts key={postData.data[key].uid} title={postData.data[key].title} post={postData.data[key].post} subpage_name={postData.data[key].subpage_name} timestamp={postData.data[key].timestamp} />
+                                                                                    <Posts key={postData.data[key].uid} postData={postData.data[key]} />
                                                                                 ))
                                                                             }
                                                                         </>

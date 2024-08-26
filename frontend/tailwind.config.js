@@ -6,9 +6,10 @@ export default {
   ],
   theme: {
     colors: {
-      'app-bg-color' : '#0c1219',
+      'app-bg-color' : '#060E0E',
       'link-green' : '#00FFA7',
-      'link-hover' : '#3C697C',
+      'link-hover' : '#ffffff',
+      'navbar-bg-color' : "#060E0E",
       'navbar-link-active-bg' : '#122c1c',
       'navbar-main-color' : '#121c26',
       'navbar-active-link-text' : "#00ffa6",
@@ -17,6 +18,7 @@ export default {
       'header-link-hover' : '#ffffff',
       'border-color' : '#2b3540',
       'card-bg-color' : '#121c26',
+      'post-card-title-link': "#ffffff", 
       'grey-text' : '#808080',
       'form-hover' : "#00FFA7",
       'form-focus' : "#00FFA7",
@@ -24,7 +26,8 @@ export default {
       'login-bg' : "#ffffff4d",
       'button-text-color' : "#ffffff"
       
-    },
+    } ,
+
     extend: {},
   },
   plugins: [],

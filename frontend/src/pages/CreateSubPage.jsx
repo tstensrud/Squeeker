@@ -74,13 +74,13 @@ function CreateSubPage(props) {
                                         Room name <span className="text-grey-text text-sm">(max 50 chars)</span><br />
                                     </div>
                                     <div className="mb-3 mt-1">
-                                        <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="name" onChange={handleInputChange} type="text" placeholder="The great timber room.." />
+                                        <input id="name" onChange={handleInputChange} type="text" placeholder="The great timber room.." />
                                     </div>
                                     <div>
                                         Description <span className="text-grey-text text-sm">(Max 500 chars)</span> <br />
                                     </div>
                                     <div>
-                                        <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
+                                        <input onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
                                     </div>
                                     <div className="mt-4">
                                         <ul className="p-0 list-none m-0">
@@ -90,7 +90,7 @@ function CreateSubPage(props) {
                                                         Public
                                                     </div>
                                                     <div>
-                                                        <input id="public" onChange={handleCheckboxChange} type="checkbox" checked={publicChecked} />
+                                                        <input id="public" className="default-checkbox" onChange={handleCheckboxChange} type="checkbox" checked={publicChecked} />
                                                     </div>
                                                 </div>
                                             </li>
@@ -102,14 +102,14 @@ function CreateSubPage(props) {
                                                         NSFW?
                                                     </div>
                                                     <div>
-                                                        <input id="nsfw" onChange={handleCheckboxChange} type="checkbox" checked={nsfwChecked} />
+                                                        <input id="nsfw" className="default-checkbox" onChange={handleCheckboxChange} type="checkbox" checked={nsfwChecked} />
                                                     </div>
                                                 </div>
                                             </li>
                                         </ul>
                                     </div>
                                     <div>
-                                        <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text hover:border-link-green transition:all 0.3 ease-in" type="submit">Create!</button>
+                                        <button className="standard-button" type="submit">Create!</button>
                                     </div>
                                 </form>
 

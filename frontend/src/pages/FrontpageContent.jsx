@@ -15,7 +15,7 @@ function FrontpageContent() {
                 // If logged in
                 currentUser && idToken ? (
                     <>
-                        <FrontpageContentLoggedIn currentUser={currentUser} idToken={idToken} />
+                        <FrontpageContentLoggedIn/>
                     </>
                 ):(
                 // If not logged in

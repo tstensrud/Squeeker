@@ -139,7 +139,7 @@ function FrontPage() {
           )
         }
 
-        <div className="flex flex-col items-center sticky w-80 border-r border-border-color min-h-20 left-0">
+        <div className="flex flex-col bg-navbar-bg-color items-center sticky w-80 border-r border-border-color min-h-20 left-0">
           <div className="w-full flex justify-center flex-col text-center mt-3">
             <div className="flex items-center justify-center w-full">
               <Link to="/">
@@ -231,7 +231,7 @@ function FrontPage() {
               userSubscriptionsLoading && userSubscriptionsLoading === true ? (
                 <LoadingBar />
               ) : (
-                <ul className="inline">
+                <ul className="inline font-bold">
                   <li className="inline mr-3 text-sm tracking-wide">
                     {currentUser  ? "Subscribed rooms: "  : <>Popular rooms: Worldnews &nbsp; / soccer &nbsp; </>}
                   </li>
@@ -240,7 +240,7 @@ function FrontPage() {
                     userSubscriptionsData && userSubscriptionsData.data !== undefined && userSubscriptionsData.data.map((sub, index) =>
 
                       <li key={sub} className="inline mr-3 text-sm tracking-wide">
-                        <Link className="hover:underline" key={`${sub}+${index}`} to={`/room/${sub}/`}>{sub}</Link>&nbsp;/
+                        <Link key={`${sub}+${index}`} to={`/room/${sub}/`}>{sub}</Link>&nbsp;/
                       </li>
                     )
                   }

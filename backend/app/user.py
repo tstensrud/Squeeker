@@ -117,7 +117,6 @@ def get_downvoted_posts(uuid):
 
 @user.route('/stats/<uuid>/', methods=['GET'])
 def get_user_stats(uuid):
-    print("asdfasdfasdfasdfasdf")
     user = db.get_user(uuid)
     if user:
         post_score = db.get_user_post_score(uuid)

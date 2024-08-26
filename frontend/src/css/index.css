@@ -22,6 +22,19 @@
   a {
     @apply text-link-green;
   }
+  a:hover {
+    @apply text-link-hover
+  }
+
+  input {
+    @apply h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color;
+  }
+  input:hover {
+    @apply border-form-hover;
+  }
+  input:focus {
+    @apply border-form-focus outline-none;
+  }
 }
 
 @layer components {
@@ -34,6 +47,32 @@
   .post-title-card {
     @apply flex flex-row border border-border-color rounded-lg mt-5 pt-3 pb-3 pr-3;
   }
+
+  .post-card-title-link {
+    @apply text-post-card-title-link;
+  }
+
+  .post-card-title-link:hover {
+    @apply text-post-card-title-link;
+  }
+
+  .standard-button {
+    @apply bg-app-bg-color text-button-text-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 transition duration-200 ease-in-out;
+  }
+
+  .standard-button:hover {
+    @apply border-link-green;
+  }
+
+  .default-checkbox {
+    @apply h-4 w-4 border-border-color rounded-md;
+  }
+  
+  .default-checkbox:checked {
+    @apply border-none;
+  }
+
+ 
 }
 * {
   box-sizing: border-box;
@@ -59,7 +98,7 @@ body {
   display: flex;
   height: 100%;
   width: 100%;
-  background-color: rgb(12, 18, 25);
+  background-color: #060E0E;
   color: white;
   justify-content: center;
 }
@@ -84,7 +123,7 @@ body {
 /* Loading bar */
 .loading-bar {
   width: 30%;
-  height: 10%;
+  height: 20%;
   background-color: #00FFA7;
   position: absolute;
   top: 0;

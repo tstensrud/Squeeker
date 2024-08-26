@@ -1,15 +1,18 @@
-function Posts(props) {
+import { Link } from "react-router-dom";
+
+function Posts({postData}) {
+
     return (
         <>
             <div className="card">
                 <div className="text-xl">
-                    {props.title}
+                    <Link to={`/room/${postData.subpage_name}/post/${postData.uid}`}>{postData.title}</Link>
                 </div>
                 <div className="text-grey-text">
-                    {props.post}
+                    {postData.post}
                 </div>
                 <div className="text-grey-text text-xs">
-                    Posted to: {props.subpage_name} @ {props.timestamp}
+                    Posted to: {postData.subpage_name} @ {postData.timestamp}
                 </div>
             </div>
         </>

@@ -61,7 +61,7 @@ function SubPagePost(props) {
                 ) : (
                     <>
                         <div className="post-title-card">
-                            <div className="flex flex-col w-12 justify-start items-center">
+                            <div className="flex flex-col pt-1 w-12 justify-start items-center">
                                 <Votebox refetch={refetchPostData} post={true} postData={postData && postData.data} />
                             </div>
                             <div className="flex flex-col">

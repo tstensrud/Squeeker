@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom';
 
+// Hooks and globals
+import useFetch from '../../hooks/useFetch';
 
 function Post({ postData }) {
-
-    return (
+    
+        return (
         <>
             <div className="post-card">
 
-                <div className="flex flex-col w-16 items-center">
+                <div className="flex flex-col w-16 pt-3 items-center">
                     <div>{postData.total_votes}</div>
                     <div>pts</div>
                 </div>
@@ -15,11 +17,13 @@ function Post({ postData }) {
                 <div className="flex flex-col">
 
                     <div className="w-full">
+                        <Link className="post-card-title-link" to={`/room/${postData.subpage_name}/post/${postData.uid}/`}>
                         <h3>{postData.title}</h3>
+                        </Link>
                     </div>
 
                     <div className="w-full text-base text-grey-text">
-                        {postData.post}
+                        {postData.post.length > 30 ? <>{postData.post.slice(0,30)}(...)</> : <>{postData.post}</>}
                     </div>
 
                     <div className="w-full text-xs text-grey-text">
@@ -31,14 +35,14 @@ function Post({ postData }) {
                                 <span className="grey-info-text">Posted by: {postData.author_name}</span>
                             </li>
                             <li className="inline mr-3 tracking-wide">
-                                <span className="grey-info-text">Posted to: {postData.subpage_name}</span>
+                                <span className="grey-info-text">Posted to: <Link to={`/room/${postData.subpage_name}`}>{postData.subpage_name}</Link></span>
                             </li>
                         </ul>
                     </div>
                     <div className="w-full text-xs text-grey-text">
                         <ul className="p-0 list-none m-0">
                             <li className="inline mr-3 tracking-wide">
-                                <Link  to={`/room/${postData.subpage_name}/post/${postData.uid}/`}>Comments</Link>
+                               <Link to={`/room/${postData.subpage_name}/post/${postData.uid}/`}> {postData.comment_count} comments</Link>
                             </li>
                             <li className="inline mr-3 tracking-wide">
                                 <Link  to="">Share</Link>
@@ -52,3 +56,4 @@ function Post({ postData }) {
 }
 
 export default Post
+

@@ -54,7 +54,7 @@ function NewComment({commentDataRefech, postId, subpageUid, subPageName, msgToPa
                 <form onSubmit={handleSubmit}>
                     <textarea ref={commentRef} onChange={handleInputChange} name="comment" className="bg-app-bg-color border border-border-color outline-none p-2 h-40 w-96 rounded-lg mb-3 hover:border-form-hover focus:border-form-focus" placeholder="Write a comment"></textarea>
                     <p>
-                        <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-8 w-20 text-grey-text transition:all 0.3 ease-in" type="submit">Post</button>
+                        <button className="standard-button" type="submit">Post</button>
                     </p>
                     
                 </form>

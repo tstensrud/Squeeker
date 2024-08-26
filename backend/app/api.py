@@ -56,7 +56,6 @@ def create_subpage():
 
 @api.route('/subpage/all/', methods=['GET'])
 def get_subpages():
-    print("All subpages")
     subpages = db.get_all_subpages()
     if subpages:
         return jsonify({"success": True, "message": "All subpages", "data": subpages})
@@ -88,7 +87,6 @@ def subscribe():
                 return jsonify({"success": True, "message": "Unsubscribed user"})
             else:
                 return jsonify({"success": False, "message": "Could not unsubscribed user"})
-            
 
         # If user is not subbed, sub
         else:
@@ -230,7 +228,6 @@ def get_votes_for_comment(comment_uid):
 @api.route('/subpage/post/has_upvoted/<uuid>/<post_uid>/', methods=['GET'])
 @firebase_auth_required
 def has_upvoted(uuid, post_uid):
-    print(f"POST UID: {post_uid}")
     vote_status = db.has_upvoted_post(post_uid, uuid)
     if vote_status:
         return jsonify({"success": True, "message": "Upvoted", "data": vote_status})
@@ -245,8 +242,6 @@ def has_upvoted_comment(uuid, comment_uid):
         return jsonify({"success": True, "message": "Upvoted", "data": vote_status})
     else:
         return jsonify({"success": False, "message": "Could not find vote record"})
-
-
 
 # New comment
 @api.route('/subpage/comment/new/', methods=['POST'])
@@ -275,7 +270,6 @@ def new_comment():
 @firebase_auth_required
 def new_reply():
     data = request.get_json()
-    print(data)
     if data:
         author_uuid = data["authorUid"]
         parent_comment_uid = data["parentComment"]
@@ -294,9 +288,17 @@ def new_reply():
 @api.route('/subpage/comment/children/<comment_uid>/', methods=['GET'])
 def get_comment_children(comment_uid):
     children_data = db.get_comment_children(comment_uid)
-    print(children_data)
     if children_data is not None:
         return jsonify({"success": True, "message": "Children comments retrieved", "data": children_data})
     else:
         return jsonify({"success": False, "message": "Parent comment has no children"})
 
+# Get posts for front page
+@api.route('/frontpage/<uuid>/<limit>/', methods=['GET'])
+def frontpage(uuid, limit):
+    if uuid != "0":
+        posts = db.get_frontpage_posts_logged_in(uuid, limit)
+        if posts:
+            return jsonify({"success": True, "message": "Frontpage", "data": posts})
+        else:
+            return jsonify({"success": False, "message": "Could not find any posts"})
