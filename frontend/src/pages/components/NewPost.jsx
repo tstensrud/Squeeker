@@ -51,12 +51,12 @@ function NewPost(props) {
     
     return (
         <>
-            <div className="flex flex-col bg-card-bg-color rounded-lg mb-3 mt-3 p-2">
+            <div className="card">
                 <div className="w-full p-2 text-base">
                     <h3>Create new discussion topic</h3>
                 </div>
                 <form onSubmit={handleSubmit}>
-                    <div className="flex flex-col bg-card-bg-color rounded-lg mb-3 mt-3 p-2">
+                    <div className="flex flex-col rounded-lg mb-3 mt-3 p-2">
                         <div className="mb-4">
                             <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" onChange={handleInputChange} id="title" type="text" placeholder="Post title" />
                         </div>

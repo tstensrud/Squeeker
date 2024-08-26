@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { AuthContext } from '../context/AuthContext';
+import { GlobalContext } from '../context/GlobalContext';
 import useFetchDemand from '../hooks/useFetchDemand';
 import useFetch from '../hooks/useFetch';
 import { BASE_URL } from '../utils/globalVariables';
@@ -12,14 +13,11 @@ import LoadingSpinner from './components/LoadingSpinner';
 import Comment from './components/Comment';
 import Votebox from './components/VoteBox';
 
-// SVG import
-import ArrowUp from '../assets/svg/ArrowUp.svg?react';
-import ArrowDown from '../assets/svg/ArrowDown.svg?react';
-
-function SubPagePost() {
+function SubPagePost(props) {
 
     const { subPageName, postId } = useParams();
     const { currentUser, idToken } = useContext(AuthContext);
+    const { setSelectedIndex } = useContext(GlobalContext);
     const [subpageUid, setSubpageUid] = useState("");
     const [newCommentUid, setNewCommentUid] = useState(null);
 
@@ -37,11 +35,9 @@ function SubPagePost() {
         setSubpageUid(subpageData && subpageData.data.uid)
     }, [subpageData])
 
-    const handleChildMsg = (msg) => {
-        if (msg.msg === "fetch_latest_comment") {
-            setNewCommentUid(msg.uid);
-        }
-    }
+    useEffect(() => {
+        setSelectedIndex(props.index);
+    },[]);
 
     // If the user leaves a comment, this will trigger a fetch of that comment so that it is visible to the user immediately
     useEffect(() => {
@@ -64,7 +60,7 @@ function SubPagePost() {
                 postDataLoading && postDataLoading === true ? (<LoadingSpinner key={"loadingspinner1"} />
                 ) : (
                     <>
-                        <div className="flex flex-row border border-border-color rounded-lg mt-5 pt-3 pb-3 pr-3">
+                        <div className="post-title-card">
                             <div className="flex flex-col w-12 justify-start items-center">
                                 <Votebox refetch={refetchPostData} post={true} postData={postData && postData.data} />
                             </div>

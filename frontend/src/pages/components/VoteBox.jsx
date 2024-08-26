@@ -15,14 +15,15 @@ function Votebox({ post, postData }) {
     const { currentUser, idToken } = useContext(AuthContext);
     const [voteData, setVoteData] = useState();
     const postUid = postData.uid;
-    
+
     // Fetches and patches
-    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/up/`, idToken);
-    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/down/`, idToken);
+    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/1/`, idToken);
+    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/-1/`, idToken);
+    const { data: resetVote, error: resetVoteError, updateData: resetVoteData } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postUid}/0/`, idToken);
     const { data: totalVotes, refetch: refetchTotalVotes } = useFetch(`${BASE_URL}/api/subpage/post/votes/${postUid}/`, idToken);
     const { data: hasUpvoted, refetch: refetchHasUpvoted } = useFetch(
         currentUser ? `${BASE_URL}/api/subpage/post/has_upvoted/${currentUser.uid}/${postUid}/` : null, idToken);
-    
+
     // useEffects
     useEffect(() => {
         setVoteData({
@@ -36,7 +37,7 @@ function Votebox({ post, postData }) {
             refetchHasUpvoted();
             refetchTotalVotes();
         }
-    }, [upvoteData, downvoteData]);
+    }, [upvoteData, downvoteData, resetVote]);
 
     // Handlers
     const handleUpvote = (e) => {
@@ -49,32 +50,39 @@ function Votebox({ post, postData }) {
         downvote(voteData)
     }
 
-    
+    const handleResetVote = (e) => {
+        e.preventDefault();
+        resetVoteData(voteData);
+    }
+
+   
     return (
         <>
             <div>
                 {
-                currentUser && idToken ? (
-                    <>
-                        {
-                            hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === true ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
-                                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                                    <polyline points="6 10 12 4 18 10"></polyline>
-                                </svg>
-                            ) : (
-                                <Link onClick={handleUpvote} className="upvote-arrowtext-link-green hover:underline">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
-                                        <line x1="12" y1="20" x2="12" y2="4"></line>
-                                        <polyline points="6 10 12 4 18 10"></polyline>
-                                    </svg>
-                                </Link>
-                            )
-                        }
-                    </>
-                ) : (
-                    <ArrowUp />
-                )
+                    currentUser && idToken ? (
+                        <>
+                            {
+                                hasUpvoted && hasUpvoted.success === true && hasUpvoted.data.upvoted === true ? (
+                                    <Link onClick={handleResetVote} >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
+                                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                                            <polyline points="6 10 12 4 18 10"></polyline>
+                                        </svg>
+                                    </Link>
+                                ) : (
+                                    <Link onClick={handleUpvote} className="upvote-arrowtext-link-green hover:underline">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
+                                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                                            <polyline points="6 10 12 4 18 10"></polyline>
+                                        </svg>
+                                    </Link>
+                                )
+                            }
+                        </>
+                    ) : (
+                        <ArrowUp />
+                    )
                 }
 
             </div>
@@ -82,7 +90,7 @@ function Votebox({ post, postData }) {
                 {
                     post && post === true ? (
                         <>
-                            { /* postData && postData.total_votes */ totalVotes && totalVotes.data }
+                            { /* postData && postData.total_votes */ totalVotes && totalVotes.data}
                         </>
                     ) : (
                         <>
@@ -96,11 +104,14 @@ function Votebox({ post, postData }) {
                     currentUser && idToken ? (
                         <>
                             {
-                                hasUpvoted && hasUpvoted.success === true && hasUpvoted.data === false ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
-                                        <line x1="12" y1="4" x2="12" y2="20"></line>
-                                        <polyline points="18 14 12 20 6 14"></polyline>
-                                    </svg>
+                                hasUpvoted && hasUpvoted.success === true && hasUpvoted.data.downvoted === true ? (
+                                    <Link onClick={handleResetVote}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
+                                            <line x1="12" y1="4" x2="12" y2="20"></line>
+                                            <polyline points="18 14 12 20 6 14"></polyline>
+
+                                        </svg>
+                                    </Link>
                                 ) : (
                                     <Link onClick={handleDownVote}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">

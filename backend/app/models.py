@@ -7,6 +7,7 @@ class User(db.Model):
     uuid = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     username = db.Column(db.String(100), nullable=False)
+    event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
     posts = db.relationship("Post", backref="user", lazy=True)
     subscriptions = db.relationship('UserSubscription', backref="user", lazy=True)
@@ -17,7 +18,8 @@ class User(db.Model):
             "id": self.id,
             "uuid": self.uuid,
             "email": self.email,
-            "username": self.username
+            "username": self.username,
+            "event_timestamp": self.event_timestamp
         }
 
 class UserMessage(db.Model):
@@ -27,6 +29,7 @@ class UserMessage(db.Model):
     sender_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.String(50))
+    event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
 class UserSubscription(db.Model):
     __tablename__ = 'Usersubscription'
@@ -34,6 +37,16 @@ class UserSubscription(db.Model):
     user_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
     subpage_uid = db.Column(db.String(255), nullable=False)
     timestamp = db.Column(db.String(100))
+    event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "user_uid": self.user_uid,
+            "subpage_uid": self.subpage_uid,
+            "timestamp": self.timestamp,
+            "event_timestamp": self.event_timestamp
+        }
 
 
 class Subpage(db.Model):
@@ -45,6 +58,7 @@ class Subpage(db.Model):
     public = db.Column(db.Boolean, default=True)
     active = db.Column(db.Boolean, default=True)
     nsfw = db.Column(db.Boolean, default=False)
+    event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
     def to_json(self):
         return {
@@ -54,7 +68,8 @@ class Subpage(db.Model):
             "description": self.description,
             "public": self.public,
             "active": self.active,
-            "nsfw": self.nsfw
+            "nsfw": self.nsfw,
+            "event_timestamp": self.event_timestamp
         }
 
 class Post(db.Model):
@@ -71,6 +86,7 @@ class Post(db.Model):
     total_votes = db.Column(db.Integer)
     upvotes = db.Column(db.Integer)
     downvotes = db.Column(db.Integer)
+    event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
     comments = db.relationship("Comment")
 
@@ -87,7 +103,8 @@ class Post(db.Model):
             'timestamp': self.timestamp,
             'total_votes': self.total_votes,
             'upvotes': self.upvotes,
-            'downvotes': self.downvotes
+            'downvotes': self.downvotes,
+            "event_timestamp": self.event_timestamp
         }
 
 class Comment(db.Model):
@@ -102,13 +119,14 @@ class Comment(db.Model):
     total_votes = db.Column(db.Integer)
     upvotes = db.Column(db.Integer)
     downvotes = db.Column(db.Integer)
+    event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
     def to_json(self):
         author_object = db.session.query(User).filter(User.uuid == self.author).first()
         author_name = author_object.username
         post = db.session.query(Post).filter(Post.uid == self.post_uid).first()
         subpage_name = post.subpage_name
-        print(subpage_name)
+
         return {
             'id': self.id,
             'uid': self.uid,
@@ -121,7 +139,8 @@ class Comment(db.Model):
             "comment": self.comment,
             'total_votes': self.total_votes,
             'upvotes': self.upvotes,
-            'downvotes': self.downvotes
+            'downvotes': self.downvotes,
+            "event_timestamp": self.event_timestamp
         }
 
 class Vote(db.Model):
@@ -133,3 +152,17 @@ class Vote(db.Model):
     author_uuid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
     upvote = db.Column(db.Boolean)
     downvote = db.Column(db.Boolean)
+    event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "uid": self.uid,
+            "post_uid": self.post_uid,
+            "comment_uid": self.comment_uid,
+            "author_uuid": self.author_uuid,
+            "upvote": self.upvote,
+            "downvote": self.downvote,
+            "event_timestamp": self.event_timestamp
+        }
+        

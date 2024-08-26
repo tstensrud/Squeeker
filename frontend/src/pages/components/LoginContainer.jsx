@@ -57,7 +57,7 @@ function LoginContainer({ setShowLoginCointainer }) {
                                 <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" onChange={handlePasswordChange} type="password" placeholder="Password" />
                             </div>
                             <div className="mb-4">
-                                <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text transition:all 0.3 ease-in hover:border-link-green" type="submit">Log in</button>
+                                <button className="bg-app-bg-color text-button-text-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text transition:all 0.3 ease-in hover:border-link-green" type="submit">Log in</button>
                             </div>
                         </form>
 

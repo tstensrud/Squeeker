@@ -1,7 +1,7 @@
 function Posts(props) {
     return (
         <>
-            <div className="flex mb-3 flex-col w-full p-3 bg-card-bg-color rounded-lg">
+            <div className="card">
                 <div className="text-xl">
                     {props.title}
                 </div>

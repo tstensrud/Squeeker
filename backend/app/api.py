@@ -25,20 +25,6 @@ def firebase_auth_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@api.route('/register/<uuid>/', methods=['POST'])
-def register(uuid):
-    data = request.get_json()
-    print(f"Data: {data}. UUID: {uuid}")
-    if data:
-        username = data["username"].strip()
-        email = data["email"].strip()
-        new_uuid = uuid
-        if db.register_new_user(new_uuid, username, email):
-            return jsonify({"success": True, "message": "User created"})
-        else:
-            return jsonify({"success": False, "message": "Could not create user"})
-    else:
-        return jsonify({"success": False, "message": "No data received"})
 
 # Front page for logged in user
 @api.route('/frontpage/<uuid>/', methods=['GET'])
@@ -191,25 +177,19 @@ def new_subpage_post(subpage_uid):
 @firebase_auth_required
 def upvote_post(post_uid, direction):
     data = request.get_json()
-    print(f"Upvote data {data}")
-
+    directions = ["-1", "0", "1"]
+    if direction not in directions:
+        return jsonify({"success": False, "message": "Vote direction not supported"})
+    
     if data:
-        # Set vote direction
-        upvote = False
-        downvote = False
-        if direction == "up":
-            upvote = True
-        elif direction == "down":
-            downvote = True
-        
+        # Set vote direction        
         voter = data["voter"]
         is_subpage_post = data["post"]
         
         if is_subpage_post is True:
             post = db.get_post(post_uid)
-            print(f"Post object: {post}")
             if post:
-                vote = db.set_vote(voter, upvote, downvote, post_uid=post_uid)
+                vote = db.set_vote(voter, direction, post_uid=post_uid)
                 if vote:
                     return jsonify({"success": True, "message": "Vote for post received"})
                 else:
@@ -219,7 +199,7 @@ def upvote_post(post_uid, direction):
         elif is_subpage_post is False:
             comment = db.get_comment(post_uid)
             if comment:
-                vote = db.set_vote(voter, upvote, downvote, comment_uid=post_uid)
+                vote = db.set_vote(voter, direction, comment_uid=post_uid)
                 if vote:
                     return jsonify({"success": True, "message": "Vote for comment received"})
                 else:
@@ -250,22 +230,19 @@ def get_votes_for_comment(comment_uid):
 @api.route('/subpage/post/has_upvoted/<uuid>/<post_uid>/', methods=['GET'])
 @firebase_auth_required
 def has_upvoted(uuid, post_uid):
-    has_voted = db.has_upvoted_post(post_uid, uuid)
-    if has_voted is True:
-        return jsonify({"success": True, "message": "Upvoted", "data": True})
-    if has_voted is False:
-        return jsonify({"success": True, "message": "Not upvoted", "data": False})
+    print(f"POST UID: {post_uid}")
+    vote_status = db.has_upvoted_post(post_uid, uuid)
+    if vote_status:
+        return jsonify({"success": True, "message": "Upvoted", "data": vote_status})
     else:
         return jsonify({"success": False, "message": "Could not find vote record"})
 
 @api.route('/subpage/comment/has_upvoted/<uuid>/<comment_uid>/', methods=['GET'])
 @firebase_auth_required
 def has_upvoted_comment(uuid, comment_uid):
-    has_voted = db.has_upvoted_comment(comment_uid, uuid)
-    if has_voted is True:
-        return jsonify({"success": True, "message": "Upvoted", "data": True})
-    if has_voted is False:
-        return jsonify({"success": True, "message": "Not upvoted", "data": False})
+    vote_status = db.has_upvoted_comment(comment_uid, uuid)
+    if vote_status:
+        return jsonify({"success": True, "message": "Upvoted", "data": vote_status})
     else:
         return jsonify({"success": False, "message": "Could not find vote record"})
 
@@ -322,10 +299,4 @@ def get_comment_children(comment_uid):
         return jsonify({"success": True, "message": "Children comments retrieved", "data": children_data})
     else:
         return jsonify({"success": False, "message": "Parent comment has no children"})
-
-
-@api.route('/test/', methods=['GET'])
-@firebase_auth_required
-def test():
-    return jsonify({"message": f"Hello"}), 200
 

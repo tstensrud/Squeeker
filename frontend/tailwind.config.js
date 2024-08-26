@@ -21,7 +21,8 @@ export default {
       'form-hover' : "#00FFA7",
       'form-focus' : "#00FFA7",
       'post-content-color' : '#ffffffb7',
-      'login-bg' : "#ffffff4d"
+      'login-bg' : "#ffffff4d",
+      'button-text-color' : "#ffffff"
       
     },
     extend: {},

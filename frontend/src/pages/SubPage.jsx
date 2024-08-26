@@ -14,10 +14,12 @@ import Post from './components/Post';
 import NewPost from './components/NewPost';
 import SubPageDoesNotExist from './components/SubPageDoesNotExist';
 import LoadingSpinner from './components/LoadingSpinner';
+import { GlobalContext } from '../context/GlobalContext';
 
-function SubPage() {
+function SubPage(props) {
     const { subPageName } = useParams();
     const { currentUser, idToken } = useContext(AuthContext);
+    const { setSelectedIndex } = useContext(GlobalContext);
 
     // Initial fetches
     const { data: subpageData, loading: subpageDataLoading, error, refetch: refetchSubpageData } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
@@ -27,6 +29,9 @@ function SubPage() {
         idToken
     );
     
+    useEffect(() => {
+        setSelectedIndex(props.index);
+    },[])
     return (
         <>
             {

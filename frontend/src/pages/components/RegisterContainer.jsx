@@ -8,23 +8,26 @@ import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 
 
-function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
+function RegisterContainer({ setShowLoginCointainer, setShowRegisterContainer }) {
     const [userData, setUserData] = useState({});
-    const [firebaseUserData, setFirebaseUserdata] = useState("");
     const [error, setError] = useState("");
-    const [password, setPassword] = useState("");
+    const [passwordMatch, setPasswordMatch] = useState("");
     const { currentUser, idToken } = useContext(AuthContext);
-    const { data, loading, error: registerError, registerUser } = useRegister(`${BASE_URL}/api/register/${firebaseUserData.uuid}/`);
+
+    //const { data, loading, error: registerError, registerUser } = useRegister(`${BASE_URL}/api/register/${firebaseUserData.uuid}/`);
+    const { data, loading, error: registerError, registerUser } = useRegister(`${BASE_URL}/user/register/`);
+
 
     useEffect(() => {
-        if (firebaseUserData) {
-            //console.log("Firebase userdata changed: ", firebaseUserData)
-            registerUser(userData);
-            //console.log("Registered userdata: ", userData)
-            setShowRegisterContainer(false);
-            refetchUserData();
+        if (data && data.success === false) {
+            setError(data.message);
         }
-    }, [firebaseUserData])
+        if (data && data.success === true) {
+            setShowRegisterContainer(false);
+            setShowLoginCointainer(true);
+        }
+    },[data])
+
 
     // Handlers
     const handleInputChange = (e) => {
@@ -34,38 +37,32 @@ function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
         })
     }
 
-    const handlePasswordChange = (e) => {
-        setPassword(
-            e.target.value,
-        )
+    const checkPasswordMatch = () => {
+        if (userData.password === userData.password_two) {
+            return true
+        } else {
+            return false
+        }
     }
-
     const handleRegister = async (e) => {
         e.preventDefault();
-        try {
-            const res = await createUserWithEmailAndPassword(auth, userData.email, password);
-            //console.log(res);
-            const newUuid = res.user.uid;
-            //console.log(res.user.uid);
-            setFirebaseUserdata({
-                uuid: newUuid,
-            });
-
-        } catch (err) {
-            //console.log(err)
-            setError(err.message);
+        if (checkPasswordMatch()) {
+            registerUser(userData);
+        } else {
+            setPasswordMatch("Passwords does not match")
         }
+        
     }
 
     const closeContainer = () => {
         setShowRegisterContainer(false);
     }
-
+    
     return (
         <>
             <div className="fixed h-full w-full justify-center items-center z-50 bg-login-bg ">
                 <div className="w-full h-full flex flex-col justify-center items-center">
-                    <div className="flex flex-col bg-card-bg-color p-6 w-96 h-96 justify-center items-center text-center rounded-lg">
+                    <div className="flex flex-col bg-card-bg-color p-6 w-96 h-auto justify-center items-center text-center rounded-lg">
 
                         <h3>Register</h3>
                         {
@@ -78,16 +75,20 @@ function RegisterContainer({ refetchUserData, setShowRegisterContainer }) {
                                 <>
                                     <form onSubmit={handleRegister}>
                                         <div className="mb-4">
-                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="email" onChange={handleInputChange} type="text" placeholder="E-mail" />
+                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="email" onChange={handleInputChange} type="text" placeholder="E-mail" tabIndex="1" />
                                         </div>
                                         <div className="mb-4">
-                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="password" onChange={handlePasswordChange} type="password" placeholder="Password" />
+                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="password" onChange={handleInputChange} type="password" placeholder="Password" tabIndex="2" />
                                         </div>
                                         <div className="mb-4">
-                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="username" onChange={handleInputChange} type="text" placeholder="Username" />
+                                        <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="password_two" onChange={handleInputChange} type="password" placeholder="Re-type password" tabIndex="3" />
+                                        {passwordMatch}
                                         </div>
                                         <div className="mb-4">
-                                            <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text transition:all 0.3 ease-in hover:border-link-green" type="submit">Register</button>
+                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="username" onChange={handleInputChange} type="text" placeholder="Username" tabIndex="4" />
+                                        </div>
+                                        <div className="mb-4">
+                                            <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text transition:all 0.3 ease-in hover:border-link-green" type="submit" tabIndex="5">Register</button>
                                         </div>
                                     </form>
 

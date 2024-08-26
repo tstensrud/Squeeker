@@ -1,8 +1,17 @@
-function About() {
+import { useContext, useEffect } from "react";
+import { GlobalContext } from "../context/GlobalContext";
+
+function About(props) {
+    const { setSelectedIndex } = useContext(GlobalContext);
+    
+    useEffect(() => {
+        setSelectedIndex(props.index);
+    },[]);
+
     return (
         <>
             <h2>Welcome to The lodge</h2>
-            <div className="flex flex-col bg-card-bg-color mt-5 p-3 rounded-lg">
+            <div className="card">
 
                 <p>
                     This is a discussion forum / content sharing site for sharing online content and discussing topics of your interest.

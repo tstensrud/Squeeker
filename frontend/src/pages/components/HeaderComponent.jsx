@@ -69,7 +69,7 @@ function HeaderComponent({ subpageData }) {
                     </p>
                 </div>
                 
-                <div className="flex flex-1 flex-col items-end text-center justify-end h-full">
+                <div className="flex flex-1 flex-col items-end text-center justify-end h-full mt-2">
                     <div>
                         {
                             isSubedData ? (

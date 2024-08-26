@@ -14,9 +14,10 @@ import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import Posts from "./Posts.jsx";
 import Comments from "./Comments.jsx";
 
-function UserAccount() {
+function UserAccount(props) {
 
     const { currentUser, idToken } = useContext(AuthContext);
+    const { setSelectedIndex } = useContext(GlobalContext);
 
     // States
     const [hasFetchedCommentData, setHasFetchedCommentData] = useState(false);
@@ -35,11 +36,17 @@ function UserAccount() {
         currentUser ? `${BASE_URL}/user/posts/${currentUser.uid}/` : null,
         idToken
     );
+    const { data: scoreData, loading: scoreDataLoading, error: scoreDataError } = useFetch(
+        currentUser ? `${BASE_URL}/user/stats/${currentUser.uid}/` : null,
+        idToken
+    );
 
     // Other fetches
-    const { data: commentData, loading: commentDataLoading, error: commentDataError, fetchData: fetchCommentData } = useFetchDemand(`${BASE_URL}/user/comments/${currentUser.uid}/`, idToken);
+    const { data: commentData, loading: commentDataLoading, error: commentDataError, fetchData: fetchCommentData } = useFetchDemand(
+        currentUser ? `${BASE_URL}/user/comments/${currentUser.uid}/` : null, idToken);
     const { data: upvoteData, loading: upvoteDataLoading, error: upvoteDataError, fetchData: fetchUpvoteData } = useFetchDemand(`${BASE_URL}/user/upvoted/posts/${currentUser.uid}/`, idToken);
     const { data: downVoteData, loading: downVoteDataLoading, error: downVoteDataError, fetchData: fetchDownVoteData } = useFetchDemand(`${BASE_URL}/user/downvoted/posts/${currentUser.uid}/`, idToken);
+    
 
     const navbarItems = [
         { text: "Posts", hasFetched: null, setFetched: null, fetch: null },
@@ -48,6 +55,10 @@ function UserAccount() {
         { text: "Downvotes", hasFetched: hasFetchedDownvoteData, setFetched: setHasFetchedDownvoteData, fetch: fetchDownVoteData }
     ]
 
+    useEffect(() => {
+        setSelectedIndex(props.index);
+    },[]);
+    
     // Handlers
     const handleNavbarClick = (index) => {
         if (navbarItems[index].hasFetched !== null && navbarItems[index].setFetched !== null && navbarItems[index].fetch !== null) {
@@ -78,30 +89,39 @@ function UserAccount() {
                                         {/* Card user data and stats */}
                                         <div className="flex flex-col w-full">
                                             <h3>{userData && userData.data.username}</h3>
-                                            <div className="flex flex-col bg-card-bg-color rounded-lg p-3">
 
+                                            <div className="card">
+                                                <h4>Your user statistics</h4>
                                                 <div className="flex flex-row w-full">
                                                     <div>
-                                                        Total points:
+                                                        Post score:
                                                     </div>
                                                     <div className="ml-3 text-end flex-1">
-                                                        9001
+                                                        {scoreData && scoreData.data.posts} pts.
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-row">
                                                     <div>
-                                                        Posts:
+                                                        Comment score:
                                                     </div>
                                                     <div className="ml-3 text-end flex-1">
-                                                        9001
+                                                        {scoreData && scoreData.data.comments} pts.
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-row">
                                                     <div>
-                                                        Comments:
+                                                        Total posts:
                                                     </div>
                                                     <div className="ml-3 text-end flex-1">
-                                                        9001
+                                                        {scoreData && scoreData.data.total_posts} posts
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-row">
+                                                    <div>
+                                                        Total comments:
+                                                    </div>
+                                                    <div className="ml-3 text-end flex-1">
+                                                        {scoreData && scoreData.data.total_comments} comments
                                                     </div>
                                                 </div>
                                             </div>
@@ -126,7 +146,7 @@ function UserAccount() {
                                                 <>
                                                     {
                                                         postDataLoading && postDataLoading === true ? (
-                                                            <div className="flex flex-col w-full p-3 bg-card-bg-color rounded-lg">
+                                                            <div className="card">
                                                                 <LoadingBar />
                                                             </div>
                                                         ) : (
@@ -167,7 +187,7 @@ function UserAccount() {
                                                                         <>
                                                                             {
                                                                                 commentData && Object.keys(commentData.data).map((key, index) => (
-                                                                                    <Comments key={commentData.data[key].uid} timestamp={commentData.data[key].timestamp} subpage_name={commentData.data[key].subpage_name} comment={commentData.data[key].comment} total_votes={commentData.data[key].total_votes} />
+                                                                                    <Comments key={commentData.data[key].uid} data={commentData.data[key]} />
                                                                                 ))
                                                                             }
                                                                         </>
@@ -199,7 +219,7 @@ function UserAccount() {
                                                                         <>
                                                                             {
                                                                                 upvoteData.data && Object.keys(upvoteData.data).map((key, index) => (
-                                                                                    <div key={`${index}-${upvoteData.data[key]}`} className="flex flex-col w-full bg-card-bg-color rounded-md p-2">
+                                                                                    <div key={`${index}-${upvoteData.data[key]}`} className="card">
                                                                                         <div className="flex mr-2">
                                                                                             <Link to={`/room/${upvoteData.data[key].subpage_name}/post/${upvoteData.data[key].uid}`}>
                                                                                                 {upvoteData.data[key].post}
@@ -210,7 +230,7 @@ function UserAccount() {
                                                                                                 Posted to: {upvoteData.data[key].subpage_name}
                                                                                             </div>
                                                                                             <div>
-                                                                                                Upvoted on {upvoteData.data[key].timestamp}
+                                                                                                Upvoted on {upvoteData.data[key].event_timestamp}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -246,7 +266,7 @@ function UserAccount() {
                                                                         <>
                                                                             {
                                                                                 downVoteData.data && Object.keys(downVoteData.data).map((key, index) => (
-                                                                                    <div key={`${index}-${downVoteData.data[key]}`} className="flex flex-col w-full bg-card-bg-color rounded-md p-2">
+                                                                                    <div key={`${index}-${downVoteData.data[key]}`} className="card">
                                                                                         <div className="flex mr-2">
                                                                                             <Link to={`/room/${downVoteData.data[key].subpage_name}/post/${downVoteData.data[key].uid}`}>
                                                                                                 {downVoteData.data[key].post}
@@ -257,7 +277,7 @@ function UserAccount() {
                                                                                                 Posted to: {downVoteData.data[key].subpage_name}
                                                                                             </div>
                                                                                             <div>
-                                                                                                Upvoted on {downVoteData.data[key].timestamp}
+                                                                                                Upvoted on {downVoteData.data[key].event_timestamp}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>

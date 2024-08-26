@@ -1,17 +1,19 @@
+import { Link } from "react-router-dom";
 
 
 function Comments(props) {
+    
     return (
         <>
-            <div className="flex flex-col mb-3 w-full p-3 bg-card-bg-color rounded-lg">
+            <div className="card">
                 <div className="text-xs">
-                    @ {props.timestamp} to {props.subpage_name}
+                   Commented @ {props.data.timestamp} in <Link to={`/room/${props.data.subpage_name}/post/${props.data.post_uid}`}>{props.data.subpage_name}</Link>
                 </div>
                 <div className="text-grey-text">
-                    {props.comment}
+                    {props.data.comment}
                 </div>
                 <div className="text-grey-text text-xs font-bold">
-                    {props.total_votes} pts.
+                    {props.data.total_votes} pts.
                 </div>
             </div>
         </>

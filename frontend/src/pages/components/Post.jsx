@@ -5,7 +5,7 @@ function Post({ postData }) {
 
     return (
         <>
-            <div className="flex flex-row bg-card-bg-color rounded-lg pt-3 pb-3 mt-3 mb-3">
+            <div className="post-card">
 
                 <div className="flex flex-col w-16 items-center">
                     <div>{postData.total_votes}</div>

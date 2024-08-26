@@ -4,11 +4,11 @@ const GlobalContext = createContext();
 
 const  GlobalProvider = ({ children }) => {
 
-    const [test, setTest] = useState("test");
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     const value = {
-        test,
-        setTest,
+        selectedIndex,
+        setSelectedIndex,
     };
 
     return (

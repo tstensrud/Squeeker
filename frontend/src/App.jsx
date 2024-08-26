@@ -29,14 +29,14 @@ function App() {
       <Routes>
         <Route path="/" element={<FrontPage />}>
           <Route path="/" element={<FrontPageContent />} />
-          <Route path="/account" element={<UserAccount />}/>
-          <Route path="about" element={<About />} />
+          <Route path="/account" element={<UserAccount index={4} />}/>
+          <Route path="about" element={<About index={3} />} />
           <Route path="reset" element={<ForgottenPassword />} />
           {/* <Route index element={ <RequireAuth> <FrontPage /> </RequireAuth>}/> */}
-          <Route path="rooms" element={<Subpages />} />
-          <Route path="room/create" element={<CreateSubPage />} />
-          <Route path="room/:subPageName" element={<SubPage />} />
-          <Route path="room/:subPageName/post/:postId" element={<SubPagePost />} />
+          <Route path="rooms" element={<Subpages index={1} />} />
+          <Route path="room/create" element={<CreateSubPage index={2} />} />
+          <Route path="room/:subPageName" element={<SubPage index={1}/>} />
+          <Route path="room/:subPageName/post/:postId" element={<SubPagePost index={1} />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>

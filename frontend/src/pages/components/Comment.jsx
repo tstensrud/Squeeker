@@ -65,7 +65,7 @@ function Comment({ isChild, commentDataRefech, data }) {
 
     return (
         <>
-            <div className="flex flex-col w-full p-3 mt-5 mb-4 bg-card-bg-color rounded-lg">
+            <div className="card">
                 <div className="flex flex-row">
                     <div className="flex flex-col w-12">
                         <VoteboxComment refetchTotalVotes={refetchTotalVotes} postData={commentUid} />

@@ -6,11 +6,17 @@ import LoadingSpinner from './components/LoadingSpinner'
 import { BASE_URL } from '../utils/globalVariables';
 import useFetchNoLogin from '../hooks/useFetchNoLogin';
 import { AuthContext } from '../context/AuthContext';
+import { GlobalContext } from '../context/GlobalContext';
 
-function Subpages() {
+function Subpages(props) {
     const { currentUser, idToken } = useContext(AuthContext);
+    const { setSelectedIndex } = useContext(GlobalContext);
     const { data, loading, error } = useFetchNoLogin(`${BASE_URL}/api/subpage/all/`, idToken)
     const subpageData = data && data.data || null;
+
+    useEffect(() => {
+        setSelectedIndex(props.index);
+    },[]);
 
     return (
         <>
@@ -31,7 +37,7 @@ function Subpages() {
                             {
                                 subpageData ? (
                                     <>
-                                        <div className="bg-card-bg-color p-3 rounded-lg">
+                                        <div className="card">
                                             <p className="text-xl mb-3">Most populare rooms</p>
                                             <div className="flex flex-col w-full">
                                                 {

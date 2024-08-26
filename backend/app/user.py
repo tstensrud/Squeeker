@@ -25,13 +25,44 @@ def firebase_auth_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@user.route('/register/', methods=['POST'])
+def register_user():
+    data = request.get_json()
+    if data:
+        email = data["email"].strip()
+        username = data["username"].strip()
+        password = data["password"].strip()
+        try:
+            user = auth.create_user(
+                email=email,
+                email_verified=False,
+                password=password,
+                display_name=username,
+                photo_url=None,
+                disabled=False
+            )
+        except Exception as e:
+            return jsonify({f"success": False, "message": str(e)})
+        if db.register_new_user(user.uid, username, email):
+            return jsonify({"success": True, "message": "User created"})
+        else:
+            return jsonify({"success": False, "message": "Could not create user"})
+    else:
+        return jsonify({"success": False, "message": "No data received"})
+    
+
 # Get user data
 @user.route('/<uuid>/', methods=['GET'])
 @firebase_auth_required
 def account(uuid):
     user = db.get_user(uuid)
-    user_data = user.to_json()
     if user:
+        user_data = user.to_json()
+    #try:
+    #    firebase_user = auth.get_user(uuid)
+    #except Exception as e:
+    #    print(e)
+    
         return jsonify({"success": True, "message": "Account found", "data": user_data})
     else:
         return jsonify({"success": False, "message": "No account found"})
@@ -83,3 +114,20 @@ def get_downvoted_posts(uuid):
         return jsonify({"success": True, "message": "Downvoted posts", "data": posts})
     else:
         return jsonify({"success": False, "message": "No Downvoted posts found"})
+
+@user.route('/stats/<uuid>/', methods=['GET'])
+def get_user_stats(uuid):
+    print("asdfasdfasdfasdfasdf")
+    user = db.get_user(uuid)
+    if user:
+        post_score = db.get_user_post_score(uuid)
+        comment_score = db.get_user_comment_score(uuid)
+        total_posts = db.get_user_total_posts(uuid)
+        total_comments = db.get_user_total_comments(uuid)
+        score = {"posts": post_score,
+                "comments": comment_score,
+                "total_posts": total_posts,
+                "total_comments": total_comments}
+        return jsonify({"success": True, "message": "Score", "data": score})
+    else:
+        return jsonify({"success": False, "message": "User not found"})

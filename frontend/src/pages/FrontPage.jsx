@@ -25,6 +25,7 @@ import LoadingBar from './components/LoadingBar';
 
 function FrontPage() {
   const { currentUser, idToken, dispatch } = useContext(AuthContext);
+  const { selectedIndex, setSelectedIndex } = useContext(GlobalContext);
 
   // Login and register states
   const [showLoginContainer, setShowLoginCointainer] = useState(false);
@@ -40,12 +41,6 @@ function FrontPage() {
     currentUser ? `${BASE_URL}/user/subs/${currentUser.uid}/` : null,
     idToken
   );
-
-  // To track active navbar item for styling
-  const [selectedIndex, setSelectexIndex] = useState(0);
-
-  // Track logged in navbar items for styling
-  const [selectedUserNavIndex, setSelectedUserNavIndex] = useState(0);
 
   const mainNavbarItems = [
     {
@@ -111,7 +106,7 @@ function FrontPage() {
   }
 
   const handleNavbarClick = (index) => {
-    setSelectexIndex(index);
+    setSelectedIndex(index);
   }
 
   const openLoginContainer = () => {
@@ -137,7 +132,7 @@ function FrontPage() {
 
         {
           showRegisterContainer && showRegisterContainer === true ? (
-            <RegisterContainer refetchUserData={refetchUserData} setShowRegisterContainer={setShowRegisterContainer} />
+            <RegisterContainer setShowLoginCointainer={setShowLoginCointainer} refetchUserData={refetchUserData} setShowRegisterContainer={setShowRegisterContainer} />
           ) : (
             <>
             </>
@@ -166,10 +161,7 @@ function FrontPage() {
           <div className="w-full flex text-xs mt-3 pr-4 pl-4 pb-3 border-b border-border-color">
             {
               idToken !== null && currentUser !== null ? (
-                <>
                   <ul className="list-none mt-4 mb-4 w-full p-0">
-
-
                     {
                       loggedInNavbarItems.map((item, index) => (
 
@@ -177,8 +169,6 @@ function FrontPage() {
 
                       ))
                     }
-
-
                     <Link to="#" onClick={logOut}>
                       <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover transition-colors duration-200">
                         <div className="flex flex-row items-center w-full">
@@ -194,11 +184,8 @@ function FrontPage() {
                         </div>
                       </li>
                     </Link>
-
                   </ul>
-                </>
               ) : (
-                <>
                   <ul className="navbar-list">
                     <Link onClick={openLoginContainer} to="#">
                       <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover">
@@ -234,11 +221,8 @@ function FrontPage() {
                       </li>
                     </Link>
                   </ul>
-                </>
               )}
           </div >
-
-
         </div>
 
         <div className="w-full h-full overflow-y-auto">
@@ -249,8 +233,9 @@ function FrontPage() {
               ) : (
                 <ul className="inline">
                   <li className="inline mr-3 text-sm tracking-wide">
-                    Subscribed rooms:
+                    {currentUser  ? "Subscribed rooms: "  : <>Popular rooms: Worldnews &nbsp; / soccer &nbsp; </>}
                   </li>
+
                   {
                     userSubscriptionsData && userSubscriptionsData.data !== undefined && userSubscriptionsData.data.map((sub, index) =>
 

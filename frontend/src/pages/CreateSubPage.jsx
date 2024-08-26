@@ -1,18 +1,28 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import useRegisterSubpage from '../hooks/useRegisterSubpage';
 import { BASE_URL } from '../utils/globalVariables';
 import { useNavigate } from 'react-router-dom';
+import { GlobalContext } from '../context/GlobalContext';
 
-function CreateSubPage() {
+function CreateSubPage(props) {
     const { currentUser, idToken } = useContext(AuthContext);
+    const { setSelectedIndex } = useContext(GlobalContext);
+
+    const { data, loading, error, registerSubpage } = useRegisterSubpage(`${BASE_URL}/api/subpage/create/`, idToken);
+    
     const [pageData, setPageData] = useState({ "public": true, "nsfw": false });
     const [creationError, setCreationError] = useState("");
-    const { data, loading, error, registerSubpage } = useRegisterSubpage(`${BASE_URL}/api/subpage/create/`, idToken);
     const [publicChecked, setPublicChecked] = useState(true);
     const [nsfwChecked, setNsfwChecked] = useState(false);
+    
     const navigate = useNavigate();
 
+    useEffect(() => {
+        setSelectedIndex(props.index);
+    },);
+
+    // Handlers
     const handleInputChange = (e) => {
         setPageData({
             ...pageData,
@@ -53,7 +63,7 @@ function CreateSubPage() {
     return (
         <>
             <h2>Create a new room</h2>
-            <div className="flex flex-col bg-card-bg-color mt-5 p-3 rounded-lg">
+            <div className="card">
 
                 {
                     idToken ? (
