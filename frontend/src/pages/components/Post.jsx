@@ -29,7 +29,7 @@ function Post({ postData }) {
                     <div className="w-full text-xs text-grey-text">
                         <ul className="p-0 list-none m-0">
                             <li className="inline mr-3 tracking-wide">
-                                <span className="grey-info-text">Submitted at: {postData.timestamp}</span>
+                                <span className="grey-info-text">Last modified at: {postData.event_timestamp}</span>
                             </li>
                             <li className="inline mr-3 tracking-wide">
                                 <span className="grey-info-text">Posted by: {postData.author_name}</span>

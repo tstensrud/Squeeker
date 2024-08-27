@@ -4,7 +4,7 @@ from sqlalchemy import func, and_, or_, asc, desc
 from uuid import uuid4
 
 def get_timestamp():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    return datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
 #############################
 # USER RELATED STUFF        #
@@ -99,6 +99,30 @@ def get_user_total_comments(uuid: str) -> int:
         return total_comments
     else:
         return 0
+
+# Checks if timestamp of current action is not less than 60 seconds to prevent post/comment spam
+def can_user_post_again(uuid: str) -> bool:
+    user = get_user(uuid)
+    timestamp = user.last_action
+    timestamp_now = get_timestamp()
+    time_since_last_entry = int(timestamp_now) - int(timestamp)
+    if time_since_last_entry < 60:
+        return False
+    else:
+        return True
+
+# Add timestamp when user performed last action to prevent users from spamming content
+def add_user_last_action(uuid: str) -> bool:
+    user = get_user(uuid)
+    timestamp = get_timestamp()
+    user.last_action = timestamp
+    try:
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return False
 
 #############################
 # USER SUBSCRIPTIONS        #
@@ -273,6 +297,7 @@ def new_post(data):
         return False
     vote = set_vote(author_uuid, "1", post_uid = uid)
     if vote:
+        add_user_last_action(author_uuid)
         return uid
     else:
         return False
@@ -337,6 +362,7 @@ def new_comment(post_uid: str, author_uuid: str, comment: str, parent_comment_ui
     
     vote = set_vote(author_uuid, "1", comment_uid=uid)
     if vote:
+        add_user_last_action(author_uuid)
         return uid
     else:
         return False

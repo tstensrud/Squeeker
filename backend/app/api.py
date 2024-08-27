@@ -158,6 +158,12 @@ def get_comment(comment_uid):
 def new_subpage_post(subpage_uid):
     data = request.get_json()
     if data:
+        user_uid = data["author"].strip()
+        
+        timestamp_check = db.can_user_post_again(user_uid)
+        if timestamp_check is False:
+            return jsonify({"success": False, "message": "You need to wait before you post again"})
+        
         processed_data = {}
         for key, value in data.items():
             processed_data[key] = value.strip()
@@ -249,15 +255,19 @@ def has_upvoted_comment(uuid, comment_uid):
 def new_comment():
     data = request.get_json()
     if data:
+        user_uid = data["author"]
+        timestamp_check = db.can_user_post_again(user_uid)
+        if timestamp_check is False:
+            return jsonify({"success": False, "message": "You need to wait before you post again"})
+        
         subpage_name = data["subPageName"]
         find_subpage = db.get_subpage(subpage_name, None)
         if find_subpage is False:
             return jsonify({"success": False, "message": f"Subpage {subpage_name} does not exist"})
         
-        author = data["author"]
         postUid = data["postId"]
         comment = data["comment"].strip()
-        new_comment = db.new_comment(postUid, author, comment, None)
+        new_comment = db.new_comment(postUid, user_uid, comment, None)
         if new_comment is not False:
             return jsonify({"success": True, "message": "Comment added", "data": new_comment})
         else:
@@ -272,6 +282,11 @@ def new_reply():
     data = request.get_json()
     if data:
         author_uuid = data["authorUid"]
+        
+        timestamp_check = db.can_user_post_again(author_uuid)
+        if timestamp_check is False:
+            return jsonify({"success": False, "message": "You need to wait before you post again"})
+        
         parent_comment_uid = data["parentComment"]
         post_uid = data["postUid"]
         comment = data["comment"].strip()

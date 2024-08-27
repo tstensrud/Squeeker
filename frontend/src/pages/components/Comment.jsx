@@ -17,6 +17,7 @@ function Comment({ isChild, commentDataRefech, data }) {
     const commentUid = data
     const [showReplyContainer, setShowReplyContainer] = useState(false);
     const [reply, setReply] = useState({});
+    const [replyWarning, setReplyWarning] = useState("");
     const { currentUser, idToken } = useContext(AuthContext);
 
     // Fetch and posts
@@ -48,11 +49,15 @@ function Comment({ isChild, commentDataRefech, data }) {
     const toggleReplySection = (e) => {
         e.preventDefault();
         setShowReplyContainer(!showReplyContainer);
-
+        setReplyWarning("");
     }
 
     const submitReply = async (e) => {
         e.preventDefault();
+        if (!reply.comment || reply.comment === "") {
+            setReplyWarning("Reply can not be empty");
+            return;
+        }
         await subpagePost(reply);
     }
 
@@ -104,6 +109,7 @@ function Comment({ isChild, commentDataRefech, data }) {
                                             <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green">Reply</button>
                                             <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green" onClick={toggleReplySection}>Cancel</button>
                                         </span>
+                                        <span>{replyWarning}</span>
                                         <p>
                                             {replyData && replyData.success === false ? (replyData.message) : (<></>)}
                                         </p>

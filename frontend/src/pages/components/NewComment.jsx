@@ -8,11 +8,14 @@ function NewComment({commentDataRefech, postId, subpageUid, subPageName, msgToPa
 
     const { currentUser, idToken } = useContext(AuthContext);
     const [comment, setComment] = useState("");
+    const [commentWarning, setCommentWarning] = useState("");
     const { loading, data, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/new/`, idToken);
 
     useEffect(() => {
         if(data !== null && data !== undefined) {
-            commentDataRefech();
+            if (data.success !== false) {
+                commentDataRefech();
+            }
             commentRef.current.value = "";
         }
     },[data]);
@@ -20,6 +23,10 @@ function NewComment({commentDataRefech, postId, subpageUid, subPageName, msgToPa
     // Handlers
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!comment.comment || comment.comment === "") {
+            setCommentWarning("Comments can not be empty");
+            return;
+        }
         await subpagePost(comment);
         //console.log(comment);
     }
@@ -54,15 +61,18 @@ function NewComment({commentDataRefech, postId, subpageUid, subPageName, msgToPa
                 <form onSubmit={handleSubmit}>
                     <textarea ref={commentRef} onChange={handleInputChange} name="comment" className="bg-app-bg-color border border-border-color outline-none p-2 h-40 w-96 rounded-lg mb-3 hover:border-form-hover focus:border-form-focus" placeholder="Write a comment"></textarea>
                     <p>
-                        <button className="standard-button" type="submit">Post</button>
+                        <button className="standard-button mr-3" type="submit">Post</button>
+                        {commentWarning}
+                        {data && data.success === false ? <>{data.message}</> : ""}
+                        {error && error}
+                        {data && data.error ? (<>{data.error}</>):(<></>)}
                     </p>
                     
                 </form>
+                <p>
+
+                </p>
             </div>
-            <p>
-                {error && error}
-                {data && data.error ? (<>{data.error}</>):(<></>)}
-            </p>
         </>
     );
 }

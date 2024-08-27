@@ -8,6 +8,7 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     username = db.Column(db.String(100), nullable=False)
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    last_action = db.Column(db.String(50))
 
     posts = db.relationship("Post", backref="user", lazy=True)
     subscriptions = db.relationship('UserSubscription', backref="user", lazy=True)

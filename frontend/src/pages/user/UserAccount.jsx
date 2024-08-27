@@ -277,7 +277,7 @@ function UserAccount(props) {
                                                                                                 Posted to: {downVoteData.data[key].subpage_name}
                                                                                             </div>
                                                                                             <div>
-                                                                                                Upvoted on {downVoteData.data[key].event_timestamp}
+                                                                                                Downvoted on {downVoteData.data[key].event_timestamp}
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>

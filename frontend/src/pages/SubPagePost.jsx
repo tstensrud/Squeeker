@@ -74,7 +74,7 @@ function SubPagePost(props) {
                                 <div>
                                     <ul className="p-0 m-0 list-none">
                                         <li className="inline mr-3 text-xs tracking-wide text-grey-text">
-                                            Submitted at: {postData && postData.data.timestamp}
+                                            Last modified at: {postData && postData.data.event_timestamp}
                                         </li>
                                         <li className="inline mr-3 text-xs tracking-wide text-grey-text">
                                             Posted by: {postData && postData.data.author_name}
