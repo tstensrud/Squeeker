@@ -77,12 +77,20 @@ def get_all_votes_posts_user(user_uid: str, upvotes: bool) -> dict:
 def get_user_post_score(uuid: str) -> int:
     post_upvotes = db.session.query(func.sum(models.Post.upvotes)).filter(models.Post.author_uuid == uuid).scalar()
     post_downvotes = db.session.query(func.sum(models.Post.downvotes)).filter(models.Post.author_uuid == uuid).scalar()
+    if post_upvotes is None:
+        post_upvotes = 0
+    if post_downvotes is None:
+        post_downvotes = 0
     post_score = post_upvotes - post_downvotes
     return post_score
 
 def get_user_comment_score(uuid: str) -> int:
     comment_upvotes = db.session.query(func.sum(models.Comment.upvotes)).filter(models.Comment.author == uuid).scalar()
     comment_downvotes = db.session.query(func.sum(models.Comment.downvotes)).filter(models.Comment.author == uuid).scalar()
+    if comment_upvotes is None:
+        comment_upvotes = 0
+    if comment_downvotes is None:
+        comment_downvotes = 0
     comment_score = comment_upvotes - comment_downvotes
     return comment_score
 
@@ -103,31 +111,35 @@ def get_user_total_comments(uuid: str) -> int:
 # Checks if timestamp of current action is not less than 60 seconds to prevent post/comment spam
 def can_user_post_again(uuid: str) -> bool:
     user = get_user(uuid)
-    timestamp = user.last_action
-    if timestamp is None:
-        return True
-    print(f"Timestamp for last actio: {timestamp}")
-    timestamp_now = get_timestamp()
-    print(f"Timestamp now: {timestamp_now}")
-    time_since_last_entry = int(timestamp_now) - int(timestamp)
-    print(f"Seconds since last entry by user: {time_since_last_entry}")
-    if time_since_last_entry < 60:
-        return False
-    else:
-        return True
+    if user:
+        timestamp = user.last_action
+        if timestamp is None:
+            return True
+        print(f"Timestamp for last actio: {timestamp}")
+        timestamp_now = get_timestamp()
+        print(f"Timestamp now: {timestamp_now}")
+        time_since_last_entry = int(timestamp_now) - int(timestamp)
+        print(f"Seconds since last entry by user: {time_since_last_entry}")
+        if time_since_last_entry < 60:
+            return False
+        else:
+            return True
+    return False
 
 # Add timestamp when user performed last action to prevent users from spamming content
 def add_user_last_action(uuid: str) -> bool:
     user = get_user(uuid)
-    timestamp = get_timestamp()
-    user.last_action = timestamp
-    try:
-        db.session.commit()
-        return True
-    except Exception as e:
-        db.session.rollback()
-        print(e)
-        return False
+    if user:
+        timestamp = get_timestamp()
+        user.last_action = timestamp
+        try:
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+            return False
+    return False
 
 #############################
 # USER SUBSCRIPTIONS        #
@@ -258,8 +270,10 @@ def get_subpage(subpage_name, subpage_uid) -> models.Subpage:
 
 def get_subpage_data(subpage_uid) -> dict:
     subpage = get_subpage(None, subpage_uid)
-    subpage_data = subpage.to_json()
-    return subpage_data
+    if subpage:
+        subpage_data = subpage.to_json()
+        return subpage_data
+    return {}
 
 def get_subpage_subscribers(subpage_uid) -> list[str]:
     subscriber_uuids = db.session.query(models.UserSubscription.user_uid).filter(models.UserSubscription.subpage_uid == subpage_uid).all()
@@ -401,6 +415,8 @@ def get_comment_children(comment_uid: str) -> list[models.Comment]:
 
 def count_comments_on_post(post_uid: str) -> int:
     comment_count = db.session.query(func.count(models.Comment.post_uid)).filter(models.Comment.post_uid == post_uid).scalar()
+    if comment_count is None:
+        return 0
     return comment_count
 
 def get_post_comments(post_uid: str) -> list[models.Comment]:
