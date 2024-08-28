@@ -1,12 +1,16 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 
-import HeaderComponent from './components/HeaderComponent';
-import LoadingSpinner from './components/LoadingSpinner'
-import { BASE_URL } from '../utils/globalVariables';
-import useFetchNoLogin from '../hooks/useFetchNoLogin';
-import { AuthContext } from '../context/AuthContext';
 import { GlobalContext } from '../context/GlobalContext';
+import { AuthContext } from '../context/AuthContext';
+import { BASE_URL } from '../utils/globalVariables';
+
+// Components
+import HeaderComponent from './components/HeaderComponent';
+import LoadingSpinner from './components/LoadingSpinner';
+import LoadingBar from './components/LoadingBar';
+import useFetchNoLogin from '../hooks/useFetchNoLogin';
+import PageHeader from './components/PageHeader';
 
 function Subpages(props) {
     const { currentUser, idToken } = useContext(AuthContext);
@@ -20,10 +24,7 @@ function Subpages(props) {
 
     return (
         <>
-            <h2 className="text-2xl mb-2">This lodge has many rooms..</h2>
-            <p>
-                Each alike, but occupied by different souls, night after night.
-            </p>
+        <PageHeader headerText="This lodge has many rooms.." subheaderText="Each alike, but occupied by different souls, night after night." />
             <div className="flex flex-col mt-5">
                 {
                     loading && loading === true ? (

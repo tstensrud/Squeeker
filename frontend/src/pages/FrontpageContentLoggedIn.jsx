@@ -18,12 +18,6 @@ function FrontpageContentLoggedIn() {
 
     return (
         <>
-            <div className="flex flex-col w-full">
-                <h2>The front page</h2>
-                <div className="text-base">
-                    A summary of the most recent posts form your subscribed rooms.
-                </div>
-            </div>
             {
                 loading && loading === true ? (
                     <LoadingBar />

@@ -88,6 +88,8 @@ class Post(db.Model):
     upvotes = db.Column(db.Integer)
     downvotes = db.Column(db.Integer)
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    deleted = db.Column(db.Boolean, default=False)
+    deleted_post = db.Column(db.Text, nullable = True)
 
     comments = db.relationship("Comment")
 
@@ -105,7 +107,8 @@ class Post(db.Model):
             'total_votes': self.total_votes,
             'upvotes': self.upvotes,
             'downvotes': self.downvotes,
-            "event_timestamp": self.event_timestamp
+            "event_timestamp": self.event_timestamp,
+            "deleted": self.deleted,
         }
 
 class Comment(db.Model):
@@ -121,6 +124,8 @@ class Comment(db.Model):
     upvotes = db.Column(db.Integer)
     downvotes = db.Column(db.Integer)
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    deleted = db.Column(db.Boolean, default=False)
+    deleted_comment = db.Column(db.Text)
 
     def to_json(self):
         author_object = db.session.query(User).filter(User.uuid == self.author).first()
@@ -141,7 +146,8 @@ class Comment(db.Model):
             'total_votes': self.total_votes,
             'upvotes': self.upvotes,
             'downvotes': self.downvotes,
-            "event_timestamp": self.event_timestamp
+            "event_timestamp": self.event_timestamp,
+            "deleted": self.deleted
         }
 
 class Vote(db.Model):

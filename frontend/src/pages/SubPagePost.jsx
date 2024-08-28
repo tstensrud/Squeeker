@@ -12,14 +12,20 @@ import NewComment from './components/NewComment';
 import LoadingSpinner from './components/LoadingSpinner';
 import Comment from './components/Comment';
 import Votebox from './components/VoteBox';
+import PostReplyShareDeleteButton from './components/formcomponents/PostReplyShareDeleteButton';
+import useDelete from '../hooks/useDelete';
 
 function SubPagePost(props) {
 
     const { subPageName, postId } = useParams();
     const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
+    
+    // useStates
     const [subpageUid, setSubpageUid] = useState("");
     const [newCommentUid, setNewCommentUid] = useState(null);
+    const [deleteData, setDeleteData] = useState({});
+    const [deletePostError, setDeleteError] = useState("");
 
     // Initial fetches
     const { data: subpageData, loading: subpageDataLoading, error: subpageDataError } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
@@ -31,6 +37,14 @@ function SubPagePost(props) {
     const { data: latestCommentData, loading: latestCommentLoading, error: latestCommentError, fetchData } = useFetchDemand(
         newCommentUid ? `${BASE_URL}/api/subpage/get_comment/${newCommentUid}/` : null, idToken);
 
+    // Delete post content
+    const {response: deleteResponse, error: deleteError, deleteEntry } = useDelete(`${BASE_URL}/api/subpage/post/delete/${postId}/`, idToken);
+    
+    // useEffects
+    useEffect(() => {
+        setDeleteData({author_uuid: postData?.data?.author_uuid});
+    },[postData]);
+
     useEffect(() => {
         setSubpageUid(subpageData && subpageData.data.uid)
     }, [subpageData])
@@ -39,6 +53,13 @@ function SubPagePost(props) {
         setSelectedIndex(props.index);
     },[]);
 
+    useEffect(() => {
+        if (deleteResponse?.success === true) {
+            refetchPostData();
+        } else {
+            setDeleteError(deleteResponse?.message);
+        }
+    },[deleteResponse])
     // If the user leaves a comment, this will trigger a fetch of that comment so that it is visible to the user immediately
     useEffect(() => {
         const fetchLatestComment = async () => {
@@ -54,8 +75,13 @@ function SubPagePost(props) {
         fetchLatestComment();
     }, [newCommentUid]);
 
+    const handleDeletePost = async (e) => {
+        e.preventDefault();
+        await deleteEntry(deleteData);
+    }
+
     return (
-        <>
+        <> 
             {
                 postDataLoading && postDataLoading === true ? (<LoadingSpinner key={"loadingspinner1"} />
                 ) : (
@@ -82,7 +108,21 @@ function SubPagePost(props) {
                                         <li className="inline mr-3 text-xs tracking-wide text-grey-text">
                                             Posted to: <Link to={`/room/${subPageName}`} className="link-card">{subPageName}</Link>
                                         </li>
+                                        {
+                                            currentUser?.uid === postData?.data?.author_uuid && (
+                                                <>
+                                                    {
+                                                        postData?.data?.deleted !== true && <li onClick={handleDeletePost} className="inline mr-3 text-xs tracking-wide text-link-green cursor-pointer hover:text-link-hover">Delete</li>
+                                                    }
+                                                </>
+                                            ) 
+                                        }
                                     </ul>
+                                    <div>
+                                        {
+                                            deletePostError && deletePostError !== "" && <>{deletePostError}</>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>

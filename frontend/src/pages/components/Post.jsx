@@ -17,7 +17,7 @@ function Post({ postData }) {
                 <div className="flex flex-col">
 
                     <div className="w-full">
-                        <Link className="post-card-title-link" to={`/room/${postData.subpage_name}/post/${postData.uid}/`}>
+                        <Link className="text-post-card-title-link hover:text-post-card-title-link" to={`/room/${postData.subpage_name}/post/${postData.uid}/`}>
                         <h3>{postData.title}</h3>
                         </Link>
                     </div>

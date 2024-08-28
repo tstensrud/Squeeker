@@ -4,19 +4,19 @@
 
 @layer base {
   h1 {
-    @apply text-3xl font-bold mt-2 mb-2;
+    @apply text-3xl font-bold;
   }
 
   h2 {
-    @apply text-2xl font-semibold mt-2 mb-2;
+    @apply text-2xl font-semibold;
   }
 
   h3 {
-    @apply text-xl font-medium mt-2 mb-2;
+    @apply text-xl font-medium;
   }
 
   h4 {
-    @apply text-base font-bold mt-2 mb-2;
+    @apply text-base font-bold;
   }
 
   a {
@@ -46,14 +46,6 @@
   }
   .post-title-card {
     @apply flex flex-row border border-border-color rounded-lg mt-5 pt-3 pb-3 pr-3;
-  }
-
-  .post-card-title-link {
-    @apply text-post-card-title-link;
-  }
-
-  .post-card-title-link:hover {
-    @apply text-post-card-title-link;
   }
 
   .standard-button {

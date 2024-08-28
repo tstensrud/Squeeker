@@ -84,7 +84,7 @@ function UserAccount(props) {
                         {
                             userData && userData.success === true ? (
                                 <>
-                                    <div className="flex flex-row w-80">
+                                    <div className="flex flex-row w-80 mt-5">
 
                                         {/* Card user data and stats */}
                                         <div className="flex flex-col w-full">

@@ -11,21 +11,36 @@ import { AuthContext } from '../../context/AuthContext';
 // Components
 import LoadingSpinner from './LoadingSpinner';
 import VoteboxComment from './VoteBoxComment';
-
+import PostReplyShareDeleteButton from "./formcomponents/PostReplyShareDeleteButton";
+import useDelete from "../../hooks/useDelete";
 
 function Comment({ isChild, commentDataRefech, data }) {
     const commentUid = data
+    const { currentUser, idToken } = useContext(AuthContext);
+
+    // useStates
     const [showReplyContainer, setShowReplyContainer] = useState(false);
     const [reply, setReply] = useState({});
     const [replyWarning, setReplyWarning] = useState("");
-    const { currentUser, idToken } = useContext(AuthContext);
+    const [deleteData, setDeleteData] = useState({})
 
     // Fetch and posts
     const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefetch } = useFetch(`${BASE_URL}/api/subpage/get_comment/${commentUid}/`, idToken);
     const { data: childrenCommentData, loading: childrenCommentDataLoading, error: childrenCommentDataError, refetch: refetchChildrenData } = useFetch(`${BASE_URL}/api/subpage/comment/children/${commentUid}/`, idToken);
-    //const { data: replyData, error: replyError, fetchData } = useFetchDemand(`${BASE_URL}/api/subpage/comment/children/${data.uid}/`, idToken);
+    
     const { loading, data: replyData, error: replyError, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/reply/new/`, idToken);
     const { data: totalVotes, refetch: refetchTotalVotes } = useFetch(`${BASE_URL}/api/subpage/comment/votes/${commentUid}/`, idToken);
+    const { response: deleteResponse, loading: deleteLoading, error: deleteError, deleteEntry} = useDelete(`${BASE_URL}/api/subpage/comment/delete/${commentUid}/`, idToken);
+
+    useEffect(() => {
+        setDeleteData({author_uuid: commentData?.data?.author_uuid});
+    },[commentData]);
+
+    useEffect(() => {
+        if (deleteResponse?.success === true) {
+            commentDataRefetch();
+        }
+    },[deleteResponse]);
 
     useEffect(() => {
         setReply((prev) => ({
@@ -43,7 +58,6 @@ function Comment({ isChild, commentDataRefech, data }) {
             refetchChildrenData();
         }
     }, [replyData]);
-
 
     // Handlers
     const toggleReplySection = (e) => {
@@ -68,6 +82,11 @@ function Comment({ isChild, commentDataRefech, data }) {
         }));
     }
 
+    const handleDeleteComment = async (e) => {
+        e.preventDefault();
+        await deleteEntry(deleteData);
+    }
+
     return (
         <>
             <div className="card">
@@ -83,7 +102,7 @@ function Comment({ isChild, commentDataRefech, data }) {
                             ) : (
                                 <>
                                     <div className="text-xs text-grey-text">
-                                        <strong>{totalVotes && totalVotes.data}</strong> pts. Commented at: {commentData && commentData.data && commentData.data.timestamp} by: <Link  to="#">{commentData && commentData.data && commentData.data.author_name}</Link>
+                                        <strong>{totalVotes && totalVotes.data}</strong> pts. Commented at: {commentData && commentData.data && commentData.data.timestamp} by: <Link to="#">{commentData && commentData.data && commentData.data.author_name}</Link>
                                     </div>
                                     <div className="mb-3 mt-3">
                                         {commentData && commentData.data && commentData.data.comment}
@@ -94,11 +113,20 @@ function Comment({ isChild, commentDataRefech, data }) {
                         <div className="flex flex-row">
                             {
                                 currentUser && idToken ? (
+                                    <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Reply" />
+                                ) : (<></>)
+                            }
+                            <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
+                            {
+                                currentUser?.uid === commentData?.data?.author_uuid && (
                                     <>
-                                        <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green" onClick={toggleReplySection}>Reply</button>
+                                        {
+                                            commentData?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
+                                        }
+                                        
                                     </>
-                                ) : (<></>)}
-                            <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green">Share</button>
+                                )
+                            }
                         </div>
                         {
                             showReplyContainer === true ? (

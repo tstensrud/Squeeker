@@ -177,6 +177,24 @@ def new_subpage_post(subpage_uid):
     else:
         return jsonify({"success": False, "message": "No data received"})
 
+@api.route('/subpage/post/delete/<post_uid>/', methods=['DELETE'])
+def delete_post(post_uid):
+    data = request.get_json()
+    if data:
+        try:
+            user = auth.get_user(data["author_uuid"])
+        except Exception as e:
+            return jsonify({"success": False, "message": "Unauthorized"})
+        firebase_uid = user.uid
+        if data["author_uuid"] == firebase_uid:
+            deleted_post = db.delete_post(post_uid)
+            if deleted_post is True:
+                return jsonify({"success": True, "message": "Post deleted"})
+            else:
+                return jsonify({"success": False, "message": "Could not delete post"})    
+    else:
+        return jsonify({"success": False, "message": "No data received"})  
+
 @api.route('/subpage/post/vote/<post_uid>/<direction>/', methods=["PATCH"])
 @firebase_auth_required
 def upvote_post(post_uid, direction):
@@ -307,6 +325,24 @@ def get_comment_children(comment_uid):
         return jsonify({"success": True, "message": "Children comments retrieved", "data": children_data})
     else:
         return jsonify({"success": False, "message": "Parent comment has no children"})
+
+@api.route('/subpage/comment/delete/<comment_uid>/', methods=['DELETE'])
+@firebase_auth_required
+def delete_comment(comment_uid):
+    data = request.get_json()
+    try:
+        user = auth.get_user(data["author_uuid"])
+    except Exception as e:
+        return jsonify({"success": False, "message": "Could not find user"})
+    user_uid = user.uid
+    if data["author_uuid"] == user_uid:
+        deleted_comment = db.delete_comment(comment_uid)
+        if deleted_comment:
+            return jsonify({"success": True, "message": "Comment deleted"})
+        else:
+            return jsonify({"success": False, "message": "Could not delete comment"})    
+    else:
+        return jsonify({"success": False, "message": "Unauthorized"})
 
 # Get posts for front page
 @api.route('/frontpage/<uuid>/<limit>/', methods=['GET'])

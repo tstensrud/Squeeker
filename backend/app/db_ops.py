@@ -266,6 +266,26 @@ def get_subpage_subscribers(subpage_uid) -> list[str]:
             subscribers.append(username)
         return subscribers
 
+def get_subpage_posts(total_posts: int, subpage_uid: str, order_by: str):
+    if order_by == "date":
+        posts = db.session.query(models.Post).filter(models.Post.subpage_uid == subpage_uid).order_by(desc(models.Post.timestamp)).limit(total_posts).all()
+    elif order_by == "votes":
+        posts = db.session.query(models.Post).filter(models.Post.subpage_uid == subpage_uid).order_by(desc(models.Post.total_votes)).limit(total_posts).all()
+
+    if posts:
+        post_dict = {}
+        for post in posts:
+            post_data = post.to_json()
+            post_data["comment_count"] = count_comments_on_post(post.uid)
+            post_dict[post.uid] = post_data
+        return post_dict
+    else:
+        return None
+    
+#############################
+# POST RELATED STUFF        #
+#############################
+
 def new_post(data):
     author_uuid = data["author"]
     author_object = get_user(author_uuid)
@@ -309,31 +329,21 @@ def get_post(post_uid: str) -> models.Post:
     else:
         return None
 
-def get_subpage_posts(total_posts: int, subpage_uid: str, order_by: str):
-    if order_by == "date":
-        posts = db.session.query(models.Post).filter(models.Post.subpage_uid == subpage_uid).order_by(desc(models.Post.timestamp)).limit(total_posts).all()
-    elif order_by == "votes":
-        posts = db.session.query(models.Post).filter(models.Post.subpage_uid == subpage_uid).order_by(desc(models.Post.total_votes)).limit(total_posts).all()
+def delete_post(post_uid: str) -> bool:
+    post = get_post(post_uid)
+    if post:
+        post.deleted_post = post.post
+        post.post = "The content of this post was deleted.."
+        post.deleted = True
+        try:
+            db.session.commit()
+            return True
+        except Exception as e:
+            print (e)
+            db.session.rollback()
+            return False
+    return False
 
-    if posts:
-        post_dict = {}
-        for post in posts:
-            post_data = post.to_json()
-            post_data["comment_count"] = count_comments_on_post(post.uid)
-            post_dict[post.uid] = post_data
-        return post_dict
-    else:
-        return None
-
-def get_post_comments(post_uid: str) -> list[models.Comment]:
-    comments = db.session.query(models.Comment).filter(and_(models.Comment.post_uid == post_uid, or_( models.Comment.parent_comment_uid == None, models.Comment.parent_comment_uid == ""))).order_by(models.Comment.total_votes).all()
-    if comments:
-        comment_uids = {}
-        for comment in comments:
-            comment_uids[comment.id] = comment.uid
-        return comment_uids
-    else:
-        return None
 
 #############################
 # COMMENT RELATED STUFF     #
@@ -387,6 +397,33 @@ def get_comment_children(comment_uid: str) -> list[models.Comment]:
 def count_comments_on_post(post_uid: str) -> int:
     comment_count = db.session.query(func.count(models.Comment.post_uid)).filter(models.Comment.post_uid == post_uid).scalar()
     return comment_count
+
+def get_post_comments(post_uid: str) -> list[models.Comment]:
+    comments = db.session.query(models.Comment).filter(and_(models.Comment.post_uid == post_uid, or_( models.Comment.parent_comment_uid == None, models.Comment.parent_comment_uid == ""))).order_by(models.Comment.total_votes).all()
+    if comments:
+        comment_uids = {}
+        for comment in comments:
+            comment_uids[comment.id] = comment.uid
+        return comment_uids
+    else:
+        return None
+    
+def delete_comment(comment_uid: str) -> bool:
+    comment = get_comment(comment_uid)
+    if comment:
+        if comment.deleted is True:
+            return False
+        comment.deleted_comment = comment.comment
+        comment.comment = "This comment was deleted :-("
+        comment.deleted = True
+        try:
+            db.session.commit()
+            return True
+        except Exception as e:
+            print (e)
+            db.session.rollback()
+            return False
+    return False
 
 #############################
 # VOTING                    #

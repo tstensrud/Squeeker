@@ -61,7 +61,8 @@ function HeaderComponent({ subpageData }) {
 
     return (
         <>
-            <div className="flex flex-row mb-5 mt-4">
+        
+            <div className="flex flex-row mb-5 mt-5">
                 <div className="flex flex-col">
                     <h2>Welcome to {subpageData && subpageData.name}!</h2>
                     <p className="text-grey-text">

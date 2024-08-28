@@ -4,18 +4,19 @@ import useRegisterSubpage from '../hooks/useRegisterSubpage';
 import { BASE_URL } from '../utils/globalVariables';
 import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../context/GlobalContext';
+import PageHeader from './components/PageHeader';
 
 function CreateSubPage(props) {
     const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
 
     const { data, loading, error, registerSubpage } = useRegisterSubpage(`${BASE_URL}/api/subpage/create/`, idToken);
-    
+
     const [pageData, setPageData] = useState({ "public": true, "nsfw": false });
     const [creationError, setCreationError] = useState("");
     const [publicChecked, setPublicChecked] = useState(true);
     const [nsfwChecked, setNsfwChecked] = useState(false);
-    
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -61,10 +62,9 @@ function CreateSubPage(props) {
     }
 
     return (
-        <>
-            <h2>Create a new room</h2>
+        <>  
+            <PageHeader headerText="Create new room" subheaderText="Here you can create your own new room" />
             <div className="card">
-
                 {
                     idToken ? (
                         <>

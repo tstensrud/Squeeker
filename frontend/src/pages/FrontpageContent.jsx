@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 
 // Components
 import FrontpageContentLoggedIn from "./FrontpageContentLoggedIn";
+import PageHeader from "./components/PageHeader";
 
 function FrontpageContent() {
 
@@ -11,6 +12,7 @@ function FrontpageContent() {
 
     return (
         <>
+        <PageHeader headerText="The front page of the lodge" subheaderText="A summary of the most recent posts form your subscribed rooms." />
             {   
                 // If logged in
                 currentUser && idToken ? (

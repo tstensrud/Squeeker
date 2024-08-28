@@ -31,7 +31,8 @@ function SubPage(props) {
     
     useEffect(() => {
         setSelectedIndex(props.index);
-    },[])
+    },[]);
+    
     return (
         <>
             {
