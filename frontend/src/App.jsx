@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter as Router, BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
 
@@ -25,7 +25,7 @@ function App() {
 
 
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/" element={<FrontPage />}>
           <Route path="/" element={<FrontPageContent />} />
@@ -40,7 +40,7 @@ function App() {
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   )
 }
 
