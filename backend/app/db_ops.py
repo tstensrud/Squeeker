@@ -541,28 +541,28 @@ def has_upvoted_comment(comment_uid: str, uuid: str) -> bool:
 #############################
 def get_frontpage_posts_logged_in(user_uid: str, limit: int) -> dict:
     subs = get_user_subscriptions(user_uid, False)
-    if len(subs) == 0:
-        return False
-    try:
-        limit = int(limit)
-    except Exception as e:
-        print(e)
-        return False
+    if subs:
+        try:
+            limit = int(limit)
+        except Exception as e:
+            print(e)
+            return False
 
-    if limit % len(subs) == 0:
-        posts_per_sub = limit / len(subs)
-    else:
-        for lim in range(limit, limit + 10):
-            if lim % len(subs) == 0:
-                posts_per_sub = lim / len(subs)
-                break
-    post_dict = {}
-    for sub in subs:
-        posts = db.session.query(models.Post).filter(models.Post.subpage_uid == sub).order_by(models.Post.timestamp.desc()).limit(posts_per_sub)
-        for post in posts:
-            comment_count = count_comments_on_post(post.uid)
-            post_data = post.to_json()
-            post_data["comment_count"] = comment_count
-            post_dict[post.uid] = post_data
-    return post_dict
+        if limit % len(subs) == 0:
+            posts_per_sub = limit / len(subs)
+        else:
+            for lim in range(limit, limit + 10):
+                if lim % len(subs) == 0:
+                    posts_per_sub = lim / len(subs)
+                    break
+        post_dict = {}
+        for sub in subs:
+            posts = db.session.query(models.Post).filter(models.Post.subpage_uid == sub).order_by(models.Post.timestamp.desc()).limit(posts_per_sub)
+            for post in posts:
+                comment_count = count_comments_on_post(post.uid)
+                post_data = post.to_json()
+                post_data["comment_count"] = comment_count
+                post_dict[post.uid] = post_data
+        return post_dict
+    return {}
 

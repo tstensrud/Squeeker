@@ -35,7 +35,7 @@ function FrontpageContentLoggedIn() {
                                 </>
                             ) : (
                                 <>
-                                    {data.message}
+                                    {data && data.message}
                                 </>
                             )
                         }
