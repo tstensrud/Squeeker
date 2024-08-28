@@ -104,6 +104,8 @@ def get_user_total_comments(uuid: str) -> int:
 def can_user_post_again(uuid: str) -> bool:
     user = get_user(uuid)
     timestamp = user.last_action
+    if timestamp is None:
+        return True
     print(f"Timestamp for last actio: {timestamp}")
     timestamp_now = get_timestamp()
     print(f"Timestamp now: {timestamp_now}")
