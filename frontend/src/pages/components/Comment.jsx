@@ -45,7 +45,7 @@ function Comment({ isChild, commentDataRefech, data }) {
     useEffect(() => {
         setReply((prev) => ({
             ...prev,
-            authorUid: commentData && commentData.data && commentData.data.author_uuid,
+            authorUid: currentUser && currentUser.uid,
             parentComment: commentUid,
             postUid: commentData && commentData.data && commentData.data.post_uid,
         }));
