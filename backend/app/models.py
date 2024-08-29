@@ -1,5 +1,5 @@
 from . import db
-from sqlalchemy import func, and_, or_, asc, desc
+from sqlalchemy import func, and_, or_, asc, desc, Index
 
 class User(db.Model):
     __tablename__ = 'Users'
@@ -13,7 +13,11 @@ class User(db.Model):
     posts = db.relationship("Post", backref="user", lazy=True)
     subscriptions = db.relationship('UserSubscription', backref="user", lazy=True)
     comments = db.relationship("Comment", backref='user', lazy=True)
-
+    
+    __table_args__ = (
+            Index('idx_uid', 'uuid'),
+        )
+    
     def to_json(self):
         return {
             "id": self.id,
@@ -26,11 +30,16 @@ class User(db.Model):
 class UserMessage(db.Model):
     __tablename__ = "UserMessage"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uid = db.Column(db.String(255), unique=True, nullable=False)
     recipient_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
     sender_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.String(50))
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    
+    __table_args__ = (
+        Index('idx_uid', 'uid'),
+    )
 
 class UserSubscription(db.Model):
     __tablename__ = 'Usersubscription'
@@ -39,6 +48,10 @@ class UserSubscription(db.Model):
     subpage_uid = db.Column(db.String(255), nullable=False)
     timestamp = db.Column(db.String(100))
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index('idx_uid', 'user_uid'),
+    )
 
     def to_json(self):
         return {
@@ -60,6 +73,10 @@ class Subpage(db.Model):
     active = db.Column(db.Boolean, default=True)
     nsfw = db.Column(db.Boolean, default=False)
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index('idx_uid', 'uid'),
+    )
 
     def to_json(self):
         return {
@@ -92,6 +109,10 @@ class Post(db.Model):
     deleted_post = db.Column(db.Text, nullable = True)
 
     comments = db.relationship("Comment")
+
+    __table_args__ = (
+        Index('idx_uid', 'uid'),
+    )
 
     def to_json(self):
         return {
@@ -127,6 +148,10 @@ class Comment(db.Model):
     deleted = db.Column(db.Boolean, default=False)
     deleted_comment = db.Column(db.Text)
 
+    __table_args__ = (
+        Index('idx_uid', 'uid'),
+    )
+
     def to_json(self):
         author_object = db.session.query(User).filter(User.uuid == self.author).first()
         author_name = author_object.username
@@ -161,6 +186,9 @@ class Vote(db.Model):
     downvote = db.Column(db.Boolean)
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
+    __table_args__ = (
+        Index('idx_uid', 'uid'),
+    )
     def to_json(self):
         return {
             "id": self.id,
