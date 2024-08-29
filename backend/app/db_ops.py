@@ -464,43 +464,45 @@ def get_vote_record(vote_object_uid: str, author_uuid: str, post: bool) -> model
 def set_vote(author_uuid: str, direction: str, post_uid=None, comment_uid=None) -> bool:
     if post_uid:
         vote_record = get_vote_record(post_uid, author_uuid, True)
-        post_comment = get_post(post_uid)
+        post_or_comment = get_post(post_uid)
     elif comment_uid:
         vote_record = get_vote_record(comment_uid, author_uuid, False)
-        post_comment = get_comment(comment_uid)
+        post_or_comment = get_comment(comment_uid)
 
     # Set votes for existing voting record in Vote-table
     if vote_record:
-        # Prevents a user to vote for his own content
+        
         if direction == "0":
             if vote_record.upvote is True:
-                post_comment.upvotes = post_comment.upvotes - 1
+                post_or_comment.upvotes = post_or_comment.upvotes - 1
             elif vote_record.downvote is True:
-                post_comment.downvotes = post_comment.downvotes - 1
+                post_or_comment.downvotes = post_or_comment.downvotes - 1
             vote_record.upvote = False
             vote_record.downvote = False
         
         elif direction == "1":
+            #Prevent multiple upvotes from same user
             if vote_record.upvote is True:
                 return False
             else:
-                post_comment.upvotes = post_comment.upvotes + 1
+                post_or_comment.upvotes = post_or_comment.upvotes + 1
                 if vote_record.downvote is True:
-                    post_comment.downvotes = post_comment.downvotes - 1
+                    post_or_comment.downvotes = post_or_comment.downvotes - 1
             vote_record.upvote = True
             vote_record.downvote = False
         
         elif direction == "-1":
+            #Prevent multiple downvotes from same user
             if vote_record.downvote is True:
                 return False
             else:
-                post_comment.downvotes = post_comment.downvotes + 1
+                post_or_comment.downvotes = post_or_comment.downvotes + 1
                 if vote_record.upvote is True:
-                    post_comment.upvotes = post_comment.upvotes - 1
+                    post_or_comment.upvotes = post_or_comment.upvotes - 1
             vote_record.upvote = False
             vote_record.downvote = True
         
-        post_comment.total_votes = post_comment.upvotes - post_comment.downvotes
+        post_or_comment.total_votes = post_or_comment.upvotes - post_or_comment.downvotes
 
         try:
             db.session.commit()
@@ -513,12 +515,19 @@ def set_vote(author_uuid: str, direction: str, post_uid=None, comment_uid=None) 
     # If user has not voted for this post/comment yet
     else:
         uid = str(uuid4())
+        upvote = False
+        downvote = False
+        if direction == "1":
+            upvote = True
+        if direction == "-1":
+            downvote = True
+            
         new_vote_object = models.Vote(uid = uid,
                                       post_uid = post_uid,
                                       comment_uid = comment_uid,
                                       author_uuid=author_uuid,
-                                      upvote=True,
-                                      downvote=False)
+                                      upvote=upvote,
+                                      downvote=downvote)
         try:
             db.session.add(new_vote_object)
             db.session.commit()

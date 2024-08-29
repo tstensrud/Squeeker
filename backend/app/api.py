@@ -205,13 +205,13 @@ def upvote_post(post_uid, direction):
     
     if data:
         # Set vote direction        
-        voter = data["voter"]
+        voter_uid = data["voter"]
         is_subpage_post = data["post"]
         
         if is_subpage_post is True:
             post = db.get_post(post_uid)
             if post:
-                vote = db.set_vote(voter, direction, post_uid=post_uid)
+                vote = db.set_vote(voter_uid, direction, post_uid=post_uid)
                 if vote:
                     return jsonify({"success": True, "message": "Vote for post received"})
                 else:
@@ -221,7 +221,7 @@ def upvote_post(post_uid, direction):
         elif is_subpage_post is False:
             comment = db.get_comment(post_uid)
             if comment:
-                vote = db.set_vote(voter, direction, comment_uid=post_uid)
+                vote = db.set_vote(voter_uid, direction, comment_uid=post_uid)
                 if vote:
                     return jsonify({"success": True, "message": "Vote for comment received"})
                 else:
