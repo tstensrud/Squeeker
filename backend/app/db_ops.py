@@ -403,15 +403,21 @@ def get_comment(comment_uid: str) -> models.Comment:
     else:
         return None
 
-def get_comment_children(comment_uid: str) -> list[models.Comment]:
+def get_comment_children(comment_uid: str, uuid=None) -> dict:
     children = db.session.query(models.Comment).filter(models.Comment.parent_comment_uid == comment_uid).all()
     if children:
-        children_data = {}
+        all_comment_data = {}
         for child in children:
-            children_data[child.id] = child.uid
-        return children_data
+            comment_data = {}
+            comment_data["data"] = child.to_json()
+            if uuid:
+                comment_data["has_voted"] = has_upvoted_comment(child.uid, uuid)
+            if child.parent_comment_uid is not None:
+                comment_data["children"] = get_comment_children(child.uid)
+            all_comment_data[child.uid] = comment_data
+        return all_comment_data
     else:
-        return None
+        return {}
 
 def count_comments_on_post(post_uid: str) -> int:
     comment_count = db.session.query(func.count(models.Comment.post_uid)).filter(models.Comment.post_uid == post_uid).scalar()
@@ -419,7 +425,7 @@ def count_comments_on_post(post_uid: str) -> int:
         return 0
     return comment_count
 
-def get_post_comments(post_uid: str) -> list[models.Comment]:
+def get_post_comments_uids(post_uid: str) -> dict:
     comments = db.session.query(models.Comment).filter(and_(models.Comment.post_uid == post_uid, or_( models.Comment.parent_comment_uid == None, models.Comment.parent_comment_uid == ""))).order_by(models.Comment.total_votes).all()
     if comments:
         comment_uids = {}
@@ -428,7 +434,22 @@ def get_post_comments(post_uid: str) -> list[models.Comment]:
         return comment_uids
     else:
         return None
-    
+
+def get_post_comments_all_data(post_uid: str, limit: int, uuid=None) -> list[models.Comment]:
+    comments = db.session.query(models.Comment).filter(and_(models.Comment.post_uid == post_uid, or_( models.Comment.parent_comment_uid == None, models.Comment.parent_comment_uid == ""))).order_by(models.Comment.total_votes).all()
+    if comments:
+        all_comment_data = {}
+        for comment in comments:
+            comment_data = {}
+            comment_data["data"] = comment.to_json()
+            if uuid:
+                has_voted = has_upvoted_comment(comment.uid, uuid)
+                comment_data["has_voted"] = has_voted
+            comment_data["children"] = get_comment_children(comment.uid, uuid=uuid)
+            all_comment_data[comment.uid] = comment_data
+        return all_comment_data
+    return None
+
 def delete_comment(comment_uid: str) -> bool:
     comment = get_comment(comment_uid)
     if comment:

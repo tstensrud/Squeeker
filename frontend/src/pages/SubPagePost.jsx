@@ -20,7 +20,7 @@ function SubPagePost(props) {
     const { subPageName, postId } = useParams();
     const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
-    
+
     // useStates
     const [subpageUid, setSubpageUid] = useState("");
     const [newCommentUid, setNewCommentUid] = useState(null);
@@ -29,7 +29,11 @@ function SubPagePost(props) {
 
     // Initial fetches
     const { data: subpageData, loading: subpageDataLoading, error: subpageDataError } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
-    const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(`${BASE_URL}/api/subpage/post/${postId}/comments/`, idToken);
+    //const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(`${BASE_URL}/api/subpage/post/${postId}/comments/`, idToken);
+    
+    const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(
+        postId ? `${BASE_URL}/api/subpage/post/all_comments/${postId}/` : null , idToken);
+    
     const { data: postData, loading: postDataLoading, error: postDataError, refetch: refetchPostData } = useFetch(
         postId ? `${BASE_URL}/api/subpage/post/${postId}/` : null, idToken);
 
@@ -38,12 +42,12 @@ function SubPagePost(props) {
         newCommentUid ? `${BASE_URL}/api/subpage/get_comment/${newCommentUid}/` : null, idToken);
 
     // Delete post content
-    const {response: deleteResponse, error: deleteError, deleteEntry } = useDelete(`${BASE_URL}/api/subpage/post/delete/${postId}/`, idToken);
-    
+    const { response: deleteResponse, error: deleteError, deleteEntry } = useDelete(`${BASE_URL}/api/subpage/post/delete/${postId}/`, idToken);
+
     // useEffects
     useEffect(() => {
-        setDeleteData({author_uuid: postData?.data?.author_uuid});
-    },[postData]);
+        setDeleteData({ author_uuid: postData?.data?.author_uuid });
+    }, [postData]);
 
     useEffect(() => {
         setSubpageUid(subpageData && subpageData.data.uid)
@@ -51,7 +55,7 @@ function SubPagePost(props) {
 
     useEffect(() => {
         setSelectedIndex(props.index);
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (deleteResponse?.success === true) {
@@ -59,7 +63,8 @@ function SubPagePost(props) {
         } else {
             setDeleteError(deleteResponse?.message);
         }
-    },[deleteResponse])
+    }, [deleteResponse])
+
     // If the user leaves a comment, this will trigger a fetch of that comment so that it is visible to the user immediately
     useEffect(() => {
         const fetchLatestComment = async () => {
@@ -81,9 +86,10 @@ function SubPagePost(props) {
     }
 
     return (
-        <> 
+        <>
             {
-                postDataLoading && postDataLoading === true ? (<LoadingSpinner key={"loadingspinner1"} />
+                postDataLoading && postDataLoading === true ? (
+                    <LoadingSpinner />
                 ) : (
                     <>
                         <div className="post-title-card">
@@ -115,7 +121,7 @@ function SubPagePost(props) {
                                                         postData?.data?.deleted !== true && <li onClick={handleDeletePost} className="inline mr-3 text-xs tracking-wide text-link-green cursor-pointer hover:text-link-hover">Delete</li>
                                                     }
                                                 </>
-                                            ) 
+                                            )
                                         }
                                     </ul>
                                     <div>
@@ -143,14 +149,12 @@ function SubPagePost(props) {
 
             {
                 commentDataLoading && commentDataLoading === true ? (
-                    <>
-                        <LoadingSpinner key={"loadingspinner2"} />
-                    </>
+                    <LoadingSpinner />
                 ) : (
                     <>
                         {
                             latestCommentData && latestCommentData !== null && latestCommentData !== undefined ? (
-                                <Comment isChild={false} commentDataRefech={commentDataRefech} key={latestCommentData.data} data={latestCommentData.data} />
+                                <Comment isChild={false} key={latestCommentData.data} data={latestCommentData.data} />
                             ) : (
                                 <>
                                 </>
@@ -159,7 +163,7 @@ function SubPagePost(props) {
 
                         {
                             commentData && commentData.data !== undefined && Object.keys(commentData.data).map((key, index) => (
-                                <Comment isChild={false} commentDataRefech={commentDataRefech} key={index} data={commentData.data[key]} />
+                                <Comment isChild={false} key={index} data={commentData.data[key]} />
                             ))
                         }
 

@@ -54,7 +54,7 @@ function NewComment({commentDataRefech, postId, subpageUid, subPageName, msgToPa
 
     return (
         <>
-            <div className="flex flex-col bg-card-bg-color rounded-lg mb-5 mt-5 p-3">
+            <div className="flex flex-col bg-card-bg-color rounded-lg mt-5 p-3">
                 <span>
                 <h2 className="text-xl mt-2 mb-2">Leave a comment</h2>
                 </span>

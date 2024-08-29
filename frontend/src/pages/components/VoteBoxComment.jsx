@@ -1,57 +1,83 @@
 import { useEffect, useState, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
+import { AuthContext } from '../../context/AuthContext';
+import { BASE_URL } from '../../utils/globalVariables';
+
 // Hooks
 import usePatch from '../../hooks/usePatch';
 
-import { BASE_URL } from '../../utils/globalVariables';
-import { AuthContext } from '../../context/AuthContext';
-import useFetch from '../../hooks/useFetch';
-
-
-function VoteboxComment({ voteStatus, postData, refetchTotalVotes }) {
+function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, postData }) {
     const { currentUser, idToken } = useContext(AuthContext);
+    
+    // useStates
     const [voteData, setVoteData] = useState();
+    const [currenUpvoteStatus, setCurrentUpvoteStatus] = useState();
+    const [currentDownvotestatus, setCurrentDownvoteStatus] = useState();
 
     // Fetches and patches
     const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData}/1/`, idToken);
     const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData}/-1/`, idToken);
     const { data: resetVote, error: resetVoteError, updateData: resetVoteData } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData}/0/`, idToken);
 
-    /* const { data: hasUpvoted, refetch: refetchHasUpvoted } = useFetch(
-        currentUser ? `${BASE_URL}/api/subpage/comment/has_upvoted/${currentUser.uid}/${postData}/` : null, idToken); */
-
     // useEffects
     useEffect(() => {
         setVoteData({
             post: false,
-            voter: currentUser && currentUser.uid,
+            voter: currentUser?.uid,
         });
     }, []);
 
     useEffect(() => {
-        if (upvoteData && upvoteData.success === true || downvoteData && downvoteData.success === true) {
-            //refetchHasUpvoted();
-            refetchTotalVotes();
+        setCurrentUpvoteStatus(voteStatus?.upvoted);
+        setCurrentDownvoteStatus(voteStatus?.downvoted);
+    },[voteStatus]);
+
+    useEffect(() => {
+        if (upvoteData?.success === true) {
+            setTotalCommentVotes(totalCommentVotes + 1);
+            setCurrentUpvoteStatus(true);
+            setCurrentDownvoteStatus(false);
         }
-    }, [upvoteData, downvoteData, resetVote]);
+    }, [upvoteData]);
+
+    useEffect(() => {
+        if (downvoteData?.success === true) {
+            setTotalCommentVotes(totalCommentVotes - 1);
+            setCurrentUpvoteStatus(false);
+            setCurrentDownvoteStatus(true);
+        }
+    },[downvoteData]);
+
+    useEffect(() => {
+        if (resetVote?.success === true) {
+            if (currenUpvoteStatus === true) {
+                setTotalCommentVotes(totalCommentVotes - 1);
+            } else if (currentDownvotestatus === true) {
+                setTotalCommentVotes(totalCommentVotes + 1);
+            }
+            setCurrentUpvoteStatus(false);
+            setCurrentDownvoteStatus(false);
+        }
+    },[resetVote])
 
     // Handlers
-    const handleUpvote = (e) => {
+    const handleUpvote = async (e) => {
         e.preventDefault();
-        upvote(voteData);
+        await upvote(voteData);
     }
 
-    const handleDownVote = (e) => {
+    const handleDownVote = async (e) => {
         e.preventDefault();
-        downvote(voteData)
+        await downvote(voteData);
     }
 
-    const handleResetVote = (e) => {
+    const handleResetVote = async (e) => {
         e.preventDefault();
-        resetVoteData(voteData);
+        await resetVoteData(voteData);
     }
-
+    console.log("Upvote status", currenUpvoteStatus)
+    console.log("Downvote status", currentDownvotestatus)
     return (
         <>
             <div>
@@ -59,7 +85,7 @@ function VoteboxComment({ voteStatus, postData, refetchTotalVotes }) {
                     currentUser && idToken ? (
                         <>
                             {
-                                voteStatus && voteStatus.upvoted === true ? (
+                                currenUpvoteStatus === true ? (
                                     <Link onClick={handleResetVote} >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
                                             <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -77,12 +103,10 @@ function VoteboxComment({ voteStatus, postData, refetchTotalVotes }) {
                             }
                         </>
                     ) : (
-                        <>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
                                 <line x1="12" y1="20" x2="12" y2="4"></line>
                                 <polyline points="6 10 12 4 18 10"></polyline>
                             </svg>
-                        </>
                     )
                 }
 
@@ -96,7 +120,7 @@ function VoteboxComment({ voteStatus, postData, refetchTotalVotes }) {
                     currentUser && idToken ? (
                         <>
                             {
-                                voteStatus && voteStatus.downvoted === true ? (
+                                currentDownvotestatus === true ? (
                                     <Link onClick={handleResetVote}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
                                             <line x1="12" y1="4" x2="12" y2="20"></line>

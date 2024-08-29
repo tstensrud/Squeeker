@@ -9,22 +9,40 @@ def firebase_auth_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         id_token = request.headers.get('Authorization')
-        print(f"ID_TOKEN: {id_token}")
+        #print(f"ID_TOKEN: {id_token}")
         if id_token is None:
-            print("Unauthorize access atempted")
+            #print("Unauthorize access atempted")
             return jsonify({"success": False, "message": "Unauthorized"}), 401
         token = id_token.split(" ")[1]
         try:
-            print("Verifying token")
+            #print("Verifying token")
             decoded_token = auth.verify_id_token(token)
-            print(f"decoded token: {decoded_token}")
+            #print(f"decoded token: {decoded_token}")
             request.user = decoded_token
+            uid = decoded_token['uid']
+            request.user_uid = uid
         except Exception as e:
-            print(f"Failed to verify token: {e}")
+            #print(f"Failed to verify token: {e}")
             return jsonify({"error": str(e)}), 401
         return f(*args, **kwargs)
     return decorated_function
 
+
+def optional_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        id_token = request.headers.get('Authorization')
+        if id_token and id_token.startswith('Bearer '):
+            id_token = id_token.split(' ')[1]
+            try:
+                decoded_token = auth.verify_id_token(id_token)
+                request.user_uid = decoded_token['uid']
+            except Exception as e:
+                request.user_uid = None
+        else:
+            request.user_uid = None
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Front page for logged in user
 @api.route('/frontpage/<uuid>/', methods=['GET'])
@@ -136,7 +154,7 @@ def get_post(post_uid):
 # Retrieve comments from a specific post
 @api.route('/subpage/post/<post_uid>/comments/', methods=['GET'])
 def get_post_comments(post_uid):
-    comments_uids = db.get_post_comments(post_uid)
+    comments_uids = db.get_post_comments_uids(post_uid)
     if comments_uids:
         return jsonify({"success": True, "message": f"Comments for post {post_uid}", "data": comments_uids})
     else:
@@ -156,6 +174,16 @@ def get_comment(comment_uid):
         return jsonify({"success": True, "message": "Comment fetched", "data": comment_data})
     else:
         return jsonify({"success": False, "message": "Could not find comment"})
+
+@api.route('/subpage/post/all_comments/<post_uid>/', methods=['GET'])
+@optional_auth
+def get_all_comments(post_uid):
+    uuid = request.user_uid
+    comments = db.get_post_comments_all_data(post_uid, 0, uuid=uuid)
+    if comments:
+        return jsonify({"success": True, "message": "Comment data retrieved", "data": comments})
+    else:
+        return jsonify({"success": False, "message": "No comments"})
 
 # New post to subpage
 @api.route('/subpage/<subpage_uid>/new_post/', methods=['POST'])

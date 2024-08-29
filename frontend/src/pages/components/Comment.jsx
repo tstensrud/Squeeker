@@ -14,8 +14,8 @@ import VoteboxComment from './VoteBoxComment';
 import PostReplyShareDeleteButton from "./formcomponents/PostReplyShareDeleteButton";
 import useDelete from "../../hooks/useDelete";
 
-function Comment({ isChild, commentDataRefech, data }) {
-    const commentUid = data
+function Comment({ isChild, data }) {
+    const commentUid = data?.data.uid;
     const { currentUser, idToken } = useContext(AuthContext);
 
     // useStates
@@ -23,39 +23,35 @@ function Comment({ isChild, commentDataRefech, data }) {
     const [reply, setReply] = useState({});
     const [replyWarning, setReplyWarning] = useState("");
     const [deleteData, setDeleteData] = useState({})
+    const [totalCommentVotes, setTotalCommentVotes] = useState(data?.data?.total_votes);
 
     // Fetch and posts
-    const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefetch } = useFetch(`${BASE_URL}/api/subpage/get_comment/${commentUid}/`, idToken);
-    const { data: childrenCommentData, loading: childrenCommentDataLoading, error: childrenCommentDataError, refetch: refetchChildrenData } = useFetch(`${BASE_URL}/api/subpage/comment/children/${commentUid}/`, idToken);
-    const { data: totalVotes, refetch: refetchTotalVotes } = useFetch(`${BASE_URL}/api/subpage/comment/votes/${commentUid}/`, idToken);
-    
     const { loading, data: replyData, error: replyError, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/reply/new/`, idToken);
-    const { response: deleteResponse, loading: deleteLoading, error: deleteError, deleteEntry} = useDelete(`${BASE_URL}/api/subpage/comment/delete/${commentUid}/`, idToken);
+    const { response: deleteResponse, loading: deleteLoading, error: deleteError, deleteEntry } = useDelete(`${BASE_URL}/api/subpage/comment/delete/${commentUid}/`, idToken);
 
     useEffect(() => {
-        setDeleteData({author_uuid: commentData?.data?.comment_data?.author_uuid});
-    },[commentData]);
+        setDeleteData({ author_uuid: currentUser?.uid });
+    }, [data]);
 
     useEffect(() => {
         if (deleteResponse?.success === true) {
-            commentDataRefetch();
+            //commentDataRefetch();
         }
-    },[deleteResponse]);
+    }, [deleteResponse]);
 
     useEffect(() => {
         setReply((prev) => ({
             ...prev,
-            authorUid: currentUser && currentUser.uid,
-            parentComment: commentUid,
-            postUid: commentData?.data?.comment_data?.post_uid,
+            authorUid: currentUser?.uid,
+            parentComment: data?.data?.uid,
+            postUid: data?.data?.post_uid,
         }));
-    }, [commentData]);
+    }, [data]);
 
     // Close reply container if response from server is positive
     useEffect(() => {
         if (replyData && replyData.success === true) {
             setShowReplyContainer(!showReplyContainer);
-            refetchChildrenData();
         }
     }, [replyData]);
 
@@ -86,30 +82,39 @@ function Comment({ isChild, commentDataRefech, data }) {
         e.preventDefault();
         await deleteEntry(deleteData);
     }
-
+    
     return (
         <>
-            <div className="card">
+            <div className="card mt-5">
                 <div className="flex flex-row">
                     <div className="flex flex-col w-12">
-                        <VoteboxComment voteStatus={commentData?.data?.comment_data?.has_upvoted} refetchTotalVotes={refetchTotalVotes} postData={commentUid} />
+                        <VoteboxComment totalCommentVotes={totalCommentVotes} setTotalCommentVotes={setTotalCommentVotes}  voteStatus={data?.has_voted} postData={commentUid} />
                     </div>
 
                     <div className="flex flex-col flex-1 m-0">
+
                         {
-                            commentDataLoading && commentDataLoading === true ? (
-                                <LoadingSpinner />
+                            isChild !== true ? (
+                                <>
+                                    <div className="text-xs text-grey-text">
+                                        <strong>{totalCommentVotes}</strong> pts. Commented at: {data?.data?.timestamp} by: <Link to="#">{data?.data?.author_name}</Link>
+                                    </div>
+                                    <div className="mb-3 mt-3">
+                                        {data?.data?.comment}
+                                    </div>
+                                </>
                             ) : (
                                 <>
                                     <div className="text-xs text-grey-text">
-                                        <strong>{totalVotes && totalVotes.data}</strong> pts. Commented at: {commentData?.data?.comment_data?.timestamp} by: <Link to="#">{commentData?.data?.comment_data?.author_name}</Link>
+                                        <strong>{totalCommentVotes}</strong> pts. Commented at: {data?.data?.timestamp} by: <Link to="#">{data?.data?.author_name}</Link>
                                     </div>
                                     <div className="mb-3 mt-3">
-                                        {commentData?.data?.comment_data?.comment}
+                                        {data?.data?.comment}
                                     </div>
                                 </>
                             )
                         }
+
                         <div className="flex flex-row">
                             {
                                 currentUser && idToken ? (
@@ -118,12 +123,12 @@ function Comment({ isChild, commentDataRefech, data }) {
                             }
                             <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
                             {
-                                currentUser?.uid === commentData?.comment_data?.data?.author_uuid && (
+                                currentUser?.uid === data?.data?.author_uuid && (
                                     <>
                                         {
-                                            commentData?.comment_data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
+                                            data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
                                         }
-                                        
+
                                     </>
                                 )
                             }
@@ -147,27 +152,12 @@ function Comment({ isChild, commentDataRefech, data }) {
                         }
                     </div>
                 </div>
-
                 {
-                    childrenCommentDataLoading && childrenCommentDataLoading === true ? (
-                        <LoadingSpinner />
-                    ) : (
-                        <>
-                            {
-                                childrenCommentData && childrenCommentData.success === true ? (
-                                    <>
-                                        {
-                                            childrenCommentData && Object.keys(childrenCommentData.data).map((key, index) => (
-                                                <div key={`${index}+${childrenCommentData.data[key]}`} className="flex mt-3 ml-3 p-1 rounded-bl-lg border-l border-b border-border-color">
-                                                    <Comment commentDataRefech={commentDataRefech} isChild={true} data={childrenCommentData.data[key]} key={index} />
-                                                </div>
-                                            ))
-                                        }
-                                    </>
-                                ) : (<></>)
-                            }
-                        </>
-                    )
+                    data?.children && Object.keys(data?.children).map((key, index) => (
+                        <div key={`${index}+${data?.children[key]}`} className="flex mt-3 ml-3 p-1 rounded-bl-lg border-l border-b border-border-color">
+                            <Comment isChild={true} data={data?.children[key]} key={index} />
+                        </div>
+                    ))
                 }
             </div>
         </>
