@@ -9,18 +9,18 @@ def firebase_auth_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         id_token = request.headers.get('Authorization')
-        #print(f"ID_TOKEN: {id_token}")
+        print(f"ID_TOKEN: {id_token}")
         if id_token is None:
-            #print("Unauthorize access atempted")
+            print("Unauthorize access atempted")
             return jsonify({"success": False, "message": "Unauthorized"}), 401
         token = id_token.split(" ")[1]
         try:
-            #print("Verifying token")
+            print("Verifying token")
             decoded_token = auth.verify_id_token(token)
-            #print(f"decoded token: {decoded_token}")
+            print(f"decoded token: {decoded_token}")
             request.user = decoded_token
         except Exception as e:
-            #print(f"Failed to verify token: {e}")
+            print(f"Failed to verify token: {e}")
             return jsonify({"error": str(e)}), 401
         return f(*args, **kwargs)
     return decorated_function

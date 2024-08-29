@@ -23,6 +23,14 @@ function CreateSubPage(props) {
         setSelectedIndex(props.index);
     },);
 
+    useEffect(() => {
+        if (data.success === true) {
+            navigate(`/subpage/${pageData.name}`);
+        } else {
+            setCreationError(data.message);
+        }
+    },[data]);
+    
     // Handlers
     const handleInputChange = (e) => {
         setPageData({
@@ -53,12 +61,6 @@ function CreateSubPage(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await registerSubpage(pageData);
-        //console.log(data)
-        if (data.success === true) {
-            navigate(`/subpage/${pageData.name}`);
-        } else {
-            setCreationError(data.message);
-        }
     }
 
     return (
@@ -80,7 +82,7 @@ function CreateSubPage(props) {
                                         Description <span className="text-grey-text text-sm">(Max 500 chars)</span> <br />
                                     </div>
                                     <div>
-                                        <input onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
+                                        <input id="description" onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
                                     </div>
                                     <div className="mt-4">
                                         <ul className="p-0 list-none m-0">
