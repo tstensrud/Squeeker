@@ -519,8 +519,12 @@ def set_vote(author_uuid: str, direction: str, post_uid=None, comment_uid=None) 
         downvote = False
         if direction == "1":
             upvote = True
+            post_or_comment.upvotes = post_or_comment.upvotes + 1
         if direction == "-1":
             downvote = True
+            post_or_comment.downvotes = post_or_comment.downvotes + 1
+        
+        post_or_comment.total_votes = post_or_comment.upvotes - post_or_comment.downvotes
             
         new_vote_object = models.Vote(uid = uid,
                                       post_uid = post_uid,
