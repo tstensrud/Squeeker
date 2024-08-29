@@ -147,7 +147,12 @@ def get_post_comments(post_uid):
 def get_comment(comment_uid):
     comment = db.get_comment(comment_uid)
     if comment:
-        comment_data = comment.to_json()
+        comment_data = {}
+        data = comment.to_json()
+        has_upvoted = db.has_upvoted_comment(comment_uid, "uuid")
+        comment_data["comment_data"] = data
+        comment_data["has_upvoted"] = has_upvoted
+
         return jsonify({"success": True, "message": "Comment fetched", "data": comment_data})
     else:
         return jsonify({"success": False, "message": "Could not find comment"})

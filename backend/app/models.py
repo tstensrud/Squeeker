@@ -189,6 +189,7 @@ class Vote(db.Model):
     __table_args__ = (
         Index('idx_uid', 'uid'),
     )
+    
     def to_json(self):
         return {
             "id": self.id,

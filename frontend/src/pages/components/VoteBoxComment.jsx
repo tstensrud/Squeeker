@@ -9,7 +9,7 @@ import { AuthContext } from '../../context/AuthContext';
 import useFetch from '../../hooks/useFetch';
 
 
-function VoteboxComment({ postData, refetchTotalVotes }) {
+function VoteboxComment({ voteStatus, postData, refetchTotalVotes }) {
     const { currentUser, idToken } = useContext(AuthContext);
     const [voteData, setVoteData] = useState();
 
@@ -18,8 +18,8 @@ function VoteboxComment({ postData, refetchTotalVotes }) {
     const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData}/-1/`, idToken);
     const { data: resetVote, error: resetVoteError, updateData: resetVoteData } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData}/0/`, idToken);
 
-    const { data: hasUpvoted, refetch: refetchHasUpvoted } = useFetch(
-        currentUser ? `${BASE_URL}/api/subpage/comment/has_upvoted/${currentUser.uid}/${postData}/` : null, idToken);
+    /* const { data: hasUpvoted, refetch: refetchHasUpvoted } = useFetch(
+        currentUser ? `${BASE_URL}/api/subpage/comment/has_upvoted/${currentUser.uid}/${postData}/` : null, idToken); */
 
     // useEffects
     useEffect(() => {
@@ -31,7 +31,7 @@ function VoteboxComment({ postData, refetchTotalVotes }) {
 
     useEffect(() => {
         if (upvoteData && upvoteData.success === true || downvoteData && downvoteData.success === true) {
-            refetchHasUpvoted();
+            //refetchHasUpvoted();
             refetchTotalVotes();
         }
     }, [upvoteData, downvoteData, resetVote]);
@@ -59,7 +59,7 @@ function VoteboxComment({ postData, refetchTotalVotes }) {
                     currentUser && idToken ? (
                         <>
                             {
-                                hasUpvoted && hasUpvoted.success === true && hasUpvoted.data.upvoted === true ? (
+                                voteStatus && voteStatus.upvoted === true ? (
                                     <Link onClick={handleResetVote} >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
                                             <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -96,7 +96,7 @@ function VoteboxComment({ postData, refetchTotalVotes }) {
                     currentUser && idToken ? (
                         <>
                             {
-                                hasUpvoted && hasUpvoted.success === true && hasUpvoted.data.downvoted === true ? (
+                                voteStatus && voteStatus.downvoted === true ? (
                                     <Link onClick={handleResetVote}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
                                             <line x1="12" y1="4" x2="12" y2="20"></line>

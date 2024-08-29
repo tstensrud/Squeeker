@@ -27,13 +27,13 @@ function Comment({ isChild, commentDataRefech, data }) {
     // Fetch and posts
     const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefetch } = useFetch(`${BASE_URL}/api/subpage/get_comment/${commentUid}/`, idToken);
     const { data: childrenCommentData, loading: childrenCommentDataLoading, error: childrenCommentDataError, refetch: refetchChildrenData } = useFetch(`${BASE_URL}/api/subpage/comment/children/${commentUid}/`, idToken);
+    const { data: totalVotes, refetch: refetchTotalVotes } = useFetch(`${BASE_URL}/api/subpage/comment/votes/${commentUid}/`, idToken);
     
     const { loading, data: replyData, error: replyError, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/reply/new/`, idToken);
-    const { data: totalVotes, refetch: refetchTotalVotes } = useFetch(`${BASE_URL}/api/subpage/comment/votes/${commentUid}/`, idToken);
     const { response: deleteResponse, loading: deleteLoading, error: deleteError, deleteEntry} = useDelete(`${BASE_URL}/api/subpage/comment/delete/${commentUid}/`, idToken);
 
     useEffect(() => {
-        setDeleteData({author_uuid: commentData?.data?.author_uuid});
+        setDeleteData({author_uuid: commentData?.data?.comment_data?.author_uuid});
     },[commentData]);
 
     useEffect(() => {
@@ -47,7 +47,7 @@ function Comment({ isChild, commentDataRefech, data }) {
             ...prev,
             authorUid: currentUser && currentUser.uid,
             parentComment: commentUid,
-            postUid: commentData && commentData.data && commentData.data.post_uid,
+            postUid: commentData?.data?.comment_data?.post_uid,
         }));
     }, [commentData]);
 
@@ -92,7 +92,7 @@ function Comment({ isChild, commentDataRefech, data }) {
             <div className="card">
                 <div className="flex flex-row">
                     <div className="flex flex-col w-12">
-                        <VoteboxComment refetchTotalVotes={refetchTotalVotes} postData={commentUid} />
+                        <VoteboxComment voteStatus={commentData?.data?.comment_data?.has_upvoted} refetchTotalVotes={refetchTotalVotes} postData={commentUid} />
                     </div>
 
                     <div className="flex flex-col flex-1 m-0">
@@ -102,10 +102,10 @@ function Comment({ isChild, commentDataRefech, data }) {
                             ) : (
                                 <>
                                     <div className="text-xs text-grey-text">
-                                        <strong>{totalVotes && totalVotes.data}</strong> pts. Commented at: {commentData && commentData.data && commentData.data.timestamp} by: <Link to="#">{commentData && commentData.data && commentData.data.author_name}</Link>
+                                        <strong>{totalVotes && totalVotes.data}</strong> pts. Commented at: {commentData?.data?.comment_data?.timestamp} by: <Link to="#">{commentData?.data?.comment_data?.author_name}</Link>
                                     </div>
                                     <div className="mb-3 mt-3">
-                                        {commentData && commentData.data && commentData.data.comment}
+                                        {commentData?.data?.comment_data?.comment}
                                     </div>
                                 </>
                             )
@@ -118,10 +118,10 @@ function Comment({ isChild, commentDataRefech, data }) {
                             }
                             <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
                             {
-                                currentUser?.uid === commentData?.data?.author_uuid && (
+                                currentUser?.uid === commentData?.comment_data?.data?.author_uuid && (
                                     <>
                                         {
-                                            commentData?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
+                                            commentData?.comment_data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
                                         }
                                         
                                     </>
