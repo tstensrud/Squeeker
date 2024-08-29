@@ -232,6 +232,7 @@ def delete_post(post_uid):
 @firebase_auth_required
 def upvote_post(post_uid, direction):
     data = request.get_json()
+    print(direction)
     directions = ["-1", "0", "1"]
     if direction not in directions:
         return jsonify({"success": False, "message": "Vote direction not supported"})
@@ -246,7 +247,7 @@ def upvote_post(post_uid, direction):
             if post:
                 vote = db.set_vote(voter_uid, direction, post_uid=post_uid)
                 if vote:
-                    return jsonify({"success": True, "message": "Vote for post received"})
+                    return jsonify({"success": True, "message": f"Vote for post received: direction {direction}"})
                 else:
                     return jsonify({"success": False, "message": "Could not cast vote"})
         
@@ -256,7 +257,7 @@ def upvote_post(post_uid, direction):
             if comment:
                 vote = db.set_vote(voter_uid, direction, comment_uid=post_uid)
                 if vote:
-                    return jsonify({"success": True, "message": "Vote for comment received"})
+                    return jsonify({"success": True, "message": f"Vote for comment received: direction {direction}"})
                 else:
                     return jsonify({"success": False, "message": "Could not cast vote"})
         else:

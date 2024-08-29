@@ -33,51 +33,46 @@ function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, p
         setCurrentDownvoteStatus(voteStatus?.downvoted);
     },[voteStatus]);
 
-    useEffect(() => {
-        if (upvoteData?.success === true) {
-            setTotalCommentVotes(totalCommentVotes + 1);
-            setCurrentUpvoteStatus(true);
-            setCurrentDownvoteStatus(false);
-        }
-    }, [upvoteData]);
-
-    useEffect(() => {
-        if (downvoteData?.success === true) {
-            setTotalCommentVotes(totalCommentVotes - 1);
-            setCurrentUpvoteStatus(false);
-            setCurrentDownvoteStatus(true);
-        }
-    },[downvoteData]);
-
-    useEffect(() => {
-        if (resetVote?.success === true) {
-            if (currenUpvoteStatus === true) {
-                setTotalCommentVotes(totalCommentVotes - 1);
-            } else if (currentDownvotestatus === true) {
-                setTotalCommentVotes(totalCommentVotes + 1);
-            }
-            setCurrentUpvoteStatus(false);
-            setCurrentDownvoteStatus(false);
-        }
-    },[resetVote])
-
     // Handlers
     const handleUpvote = async (e) => {
+        console.log("Upvote")
         e.preventDefault();
+        if (currentDownvotestatus === true) {
+            setTotalCommentVotes(totalCommentVotes + 2);
+        } else {
+            setTotalCommentVotes(totalCommentVotes + 1);
+        }
+        setCurrentUpvoteStatus(true);
+        setCurrentDownvoteStatus(false);
         await upvote(voteData);
     }
 
     const handleDownVote = async (e) => {
+        console.log("Downvote")
         e.preventDefault();
+        if (currenUpvoteStatus === true) {
+            setTotalCommentVotes(totalCommentVotes - 2);
+        } else {
+            setTotalCommentVotes(totalCommentVotes - 1);
+        }
+        setCurrentUpvoteStatus(false);
+        setCurrentDownvoteStatus(true);
         await downvote(voteData);
     }
 
     const handleResetVote = async (e) => {
+        console.log("Reset")
         e.preventDefault();
+        setCurrentUpvoteStatus(false);
+        setCurrentDownvoteStatus(false);
+        if (currenUpvoteStatus === true) {
+            setTotalCommentVotes(totalCommentVotes - 1);
+        } else if (currentDownvotestatus === true) {
+            setTotalCommentVotes(totalCommentVotes + 1);
+        }
         await resetVoteData(voteData);
     }
-    console.log("Upvote status", currenUpvoteStatus)
-    console.log("Downvote status", currentDownvotestatus)
+
     return (
         <>
             <div>

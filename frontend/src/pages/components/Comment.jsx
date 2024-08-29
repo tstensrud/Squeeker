@@ -13,6 +13,7 @@ import LoadingSpinner from './LoadingSpinner';
 import VoteboxComment from './VoteBoxComment';
 import PostReplyShareDeleteButton from "./formcomponents/PostReplyShareDeleteButton";
 import useDelete from "../../hooks/useDelete";
+import CollapseArrow from "./CollapseArrow";
 
 function Comment({ isChild, data }) {
     const commentUid = data?.data.uid;
@@ -24,6 +25,9 @@ function Comment({ isChild, data }) {
     const [replyWarning, setReplyWarning] = useState("");
     const [deleteData, setDeleteData] = useState({})
     const [totalCommentVotes, setTotalCommentVotes] = useState(data?.data?.total_votes);
+
+    // Show this after user comments. Render directly in the component rather then refetching from server.
+    const [showLatestReply, setShowLatestReply] = useState(false)
 
     // Fetch and posts
     const { loading, data: replyData, error: replyError, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/reply/new/`, idToken);
@@ -82,17 +86,20 @@ function Comment({ isChild, data }) {
         e.preventDefault();
         await deleteEntry(deleteData);
     }
-    
+
+    const handleCollapse = () => {
+        console.log("collapse")
+    }
     return (
         <>
             <div className="card mt-5">
+
                 <div className="flex flex-row">
                     <div className="flex flex-col w-12">
-                        <VoteboxComment totalCommentVotes={totalCommentVotes} setTotalCommentVotes={setTotalCommentVotes}  voteStatus={data?.has_voted} postData={commentUid} />
+                        <VoteboxComment totalCommentVotes={totalCommentVotes} setTotalCommentVotes={setTotalCommentVotes} voteStatus={data?.has_voted} postData={commentUid} />
                     </div>
 
                     <div className="flex flex-col flex-1 m-0">
-
                         {
                             isChild !== true ? (
                                 <>
@@ -118,7 +125,7 @@ function Comment({ isChild, data }) {
                         <div className="flex flex-row">
                             {
                                 currentUser && idToken ? (
-                                    <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Reply" />
+                                    <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Leave reply" />
                                 ) : (<></>)
                             }
                             <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
@@ -133,6 +140,7 @@ function Comment({ isChild, data }) {
                                 )
                             }
                         </div>
+
                         {
                             showReplyContainer === true ? (
                                 <div className="flex p-3 flex-col bg-card-bg-color">
@@ -150,11 +158,39 @@ function Comment({ isChild, data }) {
                                 </div>
                             ) : (<></>)
                         }
+
+                        {
+                            showLatestReply && (
+                                <div className="flex mt-3 ml-3 p-1 rounded-bl-lg border-l border-b border-border-color">
+                                    <div className="flex flex-row">
+                                        <div className="flex flex-col w-12">
+                                            <VoteboxComment />
+                                        </div>
+                                        <div className="flex flex-col flex-1 m-0">
+                                            <div className="text-xs text-grey-text">
+                                                <strong>asdf</strong> pts. Commented at:  by: <Link to="#">name</Link>
+                                            </div>
+                                            <div className="mb-3 mt-3">
+                                                comment
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
+
+
                     </div>
+                    {
+                        !data?.data?.parent_comment_uid && (
+                            <CollapseArrow clickFunction={handleCollapse} />
+                        )
+                    }
                 </div>
                 {
                     data?.children && Object.keys(data?.children).map((key, index) => (
                         <div key={`${index}+${data?.children[key]}`} className="flex mt-3 ml-3 p-1 rounded-bl-lg border-l border-b border-border-color">
+                            <CollapseArrow clickFunction={handleCollapse} />
                             <Comment isChild={true} data={data?.children[key]} key={index} />
                         </div>
                     ))
