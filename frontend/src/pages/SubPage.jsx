@@ -33,7 +33,7 @@ function SubPage(props) {
     useEffect(() => {
         setSelectedIndex(props.index);
     }, []);
-    console.log(subpageData)
+    
     return (
         <>
             {

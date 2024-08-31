@@ -92,7 +92,7 @@ function SubPagePost(props) {
         e.preventDefault();
         await deleteEntry(deleteData);
     }
-    console.log(totalVotes)
+    
     return (
         <>
             {

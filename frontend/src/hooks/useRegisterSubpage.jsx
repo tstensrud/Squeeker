@@ -23,7 +23,7 @@ const useRegisterSubpage = (url, idToken) => {
                 }
                 const result = await response.json();
                 setData(result);
-                console.log(result);
+                
             } catch (error) {
                 setError(error.message);
             } finally {

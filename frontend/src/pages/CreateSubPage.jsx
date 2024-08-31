@@ -24,10 +24,10 @@ function CreateSubPage(props) {
     },);
 
     useEffect(() => {
-        if (data.success === true) {
+        if (data?.success === true) {
             navigate(`/subpage/${pageData.name}`);
         } else {
-            setCreationError(data.message);
+            setCreationError(data?.message);
         }
     },[data]);
     

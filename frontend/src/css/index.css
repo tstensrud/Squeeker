@@ -39,7 +39,7 @@
 
 @layer components {
   .card {
-    @apply rounded-lg bg-card-bg-color w-full flex flex-col pt-3 pl-2;
+    @apply rounded-lg bg-card-bg-color w-full flex flex-col p-3;
   }
   
   .post-card {
