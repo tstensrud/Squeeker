@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 function SubPageDoesNotExist(props) {
     const subPageName = props.subPageName;
     return (
-        <>
             <div className="flex flex-col w-full h-full justify-center items-center text-center">
                 <div>
                     <h2 className="text-2xl">This room is yet to be built.</h2>
@@ -16,7 +15,6 @@ function SubPageDoesNotExist(props) {
                 </div>
 
             </div>
-        </>
     );
 }
 

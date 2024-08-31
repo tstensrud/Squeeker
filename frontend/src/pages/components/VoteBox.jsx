@@ -13,7 +13,7 @@ import ArrowDown from '../../assets/svg/ArrowDown.svg?react';
 
 function Votebox({ totalVotes, voteStatus, setTotalVotes, post, postData }) {
     const { currentUser, idToken } = useContext(AuthContext);
-    
+
     const [voteData, setVoteData] = useState();
     const [currenUpvoteStatus, setCurrentUpvoteStatus] = useState();
     const [currentDownvotestatus, setCurrentDownvoteStatus] = useState();
@@ -22,7 +22,7 @@ function Votebox({ totalVotes, voteStatus, setTotalVotes, post, postData }) {
     const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData.post_data.uid}/1/`, idToken);
     const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData.post_data.uid}/-1/`, idToken);
     const { data: resetVote, error: resetVoteError, updateData: resetVoteData } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData.post_data.uid}/0/`, idToken);
-    
+
     // useEffects
     useEffect(() => {
         setVoteData({
@@ -34,7 +34,7 @@ function Votebox({ totalVotes, voteStatus, setTotalVotes, post, postData }) {
     useEffect(() => {
         setCurrentUpvoteStatus(voteStatus?.upvoted);
         setCurrentDownvoteStatus(voteStatus?.downvoted);
-    },[voteStatus]);
+    }, [voteStatus]);
 
 
     // Handlers
@@ -83,14 +83,14 @@ function Votebox({ totalVotes, voteStatus, setTotalVotes, post, postData }) {
                             {
                                 currenUpvoteStatus === true ? (
                                     <Link onClick={handleResetVote} >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-accent-color">
                                             <line x1="12" y1="20" x2="12" y2="4"></line>
                                             <polyline points="6 10 12 4 18 10"></polyline>
                                         </svg>
                                     </Link>
                                 ) : (
-                                    <Link onClick={handleUpvote} className="upvote-arrowtext-link-green hover:underline">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
+                                    <Link onClick={handleUpvote} className="upvote-arrowtext-accent-color hover:underline">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link hover:stroke-accent-color">
                                             <line x1="12" y1="20" x2="12" y2="4"></line>
                                             <polyline points="6 10 12 4 18 10"></polyline>
                                         </svg>
@@ -122,9 +122,9 @@ function Votebox({ totalVotes, voteStatus, setTotalVotes, post, postData }) {
                     currentUser && idToken ? (
                         <>
                             {
-                               currentDownvotestatus === true ? (
+                                currentDownvotestatus === true ? (
                                     <Link onClick={handleResetVote}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-link-green">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-accent-color">
                                             <line x1="12" y1="4" x2="12" y2="20"></line>
                                             <polyline points="18 14 12 20 6 14"></polyline>
 
@@ -132,7 +132,7 @@ function Votebox({ totalVotes, voteStatus, setTotalVotes, post, postData }) {
                                     </Link>
                                 ) : (
                                     <Link onClick={handleDownVote}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-header-link hover:stroke-link-green">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link hover:stroke-accent-color">
                                             <line x1="12" y1="4" x2="12" y2="20"></line>
                                             <polyline points="18 14 12 20 6 14"></polyline>
                                         </svg>
@@ -144,8 +144,6 @@ function Votebox({ totalVotes, voteStatus, setTotalVotes, post, postData }) {
                         <ArrowDown />
                     )
                 }
-
-
             </div>
         </>
     );

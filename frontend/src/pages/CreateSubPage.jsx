@@ -29,8 +29,8 @@ function CreateSubPage(props) {
         } else {
             setCreationError(data?.message);
         }
-    },[data]);
-    
+    }, [data]);
+
     // Handlers
     const handleInputChange = (e) => {
         setPageData({
@@ -64,64 +64,62 @@ function CreateSubPage(props) {
     }
 
     return (
-        <>  
+        <>
             <PageHeader headerText="Create new room" subheaderText="Here you can create your own new room" />
             <div className="card">
                 {
                     idToken ? (
-                        <>
-                            <div className="mt-4">
-                                <form onSubmit={handleSubmit}>
-                                    <div>
-                                        Room name <span className="text-grey-text text-sm">(max 50 chars)</span><br />
-                                    </div>
-                                    <div className="mb-3 mt-1">
-                                        <input id="name" onChange={handleInputChange} type="text" placeholder="The great timber room.." />
-                                    </div>
-                                    <div>
-                                        Description <span className="text-grey-text text-sm">(Max 500 chars)</span> <br />
-                                    </div>
-                                    <div>
-                                        <input id="description" onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
-                                    </div>
-                                    <div className="mt-4">
-                                        <ul className="p-0 list-none m-0">
-                                            <li className="inline mr-3 text-base tracking-wide">
-                                                <div className="flex flex-row">
-                                                    <div className="flex items-center mr-3">
-                                                        Public
-                                                    </div>
-                                                    <div>
-                                                        <input id="public" className="default-checkbox" onChange={handleCheckboxChange} type="checkbox" checked={publicChecked} />
-                                                    </div>
+                        <div className="mt-4">
+                            <form onSubmit={handleSubmit}>
+                                <div>
+                                    Room name <span className="text-grey-text text-sm">(max 50 chars)</span><br />
+                                </div>
+                                <div className="mb-3 mt-1">
+                                    <input id="name" onChange={handleInputChange} type="text" placeholder="The great timber room.." />
+                                </div>
+                                <div>
+                                    Description <span className="text-grey-text text-sm">(Max 500 chars)</span> <br />
+                                </div>
+                                <div>
+                                    <input id="description" onChange={handleInputChange} type="text" placeholder="Where gatherings are held" />
+                                </div>
+                                <div className="mt-4">
+                                    <ul className="p-0 list-none m-0">
+                                        <li className="inline mr-3 text-base tracking-wide">
+                                            <div className="flex flex-row">
+                                                <div className="flex items-center mr-3">
+                                                    Public
                                                 </div>
-                                            </li>
-                                        </ul>
-                                        <ul className="inline p-0 list-none m-0">
-                                            <li className="inline mr-3 text-base tracking-wide">
-                                                <div className="flex flex-row">
-                                                    <div className="flex items-center mr-3">
-                                                        NSFW?
-                                                    </div>
-                                                    <div>
-                                                        <input id="nsfw" className="default-checkbox" onChange={handleCheckboxChange} type="checkbox" checked={nsfwChecked} />
-                                                    </div>
+                                                <div>
+                                                    <input id="public" className="default-checkbox" onChange={handleCheckboxChange} type="checkbox" checked={publicChecked} />
                                                 </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div>
-                                        <button className="standard-button" type="submit">Create!</button>
-                                    </div>
-                                </form>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <ul className="inline p-0 list-none m-0">
+                                        <li className="inline mr-3 text-base tracking-wide">
+                                            <div className="flex flex-row">
+                                                <div className="flex items-center mr-3">
+                                                    NSFW?
+                                                </div>
+                                                <div>
+                                                    <input id="nsfw" className="default-checkbox" onChange={handleCheckboxChange} type="checkbox" checked={nsfwChecked} />
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <button className="standard-button" type="submit">Create!</button>
+                                </div>
+                            </form>
 
-                                <p>
-                                    {creationError && creationError}
-                                    {error && error}
-                                </p>
-                                {/* fetchError && JSON.stringify(fetchError) */}
-                            </div>
-                        </>
+                            <p>
+                                {creationError && creationError}
+                                {error && error}
+                            </p>
+                            {/* fetchError && JSON.stringify(fetchError) */}
+                        </div>
                     ) : (
                         <>
                             You need an account and to be logged in to create subpages.

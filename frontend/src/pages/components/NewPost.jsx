@@ -47,7 +47,7 @@ function NewPost(props) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (! postContent.title || postContent.title === "") {
+        if (!postContent.title || postContent.title === "") {
             setWarningTitleMessage("This field can not be empty");
             return;
         } else if (postContent.title && postContent.title.length < 10) {
@@ -63,32 +63,30 @@ function NewPost(props) {
         await subpagePost(postContent);
         //navigate to the new post, with the uid receved from this method
     }
-    
-    return (
-        <>
-            <div className="card">
-                <div className="w-full p-2 text-base">
-                    <h3>Create new discussion topic</h3>
-                </div>
-                <form onSubmit={handleSubmit}>
-                    <div className="flex flex-col rounded-lg mb-3 mt-3 p-2">
-                        <div className="mb-4">
-                            <input onChange={handleInputChange} className="mr-3" id="title" type="text" placeholder="Post title" /> {warningTitleMessage}
-                        </div>
-                        <div className="flex flex-col">
-                            <textarea className="bg-app-bg-color border border-border-color outline-none p-2 h-40 w-96 rounded-lg mb-3 mr-3 hover:border-form-hover focus:border-form-focus" onChange={handleInputChange} id="content" placeholder="Write something here.."></textarea>
-                            <span>{warniningContentMessage}</span>
-                        </div>
 
-                        <div>
-                            <button className="standard-button mr-3" type="submit">Post</button>
-                            {data && data.success === false ? <>{data.message}</> : ""}
-                            {error && error}
-                        </div>
-                    </div>
-                </form>
+    return (
+        <div className="card">
+            <div className="w-full p-2 text-base">
+                <h3>Create new discussion topic</h3>
             </div>
-        </>
+            <form onSubmit={handleSubmit}>
+                <div className="flex flex-col rounded-lg mb-3 mt-3 p-2">
+                    <div className="mb-4">
+                        <input onChange={handleInputChange} className="mr-3" id="title" type="text" placeholder="Post title" /> {warningTitleMessage}
+                    </div>
+                    <div className="flex flex-col">
+                        <textarea className="bg-secondary-color border border-border-color outline-none p-2 h-40 w-96 rounded-lg mb-3 mr-3 hover:border-accent-color focus:border-accent-color" onChange={handleInputChange} id="content" placeholder="Write something here.."></textarea>
+                        <span>{warniningContentMessage}</span>
+                    </div>
+
+                    <div>
+                        <button className="standard-button mr-3" type="submit">Post</button>
+                        {data && data.success === false ? <>{data.message}</> : ""}
+                        {error && error}
+                    </div>
+                </div>
+            </form>
+        </div>
     );
 }
 

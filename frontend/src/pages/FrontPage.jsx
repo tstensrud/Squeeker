@@ -139,7 +139,7 @@ function FrontPage() {
           )
         }
 
-        <div className="flex flex-col bg-navbar-bg-color items-center sticky w-80 border-r border-border-color min-h-20 left-0">
+        <div className="flex flex-col bg-secondary-color items-center sticky w-80 border-r border-border-color min-h-20 left-0">
           <div className="w-full flex justify-center flex-col text-center mt-3">
             <div className="flex items-center justify-center w-full">
               <Link to="/">
@@ -170,10 +170,10 @@ function FrontPage() {
                       ))
                     }
                     <Link to="#" onClick={logOut}>
-                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover transition-colors duration-200">
+                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-navbar-link hover:text-primary-color transition-colors duration-200">
                         <div className="flex flex-row items-center w-full">
                           <div className="align-middle mr-2 w-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link fill-none line group-hover:stroke-primary-color transition-colors duration-200">
                               <line x1="20" y1="12" x2="4" y2="12"></line>
                               <polyline points="10 18 4 12 10 6"></polyline>
                             </svg>
@@ -188,10 +188,10 @@ function FrontPage() {
               ) : (
                   <ul className="navbar-list">
                     <Link onClick={openLoginContainer} to="#">
-                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover">
+                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-navbar-link hover:text-primary-color">
                         <div className="flex flex-row items-center w-full">
                           <div className="align-middle mr-2 w-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link fill-none line group-hover:stroke-primary-color transition-colors duration-200">
                               <path d="M14 22h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-5"></path>
                               <polyline points="11 16 15 12 11 8"></polyline>
                               <line x1="15" y1="12" x2="3" y2="12"></line>
@@ -205,10 +205,10 @@ function FrontPage() {
                     </Link>
 
                     <Link to="#" onClick={openRegisterContainer}>
-                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-header-link hover:text-header-link-hover">
+                      <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-navbar-link hover:text-primary-color">
                         <div className="flex flex-row items-center w-full">
                           <div className="align-middle mr-2 w-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-svg-icon-color fill-none line group-hover:stroke-header-link-hover">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link fill-none line group-hover:stroke-primary-color transition-colors duration-200">
                               <path d="M14 22h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-5"></path>
                               <polyline points="11 16 15 12 11 8"></polyline>
                               <line x1="15" y1="12" x2="3" y2="12"></line>
@@ -226,7 +226,7 @@ function FrontPage() {
         </div>
 
         <div className="w-full h-full overflow-y-auto">
-          <div className="flex w-full flex-col sticky overflow-hidden top-0 z-20 bg-app-bg-color text-sm border-b border-border-color p-2 m-0">
+          <div className="flex w-full flex-col sticky overflow-hidden top-0 z-20 bg-secondary-color text-sm border-b border-border-color p-2 m-0">
             {
               userSubscriptionsLoading && userSubscriptionsLoading === true ? (
                 <LoadingBar />

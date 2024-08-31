@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply m-0 p-0 w-full h-full overflow-hidden;
+  }
+
+  body {
+    @apply m-0 p-0 w-full h-full overflow-hidden;
+  }
+
   h1 {
     @apply text-3xl font-bold;
   }
@@ -20,81 +28,73 @@
   }
 
   a {
-    @apply text-link-green;
+    @apply text-accent-color;
   }
+
   a:hover {
-    @apply text-link-hover
+    @apply text-primary-color
+  }
+
+  button {
+    @apply bg-secondary-color text-primary-color cursor-pointer border rounded-lg border-border-color p-1 h-8 w-20 transition duration-200 ease-in-out;
+  }
+
+  button:hover {
+    @apply border-accent-color;
   }
 
   input {
-    @apply h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color;
+    @apply h-10 w-80 bg-secondary-color p-3 text-primary-color rounded-lg border text-sm border-primary-color;
   }
+
   input:hover {
-    @apply border-form-hover;
+    @apply border-accent-color;
   }
+
   input:focus {
-    @apply border-form-focus outline-none;
+    @apply border-accent-color outline-none;
   }
 }
 
 @layer components {
   .card {
-    @apply rounded-lg bg-card-bg-color w-full flex flex-col p-3;
+    @apply rounded-lg bg-tertiary-color w-full flex flex-col p-3;
   }
-  
+
   .post-card {
-    @apply flex flex-row bg-card-bg-color rounded-lg pt-2 pb-3 mt-3 mb-3;
+    @apply flex flex-row bg-tertiary-color rounded-lg pt-2 pb-3 mt-3 mb-3;
   }
+
   .post-title-card {
-    @apply flex flex-row border border-border-color rounded-lg mt-5 pt-3 pb-3 pr-3;
-  }
-
-  .standard-button {
-    @apply bg-app-bg-color text-button-text-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 transition duration-200 ease-in-out;
-  }
-
-  .standard-button:hover {
-    @apply border-link-green;
+    @apply flex flex-row border border-tertiary-color rounded-lg mt-5 pt-3 pb-3 pr-3;
   }
 
   .default-checkbox {
-    @apply h-4 w-4 border-border-color rounded-md;
+    @apply h-4 w-4 border-secondary-color rounded-md;
   }
-  
+
   .default-checkbox:checked {
     @apply border-none;
   }
 
- 
+  .app-container {
+    @apply flex h-full w-full bg-secondary-color text-primary-color justify-center;
+  }
+
+
 }
+
 * {
   box-sizing: border-box;
 }
 
-
-body,
-html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-}
-
 body {
-  overflow: hidden;
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.app-container {
-  display: flex;
-  height: 100%;
-  width: 100%;
-  background-color: #060E0E;
-  color: white;
-  justify-content: center;
-}
+
 
 
 /* Loading spinner */

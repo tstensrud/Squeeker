@@ -26,7 +26,7 @@ function RegisterContainer({ setShowLoginCointainer, setShowRegisterContainer })
             setShowRegisterContainer(false);
             setShowLoginCointainer(true);
         }
-    },[data])
+    }, [data])
 
 
     // Handlers
@@ -51,63 +51,63 @@ function RegisterContainer({ setShowLoginCointainer, setShowRegisterContainer })
         } else {
             setPasswordMatch("Passwords does not match")
         }
-        
+
     }
 
     const closeContainer = () => {
         setShowRegisterContainer(false);
     }
-    
+
     return (
-        <>
-            <div className="fixed h-full w-full justify-center items-center z-50 bg-login-bg ">
-                <div className="w-full h-full flex flex-col justify-center items-center">
-                    <div className="flex flex-col bg-card-bg-color p-6 w-96 h-auto justify-center items-center text-center rounded-lg">
+        <div className="fixed h-full w-full justify-center items-center z-50 bg-login-bg ">
+            <div className="w-full h-full flex flex-col justify-center items-center">
+                <div className="flex flex-col bg-secondary-color p-6 w-96 h-auto justify-center items-center text-center rounded-lg">
 
-                        <h3>Register</h3>
-                        {
-                            idToken ? (<>
-                                <div>You are curreny logged in to an account.</div>
-                                <div>
-                                    <Link className="link-card" to="#" onClick={closeContainer}>Close</Link>
-                                </div>
-                            </>) : (
-                                <>
-                                    <form onSubmit={handleRegister}>
-                                        <div className="mb-4">
-                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="email" onChange={handleInputChange} type="text" placeholder="E-mail" tabIndex="1" />
-                                        </div>
-                                        <div className="mb-4">
-                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="password" onChange={handleInputChange} type="password" placeholder="Password" tabIndex="2" />
-                                        </div>
-                                        <div className="mb-4">
-                                        <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="password_two" onChange={handleInputChange} type="password" placeholder="Re-type password" tabIndex="3" />
-                                        {passwordMatch}
-                                        </div>
-                                        <div className="mb-4">
-                                            <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" id="username" onChange={handleInputChange} type="text" placeholder="Username" tabIndex="4" />
-                                        </div>
-                                        <div className="mb-4">
-                                            <button className="bg-app-bg-color cursor-pointer border rounded-lg border-border-color p-1 h-10 w-24 text-grey-text transition:all 0.3 ease-in hover:border-link-green" type="submit" tabIndex="5">Register</button>
-                                        </div>
-                                    </form>
-
-                                    <p>
-                                        {registerError && registerError}
-                                    </p>
-                                    <p>
-                                        {error && error}
-                                    </p>
-                                    <div>
-                                        <Link to="#"  onClick={closeContainer}>Close</Link>
+                    <h3>Register</h3>
+                    {
+                        idToken ? (
+                        <>
+                            <div>You are curreny logged in to an account.</div>
+                            <div>
+                                <Link className="link-card" to="#" onClick={closeContainer}>Close</Link>
+                            </div>
+                        </>
+                        ) : (
+                            <>
+                                <form onSubmit={handleRegister}>
+                                    <div className="mb-4">
+                                        <input id="email" onChange={handleInputChange} type="text" placeholder="E-mail" tabIndex="1" />
                                     </div>
-                                </>
-                            )
-                        }
-                    </div>
+                                    <div className="mb-4">
+                                        <input id="password" onChange={handleInputChange} type="password" placeholder="Password" tabIndex="2" />
+                                    </div>
+                                    <div className="mb-4">
+                                        <input id="password_two" onChange={handleInputChange} type="password" placeholder="Re-type password" tabIndex="3" />
+                                        {passwordMatch}
+                                    </div>
+                                    <div className="mb-4">
+                                        <input id="username" onChange={handleInputChange} type="text" placeholder="Username" tabIndex="4" />
+                                    </div>
+                                    <div className="mb-4">
+                                        <button type="submit" tabIndex="5">Register</button>
+                                    </div>
+                                </form>
+
+                                <p>
+                                    {registerError && registerError}
+                                </p>
+                                <p>
+                                    {error && error}
+                                </p>
+                                <div>
+                                    <Link to="#" onClick={closeContainer}>Close</Link>
+                                </div>
+                            </>
+                        )
+                    }
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

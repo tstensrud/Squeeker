@@ -43,35 +43,33 @@ function LoginContainer({ setShowLoginCointainer }) {
 
 
     return (
-        <>
-            <div className="fixed h-full w-full justify-center items-center z-50 bg-login-bg ">
-                <div className="w-full h-full flex flex-col justify-center items-center">
-                    <div className="flex flex-col bg-card-bg-color p-6 w-96 h-96 justify-center items-center text-center rounded-lg">
+        <div className="fixed h-full w-full justify-center items-center z-50 bg-login-bg ">
+            <div className="w-full h-full flex flex-col justify-center items-center">
+                <div className="flex flex-col bg-secondary-color p-6 w-96 h-96 justify-center items-center text-center rounded-lg">
 
-                        <h3>Log in</h3>
-                        <form onSubmit={handleLogin}>
-                            <div className="mb-4">
-                                <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" onChange={handleUsernameChange} type="text" placeholder="E-mail" />
-                            </div>
-                            <div className="mb-4">
-                                <input className="h-10 w-80 bg-app-bg-color p-3 text-header-link-hover rounded-lg border text-sm border-border-color focus:border-form-focus outline-none hover:border-form-hover" onChange={handlePasswordChange} type="password" placeholder="Password" />
-                            </div>
-                            <div className="mb-4">
-                                <button className="standard-button" type="submit">Log in</button>
-                            </div>
-                        </form>
-
+                    <h3>Log in</h3>
+                    <form onSubmit={handleLogin}>
                         <div className="mb-4">
-                            <Link  to="#" onClick={closeLoginContainer} >Close</Link>
+                            <input className="h-10 w-80  p-3 rounded-lg border text-sm " onChange={handleUsernameChange} type="text" placeholder="E-mail" />
                         </div>
-                        <p>
-                            {error && <>{errorMessage}
-                                <Link to="/reset">Forgot password?</Link></>}
-                        </p>
+                        <div className="mb-4">
+                            <input className="h-10 w-80  p-3 rounded-lg border text-sm " onChange={handlePasswordChange} type="password" placeholder="Password" />
+                        </div>
+                        <div className="mb-4">
+                            <button type="submit">Log in</button>
+                        </div>
+                    </form>
+
+                    <div className="mb-4">
+                        <Link to="#" onClick={closeLoginContainer} >Close</Link>
                     </div>
+                    <p>
+                        {error && <>{errorMessage}
+                            <Link to="/reset">Forgot password?</Link></>}
+                    </p>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

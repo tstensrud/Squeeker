@@ -92,7 +92,7 @@ function SubPagePost(props) {
         e.preventDefault();
         await deleteEntry(deleteData);
     }
-    
+
     return (
         <>
             {
@@ -105,7 +105,7 @@ function SubPagePost(props) {
                                 <Votebox totalVotes={totalVotes} setTotalVotes={setTotalVotes} voteStatus={postData?.data?.post_data?.has_upvoted} post={true} postData={postData?.data} />
                             </div>
                             <div className="flex flex-col">
-                                <div className="text-xl mb-1">
+                                <div className="text-xl">
                                     {postData?.data?.post_data?.title}
                                 </div>
                                 <div className="text-base text-post-content-color">
@@ -126,7 +126,7 @@ function SubPagePost(props) {
                                             currentUser?.uid === postData?.data?.post_data?.author_uuid && (
                                                 <>
                                                     {
-                                                        postData?.data?.post_data?.deleted !== true && <li onClick={handleDeletePost} className="inline mr-3 text-xs tracking-wide text-link-green cursor-pointer hover:text-link-hover">Delete</li>
+                                                        postData?.data?.post_data?.deleted !== true && <li onClick={handleDeletePost} className="inline mr-3 text-xs tracking-wide text-accent-color cursor-pointer hover:text-secondary-color">Delete</li>
                                                     }
                                                 </>
                                             )
@@ -141,14 +141,8 @@ function SubPagePost(props) {
                             </div>
                         </div>
                         {
-                            currentUser && idToken ? (
-                                <>
-                                    <NewComment commentDataRefech={commentDataRefech} subpageUid={subpageUid} postId={postId} subPageName={subPageName} />
-                                </>
-                            ) : (
-                                <>
-
-                                </>
+                            currentUser && idToken && (
+                                <NewComment commentDataRefech={commentDataRefech} subpageUid={subpageUid} postId={postId} subPageName={subPageName} />
                             )
                         }
                     </>
@@ -161,24 +155,21 @@ function SubPagePost(props) {
                 ) : (
                     <>
                         {
-                            latestCommentData && latestCommentData !== null && latestCommentData !== undefined ? (
+                            latestCommentData && latestCommentData !== null && latestCommentData !== undefined && (
                                 <Comment isChild={false} key={latestCommentData.data} data={latestCommentData.data} />
-                            ) : (
-                                <>
-                                </>
                             )
                         }
 
                         {
                             commentData && commentData.data !== undefined && Object.keys(commentData.data).map((key, index) => (
-                                <div className="flex flex-col bg-card-bg-color rounded-lg w-full mt-5 mb-5 pt-3 pb-3 pl-2 pr-2">
+                                <div className="flex flex-col bg-tertiary-color rounded-lg w-full mt-5 mb-5 pt-3 pb-3 pl-2 pr-2">
                                     <Comment isChild={false} key={index} data={commentData.data[key]} />
                                 </div>
                             ))
                         }
 
                         {
-                            commentData && commentData.success === false ? <>No comments yet :(</> : ""
+                            commentData && commentData.success === false && <>No comments yet :(</>
                         }
                     </>
                 )

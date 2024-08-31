@@ -18,7 +18,7 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
 
     // Fetches and posts
     const { loading, data, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/subscribe/`, idToken);
-    
+
     const [isSubbed, setIsSubbed] = useState();
     const [subscribeData, setSubscribeData] = useState({});
     const [totalSubsCounter, setTotalSubsCounter] = useState();
@@ -44,7 +44,7 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
             setIsSubbed(!isSubbed);
 
         }
-    },[data]);
+    }, [data]);
 
     // Handlers
     const handleSubscribe = async (e) => {
@@ -53,61 +53,68 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
     }
 
     return (
-        <>
+        <div className="flex flex-row mb-5 mt-5">
+            <div className="flex flex-col">
+                <h2>Welcome to {subpageData && subpageData.name}!</h2>
+                <p className="text-grey-text">
+                    {subpageData && subpageData.description}
+                </p>
+            </div>
 
-            <div className="flex flex-row mb-5 mt-5">
-                <div className="flex flex-col">
-                    <h2>Welcome to {subpageData && subpageData.name}!</h2>
-                    <p className="text-grey-text">
-                        {subpageData && subpageData.description}
-                    </p>
-                </div>
-
-                <div className="flex flex-1 flex-col items-end text-center justify-end h-full mt-2">
-                    <div>
-                        {
-                            isSubbed === false ? (
-
-                                <ul className="p-0 list-none m-0">
-                                    <li className="inline mr-3 text-base tracking-wide">
-                                        You are not subscribed.
-                                    </li>
-                                    <li className="inline mr-3 text-base tracking-wide">
-                                        <Link to="#" onClick={handleSubscribe}>Subscribe</Link>
-                                    </li>
-                                </ul>
-
-                            ) : (
-
-                                <ul className="p-0 list-none m-0">
-                                    <li className="inline mr-3 text-base tracking-wide">
-
-                                    </li>
-                                    <li className="inline mr-3 text-base tracking-wide">
-                                        <Link to="#" onClick={handleSubscribe}>Unsubscribe</Link>
-                                    </li>
-                                </ul>
-
-                            )
-                        }
-                    </div>
-                    <div>
-                        <ul className="p-0 list-none m-0">
-                            <li className="inline mr-3 text-base tracking-wide">
-                                Total subs:
-                            </li>
-                            <li className="inline mr-3 text-base tracking-wide">
+            <div className="flex flex-1 flex-col items-end text-center justify-end h-full mt-2">
+                <div>
+                    {
+                        currentUser && idToken ? (
+                            <>
                                 {
-                                    <>
-                                        {totalSubsCounter}
-                                    </>
+                                    isSubbed === false ? (
+
+                                        <ul className="p-0 list-none m-0">
+                                            <li className="inline mr-3 text-base tracking-wide">
+                                                You are not subscribed.
+                                            </li>
+                                            <li className="inline mr-3 text-base tracking-wide">
+                                                <Link to="#" onClick={handleSubscribe}>Subscribe</Link>
+                                            </li>
+                                        </ul>
+
+                                    ) : (
+
+                                        <ul className="p-0 list-none m-0">
+                                            <li className="inline mr-3 text-base tracking-wide">
+
+                                            </li>
+                                            <li className="inline mr-3 text-base tracking-wide">
+                                                <Link to="#" onClick={handleSubscribe}>Unsubscribe</Link>
+                                            </li>
+                                        </ul>
+
+                                    )
                                 }
-                            </li>
-                        </ul>
-                    </div>
+                            </>
+                        ) : (
+                            <>
+                            </>
+                        )
+                    }
+
+                </div>
+                <div>
+                    <ul className="p-0 list-none m-0">
+                        <li className="inline mr-3 text-base tracking-wide">
+                            Total subs:
+                        </li>
+                        <li className="inline mr-3 text-base tracking-wide">
+                            {
+                                <>
+                                    {totalSubsCounter}
+                                </>
+                            }
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

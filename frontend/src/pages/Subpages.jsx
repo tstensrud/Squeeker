@@ -20,42 +20,38 @@ function Subpages(props) {
 
     useEffect(() => {
         setSelectedIndex(props.index);
-    },[]);
+    }, []);
 
     return (
         <>
-        <PageHeader headerText="This lodge has many rooms.." subheaderText="Each alike, but occupied by different souls, night after night." />
+            <PageHeader headerText="This lodge has many rooms.." subheaderText="Each alike, but occupied by different souls, night after night." />
             <div className="flex flex-col mt-5">
                 {
                     loading && loading === true ? (
-                        <>
-                            <div className="loading-spinner-container">
-                                <LoadingSpinner />
-                            </div>
-                        </>
+                        <div className="loading-spinner-container">
+                            <LoadingSpinner />
+                        </div>
                     ) : (
                         <>
                             {
                                 subpageData ? (
-                                    <>
-                                        <div className="card">
-                                            <p className="text-xl mb-3">Most populare rooms</p>
-                                            <div className="flex flex-col w-full">
-                                                {
-                                                    subpageData && subpageData !== null && Object.entries(subpageData).map(([key, value], index) => (
+                                    <div className="card">
+                                        <p className="text-xl mb-3">Most populare rooms</p>
+                                        <div className="flex flex-col w-full">
+                                            {
+                                                subpageData && subpageData !== null && Object.entries(subpageData).map(([key, value], index) => (
 
-                                                        <div className="flex flex-row" key={index}>
-                                                            <div className="w-96 overflow-hidden">
-                                                                <Link  to={`/room/${key}`}>{key}</Link> 
-                                                            </div>
-                                                            <div className="text-grey-text">/ {value}</div>
+                                                    <div className="flex flex-col" key={index}>
+                                                        <div className="w-96 overflow-hidden">
+                                                            <Link to={`/room/${key}`}>{key}</Link>
                                                         </div>
+                                                        <div className="text-grey-text mb-2">/ {value}</div>
+                                                    </div>
 
-                                                    ))
-                                                }
-                                            </div>
+                                                ))
+                                            }
                                         </div>
-                                    </>
+                                    </div>
                                 ) : (
                                     <>
                                         No data :(

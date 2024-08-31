@@ -75,7 +75,7 @@ function UserAccount(props) {
             {
                 !currentUser && !idToken ? (
                     <div className="flex w-full h-full justify-center items-center">
-                        <div className="flex bg-card-bg-color rounded-lg w-80 p-5 h-20 justify-center items-center">
+                        <div className="flex bg-secondary-color rounded-lg w-80 p-5 h-20 justify-center items-center">
                             You are not logged in.
                         </div>
                     </div>
@@ -132,7 +132,7 @@ function UserAccount(props) {
                                         {
                                             navbarItems.map((item, index) => (
                                                 <div key={index} className="mr-3">
-                                                    <div onClick={() => handleNavbarClick(index)} className={activeNavIndex === index ? "border cursor-pointer pl-3 pr-3 pt-1 pb-1 rounded-md border-link-green mb-2 text-center" : "border cursor-pointer pl-3 pr-3 pt-1 pb-1 rounded-md border-border-color mb-2 text-center hover:border-link-green"}>{item.text}</div>
+                                                    <div onClick={() => handleNavbarClick(index)} className={activeNavIndex === index ? "border cursor-pointer pl-3 pr-3 pt-1 pb-1 rounded-md border-accent-color mb-2 text-center" : "border cursor-pointer pl-3 pr-3 pt-1 pb-1 rounded-md border-secondary-color mb-2 text-center hover:border-accent-color"}>{item.text}</div>
                                                 </div>
                                             ))
                                         }
@@ -161,7 +161,7 @@ function UserAccount(props) {
                                                                             }
                                                                         </>
                                                                     ) : (
-                                                                        <div className="flex w-full bg-card-bg-color rounded-md p-3">
+                                                                        <div className="flex w-full bg-secondary-color rounded-md p-3">
                                                                             {postData && postData.message}
                                                                         </div>
                                                                     )}
@@ -192,7 +192,7 @@ function UserAccount(props) {
                                                                             }
                                                                         </>
                                                                     ) : (
-                                                                        <div className="flex w-full bg-card-bg-color rounded-md p-3">
+                                                                        <div className="flex w-full bg-secondary-color rounded-md p-3">
                                                                             {commentData && commentData.message}
                                                                         </div>
                                                                     )}
@@ -219,7 +219,7 @@ function UserAccount(props) {
                                                                         <>
                                                                             {
                                                                                 upvoteData.data && Object.keys(upvoteData.data).map((key, index) => (
-                                                                                    <div key={`${index}-${upvoteData.data[key]}`} className="card">
+                                                                                    <div key={`${index}-${upvoteData.data[key]}`} className="card mb-3">
                                                                                         <div className="flex mr-2">
                                                                                             <Link to={`/room/${upvoteData.data[key].subpage_name}/post/${upvoteData.data[key].uid}`}>
                                                                                                 {upvoteData.data[key].post}
@@ -238,7 +238,7 @@ function UserAccount(props) {
                                                                             }
                                                                         </>
                                                                     ) : (
-                                                                        <div className="flex w-full bg-card-bg-color rounded-md p-3">
+                                                                        <div className="flex w-full bg-secondary-color rounded-md p-3">
                                                                             {upvoteData && upvoteData.message}
                                                                         </div>
                                                                     )
@@ -266,7 +266,7 @@ function UserAccount(props) {
                                                                         <>
                                                                             {
                                                                                 downVoteData.data && Object.keys(downVoteData.data).map((key, index) => (
-                                                                                    <div key={`${index}-${downVoteData.data[key]}`} className="card">
+                                                                                    <div key={`${index}-${downVoteData.data[key]}`} className="card mb-3">
                                                                                         <div className="flex mr-2">
                                                                                             <Link to={`/room/${downVoteData.data[key].subpage_name}/post/${downVoteData.data[key].uid}`}>
                                                                                                 {downVoteData.data[key].post}
@@ -300,7 +300,7 @@ function UserAccount(props) {
                                     </div>
                                 </>
                             ) : (
-                                <div className="flex w-full bg-card-bg-color rounded-md p-3">
+                                <div className="flex w-full bg-secondary-color rounded-md p-3">
                                     {userData && userData.message}
                                 </div>
                             )

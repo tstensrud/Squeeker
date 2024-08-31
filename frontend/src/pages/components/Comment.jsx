@@ -152,20 +152,18 @@ function Comment({ isChild, data }) {
                                 </div>
                                 {
                                     showReplyContainer === true ? (
-                                        <div className="flex p-3 flex-col bg-card-bg-color w-full">
-
+                                        <div className="flex p-3 flex-col bg-tertiary-color w-full">
                                             <form onSubmit={submitReply} className="flex flex-col">
-                                                <textarea name="comment" onChange={handleReplyChange} className="bg-app-bg-color border outline-none border-border-color text-base leading-5 p-1 h-20 w-96 mb-3 hover:border-link-green focus:border-link-green " placeholder="Leave a reply"></textarea>
+                                                <textarea name="comment" onChange={handleReplyChange} className="bg-tertiary-color border outline-none border-border-color text-base leading-5 p-1 h-20 w-96 mb-3 hover:border-accent-color focus:border-accent-color " placeholder="Leave a reply"></textarea>
                                                 <span>
-                                                    <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green">Reply</button>
-                                                    <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green" onClick={toggleReplySection}>Cancel</button>
+                                                    <button className="mr-3 bg-tertiary-color text-grey-text rounded-lg p-0 border-0 hover:text-accent-color">Reply</button>
+                                                    <button className="mr-3 bg-tertiary-color text-grey-text rounded-lg p-0 border-0 hover:text-accent-color" onClick={toggleReplySection}>Cancel</button>
                                                 </span>
                                                 <span>{replyWarning}</span>
                                                 <p>
                                                     {replyData && replyData.success === false ? (replyData.message) : (<></>)}
                                                 </p>
                                             </form>
-
                                         </div>
                                     ) : (<></>)
                                 }
