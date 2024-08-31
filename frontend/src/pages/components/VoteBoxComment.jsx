@@ -35,7 +35,6 @@ function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, p
 
     // Handlers
     const handleUpvote = async (e) => {
-        console.log("Upvote")
         e.preventDefault();
         if (currentDownvotestatus === true) {
             setTotalCommentVotes(totalCommentVotes + 2);
@@ -48,7 +47,6 @@ function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, p
     }
 
     const handleDownVote = async (e) => {
-        console.log("Downvote")
         e.preventDefault();
         if (currenUpvoteStatus === true) {
             setTotalCommentVotes(totalCommentVotes - 2);
@@ -61,7 +59,6 @@ function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, p
     }
 
     const handleResetVote = async (e) => {
-        console.log("Reset")
         e.preventDefault();
         setCurrentUpvoteStatus(false);
         setCurrentDownvoteStatus(false);
@@ -107,9 +104,7 @@ function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, p
 
 
             </div>
-            <div>
 
-            </div>
             <div>
                 {
                     currentUser && idToken ? (

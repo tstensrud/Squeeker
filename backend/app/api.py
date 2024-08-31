@@ -81,11 +81,18 @@ def get_subpages():
         return jsonify({"success": False, "message": "No subpages were found"})
 
 @api.route('/subpage/<subpage_name>/', methods=['GET'])
+@optional_auth
 def get_subpage(subpage_name):
     subpage = db.get_subpage(subpage_name, None)
     if subpage is False:
         return jsonify({"success": False, "message": "This subpage does not exist"})
-    subpage_data = subpage.to_json()
+    uuid = request.user_uid
+    subpage_data = {}
+    subpage_data["subpage_data"] = subpage.to_json()
+    if uuid:
+        is_subscribed = db.check_for_user_sub(uuid, subpage.uid)
+        subpage_data["is_subscribed"] = is_subscribed
+    
     return jsonify({"success": True, "message": "Fetched subpage data", "data": subpage_data})
 
 # User subscribe to subpage
@@ -93,6 +100,7 @@ def get_subpage(subpage_name):
 @firebase_auth_required
 def subscribe():
     data = request.get_json()
+
     if data:
         client_uid = data["clientUid"]
         subpage_uid = data["subpageUid"]
@@ -143,10 +151,18 @@ def get_subpage_posts(subpage_uid):
 
 # Get data about specific post
 @api.route('/subpage/post/<post_uid>/', methods=['GET'])
+@optional_auth
 def get_post(post_uid):
     post = db.get_post(post_uid)
+    uuid = request.user_uid
     if post:
-        post_data = post.to_json()
+        post_data = {}
+        post_data["post_data"] = post.to_json()
+        if uuid:
+            print(uuid)
+            has_upvoted = db.has_upvoted_post(post_uid, uuid)
+            post_data["has_upvoted"] = has_upvoted
+            print(post_data)
         return jsonify({"success": True, "message": "Post found", "data": post_data})
     else:
         return jsonify({"success": False, "message": "Could not find post"})
@@ -195,7 +211,7 @@ def new_subpage_post(subpage_uid):
         
         timestamp_check = db.can_user_post_again(user_uid)
         if timestamp_check is False:
-            return jsonify({"success": False, "message": "You need to wait before you post again"})
+            return jsonify({"success": False, "message": "You need to wait before you can post again"})
         
         processed_data = {}
         for key, value in data.items():
@@ -310,7 +326,7 @@ def new_comment():
         user_uid = data["author"]
         timestamp_check = db.can_user_post_again(user_uid)
         if timestamp_check is False:
-            return jsonify({"success": False, "message": "You need to wait before you post again"})
+            return jsonify({"success": False, "message": "You need to wait before you comment again"})
         
         subpage_name = data["subPageName"]
         find_subpage = db.get_subpage(subpage_name, None)
@@ -337,7 +353,7 @@ def new_reply():
         
         timestamp_check = db.can_user_post_again(author_uuid)
         if timestamp_check is False:
-            return jsonify({"success": False, "message": "You need to wait before you post again"})
+            return jsonify({"success": False, "message": "You need to wait before you reply again"})
         
         parent_comment_uid = data["parentComment"]
         post_uid = data["postUid"]

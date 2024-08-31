@@ -174,6 +174,8 @@ def get_user_sub(user_uid: str, sub_uid: str) -> models.UserSubscription:
 def add_subscription_to_user(user_uid: str, sub_uid: str) -> bool:
     timestamp = get_timestamp()
     subscription = models.UserSubscription(user_uid=user_uid, subpage_uid=sub_uid, timestamp=timestamp)
+    sub = get_subpage(None, sub_uid)
+    sub.total_subs = sub.total_subs + 1
     try:
         db.session.add(subscription)
         db.session.commit()
@@ -186,6 +188,8 @@ def add_subscription_to_user(user_uid: str, sub_uid: str) -> bool:
 def remove_subscription_from_user(user_uid: str, sub_uid: str) -> bool:
     sub = get_user_sub(user_uid, sub_uid)
     if sub:
+        subpage = get_subpage(None, sub_uid)
+        subpage.total_subs = subpage.total_subs - 1
         try:
             db.session.delete(sub)
             db.session.commit()
@@ -210,7 +214,6 @@ def get_total_subs_of_subpage(sub_uid: str) -> int:
         return total_subs
     else:
         return 0
-    
 
 #############################
 # SUBPAGE RELATED STUFF     #

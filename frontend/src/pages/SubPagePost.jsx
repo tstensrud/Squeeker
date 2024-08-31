@@ -10,9 +10,9 @@ import { BASE_URL } from '../utils/globalVariables';
 // Components
 import NewComment from './components/NewComment';
 import LoadingSpinner from './components/LoadingSpinner';
+import LoadingBar from './components/LoadingBar';
 import Comment from './components/Comment';
 import Votebox from './components/VoteBox';
-import PostReplyShareDeleteButton from './components/formcomponents/PostReplyShareDeleteButton';
 import useDelete from '../hooks/useDelete';
 
 function SubPagePost(props) {
@@ -21,21 +21,23 @@ function SubPagePost(props) {
     const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
 
+
+    // Initial fetches
+    const { data: subpageData, loading: subpageDataLoading, error: subpageDataError } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
+
+    const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(
+        postId ? `${BASE_URL}/api/subpage/post/all_comments/${postId}/` : null, idToken);
+
+    const { data: postData, loading: postDataLoading, error: postDataError, refetch: refetchPostData } = useFetch(
+        postId ? `${BASE_URL}/api/subpage/post/${postId}/` : null, idToken);
+
     // useStates
     const [subpageUid, setSubpageUid] = useState("");
     const [newCommentUid, setNewCommentUid] = useState(null);
     const [deleteData, setDeleteData] = useState({});
     const [deletePostError, setDeleteError] = useState("");
+    const [totalVotes, setTotalVotes] = useState();
 
-    // Initial fetches
-    const { data: subpageData, loading: subpageDataLoading, error: subpageDataError } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
-    //const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(`${BASE_URL}/api/subpage/post/${postId}/comments/`, idToken);
-    
-    const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(
-        postId ? `${BASE_URL}/api/subpage/post/all_comments/${postId}/` : null , idToken);
-    
-    const { data: postData, loading: postDataLoading, error: postDataError, refetch: refetchPostData } = useFetch(
-        postId ? `${BASE_URL}/api/subpage/post/${postId}/` : null, idToken);
 
     // To refetch the uers latest comment
     const { data: latestCommentData, loading: latestCommentLoading, error: latestCommentError, fetchData } = useFetchDemand(
@@ -46,11 +48,17 @@ function SubPagePost(props) {
 
     // useEffects
     useEffect(() => {
-        setDeleteData({ author_uuid: postData?.data?.author_uuid });
+        setDeleteData({ author_uuid: postData?.data?.post_data?.author_uuid });
     }, [postData]);
 
     useEffect(() => {
-        setSubpageUid(subpageData && subpageData.data.uid)
+        if (postData?.success === true) {
+            setTotalVotes(postData?.data?.post_data?.total_votes);
+        }
+    }, [postData]);
+
+    useEffect(() => {
+        setSubpageUid(subpageData?.data?.post_data?.uid)
     }, [subpageData])
 
     useEffect(() => {
@@ -84,41 +92,41 @@ function SubPagePost(props) {
         e.preventDefault();
         await deleteEntry(deleteData);
     }
-
+    console.log(totalVotes)
     return (
         <>
             {
                 postDataLoading && postDataLoading === true ? (
-                    <LoadingSpinner />
+                    <LoadingBar />
                 ) : (
                     <>
                         <div className="post-title-card">
                             <div className="flex flex-col pt-1 w-12 justify-start items-center">
-                                <Votebox refetch={refetchPostData} post={true} postData={postData && postData.data} />
+                                <Votebox totalVotes={totalVotes} setTotalVotes={setTotalVotes} voteStatus={postData?.data?.post_data?.has_upvoted} post={true} postData={postData?.data} />
                             </div>
                             <div className="flex flex-col">
                                 <div className="text-xl mb-1">
-                                    {postData && postData.data.title}
+                                    {postData?.data?.post_data?.title}
                                 </div>
                                 <div className="text-base text-post-content-color">
-                                    {postData && postData.data.post}
+                                    {postData?.data?.post_data?.post}
                                 </div>
                                 <div>
                                     <ul className="p-0 m-0 list-none">
                                         <li className="inline mr-3 text-xs tracking-wide text-grey-text">
-                                            Last modified at: {postData && postData.data.event_timestamp}
+                                            Last modified at: {postData?.data?.post_data?.event_timestamp}
                                         </li>
                                         <li className="inline mr-3 text-xs tracking-wide text-grey-text">
-                                            Posted by: {postData && postData.data.author_name}
+                                            Posted by: {postData?.data?.post_data?.author_name}
                                         </li>
                                         <li className="inline mr-3 text-xs tracking-wide text-grey-text">
                                             Posted to: <Link to={`/room/${subPageName}`} className="link-card">{subPageName}</Link>
                                         </li>
                                         {
-                                            currentUser?.uid === postData?.data?.author_uuid && (
+                                            currentUser?.uid === postData?.data?.post_data?.author_uuid && (
                                                 <>
                                                     {
-                                                        postData?.data?.deleted !== true && <li onClick={handleDeletePost} className="inline mr-3 text-xs tracking-wide text-link-green cursor-pointer hover:text-link-hover">Delete</li>
+                                                        postData?.data?.post_data?.deleted !== true && <li onClick={handleDeletePost} className="inline mr-3 text-xs tracking-wide text-link-green cursor-pointer hover:text-link-hover">Delete</li>
                                                     }
                                                 </>
                                             )
@@ -149,7 +157,7 @@ function SubPagePost(props) {
 
             {
                 commentDataLoading && commentDataLoading === true ? (
-                    <LoadingSpinner />
+                    <LoadingSpinner text="comments" />
                 ) : (
                     <>
                         {
@@ -163,7 +171,9 @@ function SubPagePost(props) {
 
                         {
                             commentData && commentData.data !== undefined && Object.keys(commentData.data).map((key, index) => (
-                                <Comment isChild={false} key={index} data={commentData.data[key]} />
+                                <div className="flex flex-col bg-card-bg-color rounded-lg w-full mt-5 mb-5 pt-3 pb-3 pl-2 pr-2">
+                                    <Comment isChild={false} key={index} data={commentData.data[key]} />
+                                </div>
                             ))
                         }
 

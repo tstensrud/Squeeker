@@ -9,7 +9,6 @@ import { BASE_URL } from '../../utils/globalVariables';
 import { AuthContext } from '../../context/AuthContext';
 
 // Components
-import LoadingSpinner from './LoadingSpinner';
 import VoteboxComment from './VoteBoxComment';
 import PostReplyShareDeleteButton from "./formcomponents/PostReplyShareDeleteButton";
 import useDelete from "../../hooks/useDelete";
@@ -25,9 +24,11 @@ function Comment({ isChild, data }) {
     const [replyWarning, setReplyWarning] = useState("");
     const [deleteData, setDeleteData] = useState({})
     const [totalCommentVotes, setTotalCommentVotes] = useState(data?.data?.total_votes);
+    const [collapse, setCollapse] = useState(false);
+    const [commentIsDeleted, setCommentIsDeleted] = useState(false);
 
     // Show this after user comments. Render directly in the component rather then refetching from server.
-    const [showLatestReply, setShowLatestReply] = useState(false)
+    const [showLatestReply, setShowLatestReply] = useState(false);
 
     // Fetch and posts
     const { loading, data: replyData, error: replyError, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/reply/new/`, idToken);
@@ -39,7 +40,7 @@ function Comment({ isChild, data }) {
 
     useEffect(() => {
         if (deleteResponse?.success === true) {
-            //commentDataRefetch();
+            setCommentIsDeleted(true);
         }
     }, [deleteResponse]);
 
@@ -56,6 +57,7 @@ function Comment({ isChild, data }) {
     useEffect(() => {
         if (replyData && replyData.success === true) {
             setShowReplyContainer(!showReplyContainer);
+            setShowLatestReply(true);
         }
     }, [replyData]);
 
@@ -86,117 +88,119 @@ function Comment({ isChild, data }) {
         e.preventDefault();
         await deleteEntry(deleteData);
     }
-
     const handleCollapse = () => {
-        console.log("collapse")
+        setCollapse(!collapse);
     }
+
     return (
-        <>
-            <div className="card mt-5">
+        <div className={collapse === true ? "flex flex-col h-4 overflow-hidden" : "flex flex-col border-l border-border-color"}>
 
-                <div className="flex flex-row">
-                    <div className="flex flex-col w-12">
-                        <VoteboxComment totalCommentVotes={totalCommentVotes} setTotalCommentVotes={setTotalCommentVotes} voteStatus={data?.has_voted} postData={commentUid} />
+            <div className="flex flex-row mb-3">
+
+                <div className="h-full flex flex-col items-center w-7">
+                    <div className="flex h-6">
+                        <CollapseArrow collapse={collapse} clickFunction={handleCollapse} />
                     </div>
+                    <div className="flex flex-row h-full w-full">
+                        <div className="w-1/2 h-full"></div>
+                        <div className="border-l w-1/2 border-border-color"></div>
+                    </div>
+                </div>
 
-                    <div className="flex flex-col flex-1 m-0">
-                        {
-                            isChild !== true ? (
-                                <>
-                                    <div className="text-xs text-grey-text">
-                                        <strong>{totalCommentVotes}</strong> pts. Commented at: {data?.data?.timestamp} by: <Link to="#">{data?.data?.author_name}</Link>
-                                    </div>
-                                    <div className="mb-3 mt-3">
-                                        {data?.data?.comment}
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="text-xs text-grey-text">
-                                        <strong>{totalCommentVotes}</strong> pts. Commented at: {data?.data?.timestamp} by: <Link to="#">{data?.data?.author_name}</Link>
-                                    </div>
-                                    <div className="mb-3 mt-3">
-                                        {data?.data?.comment}
-                                    </div>
-                                </>
-                            )
-                        }
+                {
+                    collapse !== true ? (
+                        <div className="flex flex-col flex-1 ml-2 w-full">
 
-                        <div className="flex flex-row">
+                            <div className="flex flex-row items-center text-xs text-grey-text">
+                                <div className="mr-3">
+                                    <strong>{totalCommentVotes}</strong> pts.
+                                </div>
+                                <div className="mr-3">
+                                    Commented at: {data?.data?.timestamp}
+                                </div>
+                                <div className="mr-3">
+                                    by: <Link to="#">{data?.data?.author_name}</Link>
+                                </div>
+                                  
+                            </div>
+                            <div className="mb-1 mt-1">
+                                {commentIsDeleted === true ? "Your comment was deleted.." : <>{data?.data?.comment}</>}
+                                {deleteResponse?.success === false && <p>{deleteResponse?.message}</p>}
+                            </div>
+
+                            <div className="flex flex-col w-full">
+                                <div className="flex flex-row">
+                                    <div className="flex flex-row mr-4">
+                                        <VoteboxComment totalCommentVotes={totalCommentVotes} setTotalCommentVotes={setTotalCommentVotes} voteStatus={data?.has_voted} postData={commentUid} />
+                                    </div>
+                                    {
+                                        currentUser && idToken ? (
+                                            <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Leave reply" />
+                                        ) : (<></>)
+                                    }
+                                    <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
+                                    {
+                                        currentUser?.uid === data?.data?.author_uuid && (
+                                            <>
+                                                {
+                                                    data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
+                                                }
+
+                                            </>
+                                        )
+                                    }
+                                </div>
+                                {
+                                    showReplyContainer === true ? (
+                                        <div className="flex p-3 flex-col bg-card-bg-color w-full">
+
+                                            <form onSubmit={submitReply} className="flex flex-col">
+                                                <textarea name="comment" onChange={handleReplyChange} className="bg-app-bg-color border outline-none border-border-color text-base leading-5 p-1 h-20 w-96 mb-3 hover:border-link-green focus:border-link-green " placeholder="Leave a reply"></textarea>
+                                                <span>
+                                                    <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green">Reply</button>
+                                                    <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green" onClick={toggleReplySection}>Cancel</button>
+                                                </span>
+                                                <span>{replyWarning}</span>
+                                                <p>
+                                                    {replyData && replyData.success === false ? (replyData.message) : (<></>)}
+                                                </p>
+                                            </form>
+
+                                        </div>
+                                    ) : (<></>)
+                                }
+                            </div>
+
                             {
-                                currentUser && idToken ? (
-                                    <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Leave reply" />
-                                ) : (<></>)
-                            }
-                            <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
-                            {
-                                currentUser?.uid === data?.data?.author_uuid && (
-                                    <>
-                                        {
-                                            data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
-                                        }
-
-                                    </>
+                                showLatestReply && (
+                                    <div className="flex flex-col flex-1 ml-2 w-full mt-3">
+                                        <div className="items-center text-xs text-grey-text">
+                                            <strong>1</strong> pts. Commented at: now by: You
+                                        </div>
+                                        <div className="mb-1 mt-1">
+                                            {reply.comment}
+                                        </div>
+                                    </div>
                                 )
                             }
+
                         </div>
+                    ) : (
+                        <>
 
-                        {
-                            showReplyContainer === true ? (
-                                <div className="flex p-3 flex-col bg-card-bg-color">
-                                    <form onSubmit={submitReply} className="flex flex-col">
-                                        <textarea name="comment" onChange={handleReplyChange} className="bg-app-bg-color border outline-none border-border-color text-base leading-5 p-1 h-20 w-96 mb-3 hover:border-link-green focus:border-link-green " placeholder="Leave a reply"></textarea>
-                                        <span>
-                                            <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green">Reply</button>
-                                            <button className="mr-3 bg-card-bg-color text-grey-text rounded-lg p-0 border-0 hover:text-link-green" onClick={toggleReplySection}>Cancel</button>
-                                        </span>
-                                        <span>{replyWarning}</span>
-                                        <p>
-                                            {replyData && replyData.success === false ? (replyData.message) : (<></>)}
-                                        </p>
-                                    </form>
-                                </div>
-                            ) : (<></>)
-                        }
-
-                        {
-                            showLatestReply && (
-                                <div className="flex mt-3 ml-3 p-1 rounded-bl-lg border-l border-b border-border-color">
-                                    <div className="flex flex-row">
-                                        <div className="flex flex-col w-12">
-                                            <VoteboxComment />
-                                        </div>
-                                        <div className="flex flex-col flex-1 m-0">
-                                            <div className="text-xs text-grey-text">
-                                                <strong>asdf</strong> pts. Commented at:  by: <Link to="#">name</Link>
-                                            </div>
-                                            <div className="mb-3 mt-3">
-                                                comment
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        }
-
-
-                    </div>
-                    {
-                        !data?.data?.parent_comment_uid && (
-                            <CollapseArrow clickFunction={handleCollapse} />
-                        )
-                    }
-                </div>
-                {
-                    data?.children && Object.keys(data?.children).map((key, index) => (
-                        <div key={`${index}+${data?.children[key]}`} className="flex mt-3 ml-3 p-1 rounded-bl-lg border-l border-b border-border-color">
-                            <CollapseArrow clickFunction={handleCollapse} />
-                            <Comment isChild={true} data={data?.children[key]} key={index} />
-                        </div>
-                    ))
+                        </>
+                    )
                 }
             </div>
-        </>
+
+            {
+                data?.children && Object.keys(data?.children).map((key, index) => (
+                    <div key={`${index}+${data?.children[key].data.uid}`} className="flex flex-row mt-3 ml-5 w-full">
+                        <Comment isChild={true} data={data?.children[key]} key={index} />
+                    </div>
+                ))
+            }
+        </div>
     );
 }
 

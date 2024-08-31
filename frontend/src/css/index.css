@@ -39,8 +39,9 @@
 
 @layer components {
   .card {
-    @apply rounded-lg bg-card-bg-color w-full flex flex-col p-3 mb-3;
+    @apply rounded-lg bg-card-bg-color w-full flex flex-col pt-3 pl-2;
   }
+  
   .post-card {
     @apply flex flex-row bg-card-bg-color rounded-lg pt-2 pb-3 mt-3 mb-3;
   }

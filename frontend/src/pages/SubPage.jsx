@@ -15,6 +15,7 @@ import NewPost from './components/NewPost';
 import SubPageDoesNotExist from './components/SubPageDoesNotExist';
 import LoadingSpinner from './components/LoadingSpinner';
 import { GlobalContext } from '../context/GlobalContext';
+import LoadingBar from './components/LoadingBar';
 
 function SubPage(props) {
     const { subPageName } = useParams();
@@ -25,54 +26,50 @@ function SubPage(props) {
     const { data: subpageData, loading: subpageDataLoading, error, refetch: refetchSubpageData } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
 
     const { data: subpagePostData, loading: subpagePostDataLoading, error: subpagePostDataError } = useFetch(
-        subpageData && subpageData.data ? `${BASE_URL}/api/subpage/${subpageData.data.uid}/posts/` : null,
+        subpageData?.data?.subpage_data ? `${BASE_URL}/api/subpage/${subpageData.data.subpage_data.uid}/posts/` : null,
         idToken
     );
-    
+
     useEffect(() => {
         setSelectedIndex(props.index);
-    },[]);
-    
+    }, []);
+    console.log(subpageData)
     return (
         <>
             {
-                subpageData && subpageData.success === false ? (
+                subpageData?.success === false ? (
                     <SubPageDoesNotExist subPageName={subPageName} />
                 ) : (
                     <>
                         {
                             subpageDataLoading === true ? (
-                                <LoadingSpinner key={"loading1"} />
+                                <LoadingBar />
                             ) : (
-                                <HeaderComponent key={"header"} subpageData={subpageData && subpageData.data} />
+                                <HeaderComponent totalSubs={subpageData?.data?.subpage_data?.total_subs} isSubscribed={subpageData?.data?.is_subscribed} subpageData={subpageData?.data?.subpage_data} />
                             )
                         }
 
                         {
-                            idToken && currentUser && idToken !== null && currentUser !== null ? (<><NewPost key={"newpost"}  refetchSubpageData={refetchSubpageData} author={currentUser} subPageName={subPageName} subPageUid={subpageData && subpageData.data.uid} /></>) : ("")
+                            idToken && currentUser && idToken !== null && currentUser !== null ? (
+                            <NewPost refetchSubpageData={refetchSubpageData} author={currentUser} subPageName={subPageName} subPageUid={subpageData?.subpage_data?.data?.uid} />
+                        ) : ("")
                         }
+
 
                         {
                             subpagePostDataLoading && subpagePostDataLoading === true ? (
-                                <LoadingSpinner key={"loading2"} />
+                                <LoadingSpinner text="posts" />
                             ) : (
                                 <>
                                     {
-                                        subpagePostDataLoading && subpagePostDataLoading === true ? (
-                                            <LoadingSpinner key={"loading3"} />
-                                        ) : (
-                                            <>
-                                                {
-                                                    subpagePostData && subpagePostData.data !== undefined && Object.keys(subpagePostData.data).map((key, index) => (
-                                                        <Post postData={subpagePostData.data[key]} key={`${subpagePostData.data[key].uid} + ${index}`} />
-                                                    ))
-                                                }
-                                            </>
-                                        )
+                                        subpagePostData && subpagePostData.data !== undefined && Object.keys(subpagePostData.data).map((key, index) => (
+                                            <Post postData={subpagePostData.data[key]} key={`${subpagePostData.data[key].uid} + ${index}`} />
+                                        ))
                                     }
                                 </>
                             )
                         }
+
                     </>
                 )
             }

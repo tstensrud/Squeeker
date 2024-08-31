@@ -7,7 +7,7 @@ import useSubpagePost from '../../hooks/useSubpagePost';
 import useFetch from '../../hooks/useFetch';
 import useFetchDemand from '../../hooks/useFetchDemand';
 
-function HeaderComponent({ subpageData }) {
+function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
     const { currentUser, idToken } = useContext(AuthContext);
     const { userSubscriptionsRefetch } = useOutletContext();
 
@@ -18,15 +18,10 @@ function HeaderComponent({ subpageData }) {
 
     // Fetches and posts
     const { loading, data, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/subscribe/`, idToken);
-    const { data: isSubedData, refetch } = useFetch(
-        clientUid ? `${BASE_URL}/api/subpage/is_subscribed/${subpageUid}/${clientUid}/` : null, idToken);
-
-    const { data: totalSubsData, refetch: refetchSubs } = useFetch(`${BASE_URL}/api/subpage/total_subs/${subpageUid}/`, idToken);
-    //const {data: refetchSubedData } = useFetchDemand(`${BASE_URL}/api/subpage/is_subscribed/${subpageUid}/${clientUid}/`, idToken);
-
-    const [isSubbed, setIsSubbed] = useState(false);
+    
+    const [isSubbed, setIsSubbed] = useState();
     const [subscribeData, setSubscribeData] = useState({});
-    const [totalSubs, setTotalSubs] = useState("");
+    const [totalSubsCounter, setTotalSubsCounter] = useState();
 
     useEffect(() => {
         setSubscribeData({
@@ -34,34 +29,32 @@ function HeaderComponent({ subpageData }) {
             clientUid: clientUid,
             subpageUid: subpageUid,
         });
+        setIsSubbed(isSubscribed);
+        setTotalSubsCounter(totalSubs);
     }, []);
 
     useEffect(() => {
-        if (data && data.success === true) {
+        if (data?.success === true) {
+            userSubscriptionsRefetch();
+            if (isSubbed) {
+                setTotalSubsCounter(totalSubsCounter - 1);
+            } else {
+                setTotalSubsCounter(totalSubsCounter + 1);
+            }
             setIsSubbed(!isSubbed);
-        }
-    }, [data]);
 
-    useEffect(() => {
-        if (totalSubsData && totalSubsData.success === true) {
-            setTotalSubs(totalSubsData.data);
         }
-    }, [totalSubsData])
+    },[data]);
 
-    //console.log(subscribeData);
-    //console.log(data)
     // Handlers
     const handleSubscribe = async (e) => {
         e.preventDefault();
         await subpagePost(subscribeData);
-        refetch();
-        refetchSubs();
-        userSubscriptionsRefetch();
     }
 
     return (
         <>
-        
+
             <div className="flex flex-row mb-5 mt-5">
                 <div className="flex flex-col">
                     <h2>Welcome to {subpageData && subpageData.name}!</h2>
@@ -69,44 +62,34 @@ function HeaderComponent({ subpageData }) {
                         {subpageData && subpageData.description}
                     </p>
                 </div>
-                
+
                 <div className="flex flex-1 flex-col items-end text-center justify-end h-full mt-2">
                     <div>
                         {
-                            isSubedData ? (
-                                <>
-                                    {
-                                        isSubedData.data === false ? (
-                                            <>
-                                                <ul className="p-0 list-none m-0">
-                                                    <li className="inline mr-3 text-base tracking-wide">
-                                                        You are not subscribed.
-                                                    </li>
-                                                    <li className="inline mr-3 text-base tracking-wide">
-                                                        <Link  to="#" onClick={handleSubscribe}>Subscribe</Link>
-                                                    </li>
-                                                </ul>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <ul className="p-0 list-none m-0">
-                                                    <li className="inline mr-3 text-base tracking-wide">
+                            isSubbed === false ? (
 
-                                                    </li>
-                                                    <li className="inline mr-3 text-base tracking-wide">
-                                                        <Link  to="#" onClick={handleSubscribe}>Unsubscribe</Link>
-                                                    </li>
-                                                </ul>
-                                            </>
-                                        )
-                                    }
-                                </>
+                                <ul className="p-0 list-none m-0">
+                                    <li className="inline mr-3 text-base tracking-wide">
+                                        You are not subscribed.
+                                    </li>
+                                    <li className="inline mr-3 text-base tracking-wide">
+                                        <Link to="#" onClick={handleSubscribe}>Subscribe</Link>
+                                    </li>
+                                </ul>
+
                             ) : (
-                                <>
-                                </>
+
+                                <ul className="p-0 list-none m-0">
+                                    <li className="inline mr-3 text-base tracking-wide">
+
+                                    </li>
+                                    <li className="inline mr-3 text-base tracking-wide">
+                                        <Link to="#" onClick={handleSubscribe}>Unsubscribe</Link>
+                                    </li>
+                                </ul>
+
                             )
                         }
-
                     </div>
                     <div>
                         <ul className="p-0 list-none m-0">
@@ -116,9 +99,8 @@ function HeaderComponent({ subpageData }) {
                             <li className="inline mr-3 text-base tracking-wide">
                                 {
                                     <>
-                                        {totalSubs}
+                                        {totalSubsCounter}
                                     </>
-
                                 }
                             </li>
                         </ul>

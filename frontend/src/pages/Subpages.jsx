@@ -45,7 +45,7 @@ function Subpages(props) {
                                                     subpageData && subpageData !== null && Object.entries(subpageData).map(([key, value], index) => (
 
                                                         <div className="flex flex-row" key={index}>
-                                                            <div className="w-32 overflow-hidden">
+                                                            <div className="w-96 overflow-hidden">
                                                                 <Link  to={`/room/${key}`}>{key}</Link> 
                                                             </div>
                                                             <div className="text-grey-text">/ {value}</div>

@@ -73,6 +73,7 @@ class Subpage(db.Model):
     active = db.Column(db.Boolean, default=True)
     nsfw = db.Column(db.Boolean, default=False)
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    total_subs = db.Column(db.Integer)
 
     __table_args__ = (
         Index('idx_uid', 'uid'),
@@ -87,7 +88,8 @@ class Subpage(db.Model):
             "public": self.public,
             "active": self.active,
             "nsfw": self.nsfw,
-            "event_timestamp": self.event_timestamp
+            "event_timestamp": self.event_timestamp,
+            "total_subs": self.total_subs
         }
 
 class Post(db.Model):
