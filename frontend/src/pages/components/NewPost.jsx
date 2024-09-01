@@ -81,7 +81,7 @@ function NewPost(props) {
 
                     <div>
                         <button className="standard-button mr-3" type="submit">Post</button>
-                        {data && data.success === false ? <>{data.message}</> : ""}
+                        {data?.success === false && data.message}
                         {error && error}
                     </div>
                 </div>

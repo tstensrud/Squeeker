@@ -9,10 +9,14 @@ import useFetchDemand from '../../hooks/useFetchDemand.jsx';
 import { BASE_URL } from '../../utils/globalVariables.jsx';
 
 // widgets
-import LoadingBar from '../components/LoadingBar.jsx';
+
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import Posts from "./Posts.jsx";
 import Comments from "./Comments.jsx";
+import UserScoreStats from "./UserScoreStats.jsx";
+import UserPosts from "./UserPosts.jsx";
+import UserComments from "./UserComments.jsx";
+import UserUpvotes from "./UserUpvotes.jsx";
+import UserDownvotes from "./UserDownvotes.jsx";
 
 function UserAccount(props) {
 
@@ -46,19 +50,19 @@ function UserAccount(props) {
         currentUser ? `${BASE_URL}/user/comments/${currentUser.uid}/` : null, idToken);
     const { data: upvoteData, loading: upvoteDataLoading, error: upvoteDataError, fetchData: fetchUpvoteData } = useFetchDemand(`${BASE_URL}/user/upvoted/posts/${currentUser.uid}/`, idToken);
     const { data: downVoteData, loading: downVoteDataLoading, error: downVoteDataError, fetchData: fetchDownVoteData } = useFetchDemand(`${BASE_URL}/user/downvoted/posts/${currentUser.uid}/`, idToken);
-    
+
 
     const navbarItems = [
-        { text: "Posts", hasFetched: null, setFetched: null, fetch: null },
-        { text: "Comments", hasFetched: hasFetchedCommentData, setFetched: setHasFetchedCommentData, fetch: fetchCommentData },
-        { text: "Upvotes", hasFetched: hasFetchedUpvoteData, setFetched: setHasFetchedUpvoteData, fetch: fetchUpvoteData },
-        { text: "Downvotes", hasFetched: hasFetchedDownvoteData, setFetched: setHasFetchedDownvoteData, fetch: fetchDownVoteData }
+        { text: "Your posts", hasFetched: null, setFetched: null, fetch: null },
+        { text: "Your comments", hasFetched: hasFetchedCommentData, setFetched: setHasFetchedCommentData, fetch: fetchCommentData },
+        { text: "Posts you upvoted", hasFetched: hasFetchedUpvoteData, setFetched: setHasFetchedUpvoteData, fetch: fetchUpvoteData },
+        { text: "Posts you downvoted", hasFetched: hasFetchedDownvoteData, setFetched: setHasFetchedDownvoteData, fetch: fetchDownVoteData }
     ]
 
     useEffect(() => {
         setSelectedIndex(props.index);
-    },[]);
-    
+    }, []);
+
     // Handlers
     const handleNavbarClick = (index) => {
         if (navbarItems[index].hasFetched !== null && navbarItems[index].setFetched !== null && navbarItems[index].fetch !== null) {
@@ -85,47 +89,7 @@ function UserAccount(props) {
                             userData && userData.success === true ? (
                                 <>
                                     <div className="flex flex-row w-80 mt-5">
-
-                                        {/* Card user data and stats */}
-                                        <div className="flex flex-col w-full">
-                                            <h3>{userData && userData.data.username}</h3>
-
-                                            <div className="card">
-                                                <h4>Your user statistics</h4>
-                                                <div className="flex flex-row w-full">
-                                                    <div>
-                                                        Post score:
-                                                    </div>
-                                                    <div className="ml-3 text-end flex-1">
-                                                        {scoreData && scoreData.data.posts} pts.
-                                                    </div>
-                                                </div>
-                                                <div className="flex flex-row">
-                                                    <div>
-                                                        Comment score:
-                                                    </div>
-                                                    <div className="ml-3 text-end flex-1">
-                                                        {scoreData && scoreData.data.comments} pts.
-                                                    </div>
-                                                </div>
-                                                <div className="flex flex-row">
-                                                    <div>
-                                                        Total posts:
-                                                    </div>
-                                                    <div className="ml-3 text-end flex-1">
-                                                        {scoreData && scoreData.data.total_posts} posts
-                                                    </div>
-                                                </div>
-                                                <div className="flex flex-row">
-                                                    <div>
-                                                        Total comments:
-                                                    </div>
-                                                    <div className="ml-3 text-end flex-1">
-                                                        {scoreData && scoreData.data.total_comments} comments
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <UserScoreStats userDataLoading={userDataLoading} username={userData?.data.username} posts={scoreData?.data.posts} comments={scoreData?.data.comments} total_posts={scoreData?.data.total_posts} total_comments={scoreData?.data.total_comments} />
                                     </div>
 
                                     <div className="flex flex-row w-full mt-6">
@@ -138,164 +102,23 @@ function UserAccount(props) {
                                         }
                                     </div>
 
+
+
                                     <div className="flex flex-col w-full">
-
-                                        { /* All userposts */}
                                         {
-                                            activeNavIndex === 0 ? (
-                                                <>
-                                                    {
-                                                        postDataLoading && postDataLoading === true ? (
-                                                            <div className="card">
-                                                                <LoadingBar />
-                                                            </div>
-                                                        ) : (
-                                                            <>
-                                                                {
-                                                                    postData && postData.success === true ? (
-                                                                        <>
-                                                                            {
-                                                                                postData && Object.keys(postData.data).map((key) => (
-                                                                                    <Posts key={postData.data[key].uid} postData={postData.data[key]} />
-                                                                                ))
-                                                                            }
-                                                                        </>
-                                                                    ) : (
-                                                                        <div className="flex w-full bg-secondary-color rounded-md p-3">
-                                                                            {postData && postData.message}
-                                                                        </div>
-                                                                    )}
-                                                            </>
-                                                        )
-                                                    }
-                                                </>
-                                            ) : (<></>)
+                                            activeNavIndex === 0 && <UserPosts postDataLoading={postDataLoading} postData={postData && postData} />
                                         }
 
-
-                                        { /* All user comments */}
                                         {
-                                            activeNavIndex === 1 ? (
-                                                <>
-                                                    {
-                                                        commentDataLoading && commentDataLoading === true ? (
-                                                            <LoadingSpinner />
-                                                        ) : (
-                                                            <>
-                                                                {
-                                                                    commentData && commentData.success === true ? (
-                                                                        <>
-                                                                            {
-                                                                                commentData && Object.keys(commentData.data).map((key, index) => (
-                                                                                    <Comments key={commentData.data[key].uid} data={commentData.data[key]} />
-                                                                                ))
-                                                                            }
-                                                                        </>
-                                                                    ) : (
-                                                                        <div className="flex w-full bg-secondary-color rounded-md p-3">
-                                                                            {commentData && commentData.message}
-                                                                        </div>
-                                                                    )}
-                                                            </>
-                                                        )
-                                                    }
-                                                </>
-                                            ) : (<></>)
+                                            activeNavIndex === 1 && <UserComments commentDataLoading={commentDataLoading && commentDataLoading} commentData={commentData && commentData} />
                                         }
 
-                                        {/* All upvoted posts */}
                                         {
-                                            activeNavIndex === 2 ? (
-                                                <>
-                                                    {
-                                                        upvoteData && upvoteData.loading === true ? (
-                                                            <>
-                                                                <LoadingSpinner />
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                {
-                                                                    upvoteData && upvoteData.success === true ? (
-                                                                        <>
-                                                                            {
-                                                                                upvoteData.data && Object.keys(upvoteData.data).map((key, index) => (
-                                                                                    <div key={`${index}-${upvoteData.data[key]}`} className="card mb-3">
-                                                                                        <div className="flex mr-2">
-                                                                                            <Link to={`/room/${upvoteData.data[key].subpage_name}/post/${upvoteData.data[key].uid}`}>
-                                                                                                {upvoteData.data[key].post}
-                                                                                            </Link>
-                                                                                        </div>
-                                                                                        <div className="flex flex-row text-grey-text text-xs flex-1">
-                                                                                            <div className="mr-3">
-                                                                                                Posted to: {upvoteData.data[key].subpage_name}
-                                                                                            </div>
-                                                                                            <div>
-                                                                                                Upvoted on {upvoteData.data[key].event_timestamp}
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                ))
-                                                                            }
-                                                                        </>
-                                                                    ) : (
-                                                                        <div className="flex w-full bg-secondary-color rounded-md p-3">
-                                                                            {upvoteData && upvoteData.message}
-                                                                        </div>
-                                                                    )
-                                                                }
-                                                            </>
-                                                        )
-                                                    }
-                                                </>
-                                            ) : (<></>)
+                                            activeNavIndex === 2 && <UserUpvotes upvoteDataLoading={upvoteDataLoading && upvoteDataLoading} upvoteData={upvoteData && upvoteData} />
                                         }
 
-                                        {/* All downvoted posts */}
                                         {
-                                            activeNavIndex === 3 ? (
-                                                <>
-                                                    {
-                                                        downVoteData && downVoteData.loading === true ? (
-                                                            <>
-                                                                <LoadingSpinner />
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                {
-                                                                    downVoteData && downVoteData.success === true ? (
-                                                                        <>
-                                                                            {
-                                                                                downVoteData.data && Object.keys(downVoteData.data).map((key, index) => (
-                                                                                    <div key={`${index}-${downVoteData.data[key]}`} className="card mb-3">
-                                                                                        <div className="flex mr-2">
-                                                                                            <Link to={`/room/${downVoteData.data[key].subpage_name}/post/${downVoteData.data[key].uid}`}>
-                                                                                                {downVoteData.data[key].post}
-                                                                                            </Link>
-                                                                                        </div>
-                                                                                        <div className="flex flex-row text-grey-text text-xs flex-1">
-                                                                                            <div className="mr-3">
-                                                                                                Posted to: {downVoteData.data[key].subpage_name}
-                                                                                            </div>
-                                                                                            <div>
-                                                                                                Downvoted on {downVoteData.data[key].event_timestamp}
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                ))
-                                                                            }
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            {downVoteData && downVoteData.message}
-                                                                        </>
-                                                                    )
-                                                                }
-                                                            </>
-                                                        )
-                                                    }
-
-                                                </>
-                                            ) : (<></>)
+                                            activeNavIndex === 3 && <UserDownvotes downVoteDataLoading={downVoteDataLoading && downVoteDataLoading} downVoteData={downVoteData && downVoteData} />
                                         }
                                     </div>
                                 </>

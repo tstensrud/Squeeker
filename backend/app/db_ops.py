@@ -28,6 +28,13 @@ def get_user(uuid) -> models.User:
     else:
         return None
 
+def get_user_by_username(username: str) -> models.User:
+    user = db.session.query(models.User).filter(models.User.username == username).first()
+    if user:
+        return user
+    else:
+        return None
+
 def front_page_data(user_uid: str):
     subpage_uids = get_user_subscriptions(user_uid, False)
     if subpage_uids:
@@ -618,4 +625,38 @@ def get_frontpage_posts_logged_in(user_uid: str, limit: int) -> dict:
                 post_dict[post.uid] = post_data
         return post_dict
     return {}
+
+#############################
+# MESSAGES                  #
+#############################
+def get_all_user_messages(uuid: str) -> dict:
+    messages = db.session.query(models.UserMessage).filter(models.UserMessage.recipient_uid == uuid).all()
+    if messages:
+        message_data = {}
+        for message in messages:
+            message_data[message.uid] = message.to_json()
+        return message_data
+    return {}
+
+def send_message_to_single_user(sender_uid: str, receiver_name: str, message) -> bool:
+    receiver = get_user_by_username(receiver_name)
+    if not receiver:
+        return False
+    receiver_uid = receiver.uuid
+    uid = str(uuid4())
+    timestamp = get_timestamp()
+    new_message = models.UserMessage(uid=uid,
+                                     recipient_uid=receiver_uid,
+                                     sender_uid = sender_uid,
+                                     message=message,
+                                     timestamp=timestamp)
+    receiver.message_notification = True
+    try:
+        db.session.add(new_message)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return False
+    
 

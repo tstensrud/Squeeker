@@ -28,14 +28,14 @@ function FrontpageContentLoggedIn() {
                                 <>
 
                                     {
-                                        data && data.data && Object.keys(data.data).map((key, index) => (
+                                        data?.data && Object.keys(data.data).map((key, index) => (
                                             <Post key={index} postData={data.data[key]} />
                                         ))
                                     }
                                 </>
                             ) : (
                                 <>
-                                    {data && data.message}
+                                    {data?.message}
                                 </>
                             )
                         }

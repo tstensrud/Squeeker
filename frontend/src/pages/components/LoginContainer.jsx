@@ -47,7 +47,7 @@ function LoginContainer({ setShowLoginCointainer }) {
             <div className="w-full h-full flex flex-col justify-center items-center">
                 <div className="flex flex-col bg-secondary-color p-6 w-96 h-96 justify-center items-center text-center rounded-lg">
 
-                    <h3>Log in</h3>
+                    <h3 className="mb-5">Log in</h3>
                     <form onSubmit={handleLogin}>
                         <div className="mb-4">
                             <input className="h-10 w-80  p-3 rounded-lg border text-sm " onChange={handleUsernameChange} type="text" placeholder="E-mail" />

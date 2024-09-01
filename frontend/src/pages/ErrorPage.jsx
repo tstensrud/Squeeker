@@ -1,15 +1,11 @@
 function ErrorPage() {
 
     return (
-        <>  
-        <div className="login-container">
-            <div className="login-card">
+        <div className="card">
                 Error 404
                     <br />
                 Page not found
-            </div>
         </div>
-        </>
     );
 }
 

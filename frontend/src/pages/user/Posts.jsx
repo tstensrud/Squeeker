@@ -5,7 +5,7 @@ function Posts({ postData }) {
     return (
         <div className="card mb-3">
             <div className="text-xl">
-                <Link to={`/room/${postData.subpage_name}/post/${postData.uid}`}>{postData.title}</Link>
+                <Link className="text-primary-color hover:text-accent-color" to={`/room/${postData.subpage_name}/post/${postData.uid}`}>{postData.title}</Link>
             </div>
             <div className="text-grey-text">
                 {postData.post}

@@ -19,10 +19,10 @@ function RegisterContainer({ setShowLoginCointainer, setShowRegisterContainer })
 
 
     useEffect(() => {
-        if (data && data.success === false) {
+        if (data?.success === false) {
             setError(data.message);
         }
-        if (data && data.success === true) {
+        if (data?.success === true) {
             setShowRegisterContainer(false);
             setShowLoginCointainer(true);
         }

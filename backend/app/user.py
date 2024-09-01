@@ -49,7 +49,6 @@ def register_user():
             return jsonify({"success": False, "message": "Could not create user"})
     else:
         return jsonify({"success": False, "message": "No data received"})
-    
 
 # Get user data
 @user.route('/<uuid>/', methods=['GET'])

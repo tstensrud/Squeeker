@@ -121,7 +121,7 @@ function Comment({ isChild, data }) {
                                 <div className="mr-3">
                                     by: <Link to="#">{data?.data?.author_name}</Link>
                                 </div>
-                                  
+
                             </div>
                             <div className="mb-1 mt-1">
                                 {commentIsDeleted === true ? "Your comment was deleted.." : <>{data?.data?.comment}</>}
@@ -131,24 +131,29 @@ function Comment({ isChild, data }) {
                             <div className="flex flex-col w-full">
                                 <div className="flex flex-row">
                                     <div className="flex flex-row mr-4">
-                                        <VoteboxComment totalCommentVotes={totalCommentVotes} setTotalCommentVotes={setTotalCommentVotes} voteStatus={data?.has_voted} postData={commentUid} />
+                                        <VoteboxComment deleted={data?.data?.deleted} totalCommentVotes={totalCommentVotes} setTotalCommentVotes={setTotalCommentVotes} voteStatus={data?.has_voted} postData={commentUid} />
                                     </div>
-                                    {
-                                        currentUser && idToken ? (
-                                            <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Leave reply" />
-                                        ) : (<></>)
-                                    }
-                                    <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
-                                    {
-                                        currentUser?.uid === data?.data?.author_uuid && (
-                                            <>
-                                                {
-                                                    data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
-                                                }
-
-                                            </>
-                                        )
-                                    }
+                                    <div className="flex flex-row">
+                                        <div>
+                                            {
+                                                currentUser && idToken ? (
+                                                    <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Leave reply" />
+                                                ) : (<></>)
+                                            }
+                                        </div>
+                                        <div>
+                                            <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
+                                            {
+                                                currentUser?.uid === data?.data?.author_uuid && (
+                                                    <>
+                                                        {
+                                                            data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
+                                                        }
+                                                    </>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                                 {
                                     showReplyContainer === true ? (
@@ -161,7 +166,7 @@ function Comment({ isChild, data }) {
                                                 </span>
                                                 <span>{replyWarning}</span>
                                                 <p>
-                                                    {replyData && replyData.success === false ? (replyData.message) : (<></>)}
+                                                    {replyData?.success === false && replyData.message}
                                                 </p>
                                             </form>
                                         </div>

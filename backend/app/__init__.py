@@ -43,8 +43,10 @@ def create_app():
     # Blueprints
     from .api import api
     from .user import user
+    from .messages import messages
     app.register_blueprint(api, url_prefix="/api")
     app.register_blueprint(user, url_prefix="/user")
+    app.register_blueprint(messages, url_prefix="/messages")
 
     with app.app_context():
         from . import models

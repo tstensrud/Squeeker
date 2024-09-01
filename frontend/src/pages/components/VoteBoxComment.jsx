@@ -7,7 +7,7 @@ import { BASE_URL } from '../../utils/globalVariables';
 // Hooks
 import usePatch from '../../hooks/usePatch';
 
-function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, postData }) {
+function VoteboxComment({ deleted, totalCommentVotes, setTotalCommentVotes, voteStatus, postData }) {
     const { currentUser, idToken } = useContext(AuthContext);
 
     // useStates
@@ -69,7 +69,7 @@ function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, p
         }
         await resetVoteData(voteData);
     }
-
+    
     return (
         <>
             <div>
@@ -78,14 +78,14 @@ function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, p
                         <>
                             {
                                 currenUpvoteStatus === true ? (
-                                    <Link onClick={handleResetVote} >
+                                    <Link className={deleted === true ? 'cursor-auto' : 'cursor-pointer'} onClick={deleted !== true && handleResetVote} >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-accent-color">
                                             <line x1="12" y1="20" x2="12" y2="4"></line>
                                             <polyline points="6 10 12 4 18 10"></polyline>
                                         </svg>
                                     </Link>
                                 ) : (
-                                    <Link onClick={handleUpvote}>
+                                    <Link className={deleted === true ? 'cursor-auto' : 'cursor-pointer'} onClick={deleted !== true && handleUpvote}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link hover:stroke-accent-color">
                                             <line x1="12" y1="20" x2="12" y2="4"></line>
                                             <polyline points="6 10 12 4 18 10"></polyline>
@@ -109,14 +109,14 @@ function VoteboxComment({ totalCommentVotes, setTotalCommentVotes, voteStatus, p
                         <>
                             {
                                 currentDownvotestatus === true ? (
-                                    <Link onClick={handleResetVote}>
+                                    <Link className={deleted === true ? 'cursor-auto' : 'cursor-pointer'} onClick={deleted !== true && handleResetVote}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-accent-color">
                                             <line x1="12" y1="4" x2="12" y2="20"></line>
                                             <polyline points="18 14 12 20 6 14"></polyline>
                                         </svg>
                                     </Link>
                                 ) : (
-                                    <Link onClick={handleDownVote} to="">
+                                    <Link className={deleted === true ? 'cursor-auto' : 'cursor-pointer'} onClick={deleted !== true && handleDownVote}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link hover:stroke-accent-color">
                                             <line x1="12" y1="4" x2="12" y2="20"></line>
                                             <polyline points="18 14 12 20 6 14"></polyline>

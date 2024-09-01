@@ -9,6 +9,7 @@ class User(db.Model):
     username = db.Column(db.String(100), nullable=False)
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
     last_action = db.Column(db.String(50))
+    message_notification = db.Column(db.Boolean, default=False)
 
     posts = db.relationship("Post", backref="user", lazy=True)
     subscriptions = db.relationship('UserSubscription', backref="user", lazy=True)
@@ -24,7 +25,8 @@ class User(db.Model):
             "uuid": self.uuid,
             "email": self.email,
             "username": self.username,
-            "event_timestamp": self.event_timestamp
+            "event_timestamp": self.event_timestamp,
+            "message_notification": self.message_notification
         }
 
 class UserMessage(db.Model):
@@ -40,6 +42,16 @@ class UserMessage(db.Model):
     __table_args__ = (
         Index('idx_uid', 'uid'),
     )
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "uid": self.uid,
+            "recipient_uid": self.recipient_uid,
+            "sender_uid": self.sender_uid,
+            "message": self.message,
+            "timestamp": self.timestamp
+        }
 
 class UserSubscription(db.Model):
     __tablename__ = 'Usersubscription'

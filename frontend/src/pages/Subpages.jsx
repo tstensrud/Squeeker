@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 
 import { GlobalContext } from '../context/GlobalContext';
 import { AuthContext } from '../context/AuthContext';
 import { BASE_URL } from '../utils/globalVariables';
 
 // Components
-import HeaderComponent from './components/HeaderComponent';
 import LoadingSpinner from './components/LoadingSpinner';
-import LoadingBar from './components/LoadingBar';
 import useFetchNoLogin from '../hooks/useFetchNoLogin';
 import PageHeader from './components/PageHeader';
 
@@ -45,7 +43,7 @@ function Subpages(props) {
                                                         <div className="w-96 overflow-hidden">
                                                             <Link to={`/room/${key}`}>{key}</Link>
                                                         </div>
-                                                        <div className="text-grey-text mb-2">/ {value}</div>
+                                                        <div className="text-grey-text mb-2">{value}</div>
                                                     </div>
 
                                                 ))

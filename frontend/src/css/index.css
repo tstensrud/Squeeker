@@ -36,7 +36,7 @@
   }
 
   button {
-    @apply bg-secondary-color text-primary-color cursor-pointer border rounded-lg border-border-color p-1 h-8 w-20 transition duration-200 ease-in-out;
+    @apply bg-secondary-color text-primary-color cursor-pointer border rounded-lg border-border-color h-8 w-20 transition duration-200 ease-in-out;
   }
 
   button:hover {
@@ -44,7 +44,7 @@
   }
 
   input {
-    @apply h-10 w-80 bg-secondary-color p-3 text-primary-color rounded-lg border text-sm border-primary-color;
+    @apply h-10 w-80 bg-secondary-color p-3 text-primary-color rounded-lg border text-sm border-border-color;
   }
 
   input:hover {

@@ -126,7 +126,7 @@ function SubPagePost(props) {
                                             currentUser?.uid === postData?.data?.post_data?.author_uuid && (
                                                 <>
                                                     {
-                                                        postData?.data?.post_data?.deleted !== true && <li onClick={handleDeletePost} className="inline mr-3 text-xs tracking-wide text-accent-color cursor-pointer hover:text-secondary-color">Delete</li>
+                                                        postData?.data?.post_data?.deleted !== true && <li onClick={handleDeletePost} className="inline mr-3 text-xs tracking-wide text-accent-color cursor-pointer hover:text-primary-color">Delete</li>
                                                     }
                                                 </>
                                             )

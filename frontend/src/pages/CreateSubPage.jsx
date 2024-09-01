@@ -122,7 +122,7 @@ function CreateSubPage(props) {
                         </div>
                     ) : (
                         <>
-                            You need an account and to be logged in to create subpages.
+                            You need an account and to be logged in to create rooms.
                         </>
                     )
                 }

@@ -62,9 +62,9 @@ function NewComment({ commentDataRefech, postId, subpageUid, subPageName, msgToP
                 <p>
                     <button className="standard-button mr-3" type="submit">Post</button>
                     {commentWarning}
-                    {data && data.success === false ? <>{data.message}</> : ""}
+                    {data?.success === false && data.message}
                     {error && error}
-                    {data && data.error ? (<>{data.error}</>) : (<></>)}
+                    {data?.error && data.error}
                 </p>
             </form>
         </div>
