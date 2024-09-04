@@ -11,9 +11,9 @@ class User(db.Model):
     last_action = db.Column(db.String(50))
     message_notification = db.Column(db.Boolean, default=False)
 
-    posts = db.relationship("Post", backref="user", lazy=True)
-    subscriptions = db.relationship('UserSubscription', backref="user", lazy=True)
-    comments = db.relationship("Comment", backref='user', lazy=True)
+    post = db.relationship("Post", backref="user", lazy=True)
+    subscription = db.relationship('UserSubscription', backref="user", lazy=True)
+    comment = db.relationship("Comment", backref='user', lazy=True)
     
     __table_args__ = (
             Index('idx_uid', 'uuid'),
@@ -38,7 +38,10 @@ class UserMessage(db.Model):
     message = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.String(50))
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    has_read = db.Column(db.Boolean, default=False)
     
+    sender = db.relationship('User', foreign_keys=[sender_uid], backref="sender")
+
     __table_args__ = (
         Index('idx_uid', 'uid'),
     )
@@ -50,7 +53,8 @@ class UserMessage(db.Model):
             "recipient_uid": self.recipient_uid,
             "sender_uid": self.sender_uid,
             "message": self.message,
-            "timestamp": self.timestamp
+            "timestamp": self.timestamp,
+            "has_read": self.has_read
         }
 
 class UserSubscription(db.Model):
@@ -122,8 +126,6 @@ class Post(db.Model):
     deleted = db.Column(db.Boolean, default=False)
     deleted_post = db.Column(db.Text, nullable = True)
 
-    comments = db.relationship("Comment")
-
     __table_args__ = (
         Index('idx_uid', 'uid'),
     )
@@ -161,6 +163,10 @@ class Comment(db.Model):
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
     deleted = db.Column(db.Boolean, default=False)
     deleted_comment = db.Column(db.Text)
+
+    #post = db.relationship('Post', foreign_keys=[post_uid], backref='comment')
+    #author = db.relationship('User', foreign_keys=[author], backref='author')
+    
 
     __table_args__ = (
         Index('idx_uid', 'uid'),

@@ -50,6 +50,7 @@ function Comment({ isChild, data }) {
             authorUid: currentUser?.uid,
             parentComment: data?.data?.uid,
             postUid: data?.data?.post_uid,
+            authorName: data?.data?.author_name,
         }));
     }, [data]);
 
@@ -91,7 +92,7 @@ function Comment({ isChild, data }) {
     const handleCollapse = () => {
         setCollapse(!collapse);
     }
-
+    console.log(data)
     return (
         <div className={collapse === true ? "flex flex-col h-4 overflow-hidden" : "flex flex-col border-l border-border-color"}>
 

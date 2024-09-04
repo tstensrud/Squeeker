@@ -79,14 +79,14 @@ function FrontPage() {
 
   const loggedInNavbarItems = [
     {
-      name: userData?.data !== undefined && userData.data.username, url: "account", svg:
+      name: userData?.data !== undefined && userData?.data?.username, notification: null, url: "account", svg:
         <>
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
           <circle cx="12" cy="7" r="4"></circle>
         </>
     },
     {
-      name: "Messages", url: "messages", svg:
+      name: "Messages", url: "messages", notification: userData?.data?.message_notification ,svg:
         <>
           <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
           </path>
@@ -116,7 +116,6 @@ function FrontPage() {
   const openRegisterContainer = () => {
     setShowRegisterContainer(true);
   }
-
 
   return (
     <>
@@ -165,7 +164,7 @@ function FrontPage() {
                     {
                       loggedInNavbarItems.map((item, index) => (
 
-                        <NavbarListItem key={item.url} handleNavbarClick={handleNavbarClick} url={item.url} name={item.name} selectedIndex={selectedIndex} svg={item.svg} index={index + mainNavbarItems.length} />
+                        <NavbarListItem key={item.url} handleNavbarClick={handleNavbarClick} url={item.url} name={item.name} selectedIndex={selectedIndex} notification={item.notification} svg={item.svg} index={index + mainNavbarItems.length} />
 
                       ))
                     }

@@ -65,6 +65,7 @@ function LoginContainer({ setShowLoginCointainer }) {
                     </div>
                     <p>
                         {error && <>{errorMessage}
+                        <br />
                             <Link to="/reset">Forgot password?</Link></>}
                     </p>
                 </div>

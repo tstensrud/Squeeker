@@ -324,6 +324,9 @@ def new_comment():
     data = request.get_json()
     if data:
         user_uid = data["author"]
+        user = db.get_user(user_uid)
+        if not user:
+            return jsonify({"success": False, "message": "Error locating user"})
         timestamp_check = db.can_user_post_again(user_uid)
         if timestamp_check is False:
             return jsonify({"success": False, "message": "You need to wait before you comment again"})
@@ -337,6 +340,8 @@ def new_comment():
         comment = data["comment"].strip()
         new_comment = db.new_comment(postUid, user_uid, comment, None)
         if new_comment is not False:
+            message = f"{user.username} has just commented on your post: "
+            db.send_message_on_post_comment(message, user_uid, postUid)
             return jsonify({"success": True, "message": "Comment added", "data": new_comment})
         else:
             return jsonify({"success": False, "message": f"Could not add comment"})
@@ -350,6 +355,7 @@ def new_reply():
     data = request.get_json()
     if data:
         author_uuid = data["authorUid"]
+        author_name = data["authorName"]
         
         timestamp_check = db.can_user_post_again(author_uuid)
         if timestamp_check is False:
@@ -359,8 +365,9 @@ def new_reply():
         post_uid = data["postUid"]
         comment = data["comment"].strip()
         new_comment = db.new_comment(post_uid, author_uuid, comment, parent_comment_uid)
-        #new_comment = False
+        
         if new_comment is not False:
+            db.send_message_on_comment_reply(author_uuid, parent_comment_uid)
             return jsonify({"success": True, "message": "Reply added", "data": new_comment})
         else:
             return jsonify({"success": False, "message": "Could not add reply"})

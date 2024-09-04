@@ -634,12 +634,16 @@ def get_all_user_messages(uuid: str) -> dict:
     if messages:
         message_data = {}
         for message in messages:
-            message_data[message.uid] = message.to_json()
+            sender_name = message.sender.username
+            message_data[sender_name] = message.to_json()
         return message_data
     return {}
 
-def send_message_to_single_user(sender_uid: str, receiver_name: str, message) -> bool:
-    receiver = get_user_by_username(receiver_name)
+def send_message_to_single_user(message: str, sender_uid: str, receiver_name=None, receiver_uid=None ) -> bool:
+    if receiver_name:
+        receiver = get_user_by_username(receiver_name)
+    if receiver_uid:
+        receiver = get_user(receiver_uid)
     if not receiver:
         return False
     receiver_uid = receiver.uuid
@@ -647,16 +651,30 @@ def send_message_to_single_user(sender_uid: str, receiver_name: str, message) ->
     timestamp = get_timestamp()
     new_message = models.UserMessage(uid=uid,
                                      recipient_uid=receiver_uid,
-                                     sender_uid = sender_uid,
+                                     sender_uid=sender_uid,
                                      message=message,
                                      timestamp=timestamp)
     receiver.message_notification = True
     try:
         db.session.add(new_message)
         db.session.commit()
+        return True
     except Exception as e:
         db.session.rollback()
         print(e)
         return False
-    
 
+def send_message_on_post_comment(message: str, commentor_uid: str, post_uid: str) -> bool:
+    post = get_post(post_uid)
+    post_title = post.title
+    message_to_post_author = f"{message}: {post_title}"
+    post_author = post.author_uuid
+    sent_message = send_message_to_single_user(message_to_post_author, sender_uid=commentor_uid, receiver_uid=post_author)
+    return sent_message
+
+def send_message_on_comment_reply(commentor_uid: str, parent_comment_uid: str) -> bool:
+    parent_comment = get_comment(parent_comment_uid)
+    parent_comment_author = parent_comment.author
+    commentor = get_user(commentor_uid)
+    message = f"{commentor.username} has replied to your comment."
+    send_message_to_single_user(message, commentor_uid, receiver_uid=parent_comment_author)

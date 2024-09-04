@@ -5,7 +5,7 @@ function NavbarListItem(props) {
     const navbarClick = () => {
         props.handleNavbarClick(props.index);
     }
-    
+    console.log(props.notification)
     return (
         <li>
             {
@@ -23,6 +23,18 @@ function NavbarListItem(props) {
                             <div className="flex flex-auto">
                                 {props.name}
                             </div>
+                            <div>
+                                {
+                                    props.name === "Messages" && (
+                                        props.notification === true &&
+                                        <>
+                                            <div className="text-xs bg-navbar-link-active-bg text-primary-color p-1 rounded-lg">
+                                                New!
+                                            </div>
+                                        </>
+                                    )
+                                }
+                            </div>
                         </div>
                     </Link>
                 ) : (
@@ -39,6 +51,18 @@ function NavbarListItem(props) {
                             </div>
                             <div className="flex flex-auto">
                                 {props.name}
+                            </div>
+                            <div>
+                                {
+                                    props.name === "Messages" && (
+                                        props.notification === true &&
+                                        <>
+                                            <div className="text-xs bg-navbar-link-active-bg text-primary-color p-1 rounded-lg">
+                                                New!
+                                            </div>
+                                        </>
+                                    )
+                                }
                             </div>
                         </div>
                     </Link>
