@@ -340,7 +340,7 @@ def new_comment():
         comment = data["comment"].strip()
         new_comment = db.new_comment(postUid, user_uid, comment, None)
         if new_comment is not False:
-            message = f"{user.username} has just commented on your post: "
+            message = f"{user.username} has just commented on your post. {comment} "
             db.send_message_on_post_comment(message, user_uid, postUid)
             return jsonify({"success": True, "message": "Comment added", "data": new_comment})
         else:
@@ -367,7 +367,7 @@ def new_reply():
         new_comment = db.new_comment(post_uid, author_uuid, comment, parent_comment_uid)
         
         if new_comment is not False:
-            db.send_message_on_comment_reply(author_uuid, parent_comment_uid)
+            db.send_message_on_comment_reply(comment, author_uuid, parent_comment_uid)
             return jsonify({"success": True, "message": "Reply added", "data": new_comment})
         else:
             return jsonify({"success": False, "message": "Could not add reply"})

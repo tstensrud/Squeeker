@@ -35,6 +35,8 @@ class UserMessage(db.Model):
     uid = db.Column(db.String(255), unique=True, nullable=False)
     recipient_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
     sender_uid = db.Column(db.String(255), db.ForeignKey('Users.uuid'), nullable=False)
+    comment_uid = db.Column(db.String(255), nullable=True)
+    post_uid = db.Column(db.String(255), nullable=True)
     message = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.String(50))
     event_timestamp = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.now())
@@ -47,14 +49,19 @@ class UserMessage(db.Model):
     )
 
     def to_json(self):
+        sender_name = self.sender.username
         return {
             "id": self.id,
             "uid": self.uid,
             "recipient_uid": self.recipient_uid,
             "sender_uid": self.sender_uid,
+            "sender_name": sender_name,
             "message": self.message,
             "timestamp": self.timestamp,
-            "has_read": self.has_read
+            "has_read": self.has_read,
+            "event_timestamp": self.event_timestamp,
+            "post_uid": self.post_uid,
+            "comment_uid": self.comment_uid
         }
 
 class UserSubscription(db.Model):

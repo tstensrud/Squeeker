@@ -92,7 +92,7 @@ function Comment({ isChild, data }) {
     const handleCollapse = () => {
         setCollapse(!collapse);
     }
-    console.log(data)
+    //console.log(data)
     return (
         <div className={collapse === true ? "flex flex-col h-4 overflow-hidden" : "flex flex-col border-l border-border-color"}>
 

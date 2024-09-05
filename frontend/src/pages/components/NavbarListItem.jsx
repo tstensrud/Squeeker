@@ -5,7 +5,7 @@ function NavbarListItem(props) {
     const navbarClick = () => {
         props.handleNavbarClick(props.index);
     }
-    console.log(props.notification)
+    //console.log(props.notification)
     return (
         <li>
             {
@@ -27,11 +27,9 @@ function NavbarListItem(props) {
                                 {
                                     props.name === "Messages" && (
                                         props.notification === true &&
-                                        <>
-                                            <div className="text-xs bg-navbar-link-active-bg text-primary-color p-1 rounded-lg">
-                                                New!
-                                            </div>
-                                        </>
+                                        <div className="text-xs bg-navbar-link-active-bg text-primary-color p-1 rounded-lg">
+                                            New!
+                                        </div>
                                     )
                                 }
                             </div>
