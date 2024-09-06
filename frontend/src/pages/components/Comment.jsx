@@ -104,7 +104,7 @@ function Comment({ isChild, data }) {
                     </div>
                     <div className="flex flex-row h-full w-full">
                         <div className="w-1/2 h-full"></div>
-                        <div className="border-l w-1/2 border-border-color"></div>
+                        <div className="w-1/2"></div>
                     </div>
                 </div>
 
@@ -157,10 +157,10 @@ function Comment({ isChild, data }) {
                                     </div>
                                 </div>
                                 {
-                                    showReplyContainer === true ? (
+                                    showReplyContainer === true && (
                                         <div className="flex p-3 flex-col bg-tertiary-color w-full">
                                             <form onSubmit={submitReply} className="flex flex-col">
-                                                <textarea name="comment" onChange={handleReplyChange} className="bg-tertiary-color border outline-none border-border-color text-base leading-5 p-1 h-20 w-96 mb-3 hover:border-accent-color focus:border-accent-color " placeholder="Leave a reply"></textarea>
+                                                <textarea name="comment" onChange={handleReplyChange} className="bg-secondary-color border outline-none rounded-lg border-border-color text-base leading-5 p-1 w-96 mb-3 hover:border-accent-color focus:border-accent-color focus:h-32" placeholder="Leave a reply"></textarea>
                                                 <span>
                                                     <button className="mr-3 bg-tertiary-color text-grey-text rounded-lg p-0 border-0 hover:text-accent-color">Reply</button>
                                                     <button className="mr-3 bg-tertiary-color text-grey-text rounded-lg p-0 border-0 hover:text-accent-color" onClick={toggleReplySection}>Cancel</button>
@@ -171,7 +171,7 @@ function Comment({ isChild, data }) {
                                                 </p>
                                             </form>
                                         </div>
-                                    ) : (<></>)
+                                    )
                                 }
                             </div>
 

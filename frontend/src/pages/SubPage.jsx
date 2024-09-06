@@ -69,7 +69,6 @@ function SubPage(props) {
                                 </>
                             )
                         }
-
                     </>
                 )
             }

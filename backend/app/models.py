@@ -43,6 +43,7 @@ class UserMessage(db.Model):
     has_read = db.Column(db.Boolean, default=False)
     
     sender = db.relationship('User', foreign_keys=[sender_uid], backref="sender")
+    recipient = db.relationship('User', foreign_keys=[recipient_uid], backref='recipient')
 
     __table_args__ = (
         Index('idx_uid', 'uid'),

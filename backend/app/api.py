@@ -60,13 +60,15 @@ def create_subpage():
         for key, value in data.items():
             if key == "name" or key == "description":
                 escaped_data[key] = value.strip()
+                if key == "name":
+                    escaped_data[key] = value.replace(" ", "")
             else:
                 escaped_data[key] = value
         if db.find_subpage_name(escaped_data['name']):
             return jsonify({"success": False, "message": "A subpage with that name already exist"})
         
         if db.create_subpage(escaped_data):
-            return jsonify({"success": True, "message": "Subpage created"})
+            return jsonify({"success": True, "message": "Subpage created", "data": escaped_data['name']})
         else:
             return jsonify({"success": False, "message": "Could not create sub page"})
     else:

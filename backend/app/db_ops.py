@@ -182,7 +182,10 @@ def add_subscription_to_user(user_uid: str, sub_uid: str) -> bool:
     timestamp = get_timestamp()
     subscription = models.UserSubscription(user_uid=user_uid, subpage_uid=sub_uid, timestamp=timestamp)
     sub = get_subpage(None, sub_uid)
-    sub.total_subs = sub.total_subs + 1
+    if sub.total_subs:
+        sub.total_subs = sub.total_subs + 1
+    else:
+        sub.total_subs = 1
     try:
         db.session.add(subscription)
         db.session.commit()
@@ -236,13 +239,14 @@ def find_subpage_name(subpage_name: str) -> bool:
 def create_subpage(data) -> bool:
     uid = str(uuid4())
     name = data["name"]
+    name_modified = name.replace(" ", "")
     description = data["description"]
     public = data["public"]
     active = True
     nsfw = data["nsfw"]
 
     new_subpage = models.Subpage(uid=uid,
-                                 name=name,
+                                 name=name_modified,
                                  description=description,
                                  public=public,
                                  active=active,
@@ -629,14 +633,61 @@ def get_frontpage_posts_logged_in(user_uid: str, limit: int) -> dict:
 #############################
 # MESSAGES                  #
 #############################
-def get_all_user_messages(uuid: str) -> dict:
+def get_all_user_messages(uuid: str) -> models.UserMessage:
     messages = db.session.query(models.UserMessage).filter(models.UserMessage.recipient_uid == uuid).all()
     if messages:
-        message_data = {}
+        return messages
+    return None
+
+def mark_message_read(message_uid: str) -> bool:
+    message = db.session.query(models.UserMessage).filter(models.UserMessage.uid == message_uid).first()
+    if message:
+        message.has_read = True
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            return False
+        notification_status = set_notification_status(message.recipient_uid)
+        if notification_status:
+            return True
+    return False
+
+def mark_all_messages_as_read(uuid: str) -> bool:
+    messages = get_all_user_messages(uuid)
+    if messages:
         for message in messages:
-            message_data[message.uid] = message.to_json()
-        return message_data
-    return {}
+            message.has_read = True
+        try:
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+            return False
+    return False
+        
+def check_notification_status(uuid: str) -> bool:
+    user = get_user(uuid)
+    user_messages = get_all_user_messages(uuid)
+    if user and user_messages:
+        for message in user_messages:
+            if message.has_read == False:
+                return True
+        return False
+    
+def set_notification_status(user: models.User) -> bool:
+    unread_messages = check_notification_status(user.uuid)
+    if unread_messages is True:
+        user.message_notification = True
+    else:
+        user.message_notification = False
+        try:
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            return False
 
 def send_message_to_single_user(message: str, sender_uid: str, receiver_name=None, receiver_uid=None, post_uid=None, comment_uid=None ) -> bool:
     if receiver_name:

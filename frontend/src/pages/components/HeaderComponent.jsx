@@ -4,8 +4,6 @@ import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { BASE_URL } from '../../utils/globalVariables';
 import useSubpagePost from '../../hooks/useSubpagePost';
-import useFetch from '../../hooks/useFetch';
-import useFetchDemand from '../../hooks/useFetchDemand';
 
 function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
     const { currentUser, idToken } = useContext(AuthContext);
@@ -64,7 +62,7 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
             <div className="flex flex-1 flex-col items-end text-center justify-end h-full mt-2">
                 <div>
                     {
-                        currentUser && idToken ? (
+                        currentUser && idToken && (
                             <>
                                 {
                                     isSubbed === false ? (
@@ -92,12 +90,8 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
                                     )
                                 }
                             </>
-                        ) : (
-                            <>
-                            </>
                         )
                     }
-
                 </div>
                 <div>
                     <ul className="p-0 list-none m-0">

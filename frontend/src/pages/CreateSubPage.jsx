@@ -25,7 +25,7 @@ function CreateSubPage(props) {
 
     useEffect(() => {
         if (data?.success === true) {
-            navigate(`/subpage/${pageData.name}`);
+            navigate(`/room/${data?.data}`);
         } else {
             setCreationError(data?.message);
         }

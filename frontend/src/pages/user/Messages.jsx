@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom';
 import { GlobalContext } from '../../context/GlobalContext';
 import { AuthContext } from '../../context/AuthContext';
 import { BASE_URL } from '../../utils/globalVariables';
+import usePatch from "../../hooks/usePatch";
+import useFetch from '../../hooks/useFetch';
 
 // components
 import Message from './Message';
 import PageHeader from "../components/PageHeader";
-import useFetch from '../../hooks/useFetch';
 
 // Widgets
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
@@ -17,24 +18,42 @@ function Messages(props) {
     const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
 
-    const { data: messageData, loading: messageLoading, error: messageError } = useFetch(
+    const { data: messageData, loading: messageLoading, error: messageError, refetch: refetchMessageData } = useFetch(
         currentUser ? `${BASE_URL}/messages/inbox/${currentUser.uid}/` : null, idToken)
 
-    const [newMessageData, setNewMessageData] = useState({})
+    const { data, loading, error, updateData } = usePatch(`${BASE_URL}/messages/read/`, idToken);
+    const { data: markAllResponse, updateData: markAllUpdatedData } = usePatch(currentUser ? `${BASE_URL}/messages/markall/${currentUser.uid}/` : null, idToken);
+    const [newMessageData, setNewMessageData] = useState();
 
     // useEffects
     useEffect(() => {
         setSelectedIndex(props.index);
     }, []);
 
+    useEffect(() => {
+        if (newMessageData?.has_read === false) {
+            updateData(newMessageData);
+        }
+    }, [newMessageData]);
+
+    useEffect(() => {
+        if (markAllResponse?.success === true) {
+            refetchMessageData();
+        }
+    }, [markAllResponse])
+
     // Handlers
     const handleOnSenderClick = (e, messageData) => {
         e.preventDefault();
         setNewMessageData(messageData);
-        // send request to backend that message is read
     }
 
-    //console.log(messageData);
+    const handleMarkAll = (e) => {
+        e.preventDefault();
+        if (currentUser) {
+            markAllUpdatedData({});
+        }
+    }
 
     return (
         <>
@@ -49,29 +68,50 @@ function Messages(props) {
                                 <>
                                     {
                                         messageData?.success === true ? (
-                                            <div className="flex flex-row w-full">
-
-                                                <div className="card w-1/4">
+                                            <div className="flex flex-row w-full mb-10 ">
+                                                <div className="card w-1/5">
                                                     <div className="flex flex-col">
                                                         <h3>New messages</h3>
+                                                        <div className="text-xs mb-3">
+                                                            <Link to="#" onClick={handleMarkAll}>Mark all as read</Link>
+                                                        </div>
                                                         {
                                                             messageData?.data && Object.keys(messageData.data).map((key, index) => (
                                                                 <div className="flex flex-row" key={index}>
-                                                                    <div className="text-grey-text mr-2">
-                                                                        From
-                                                                    </div>
-                                                                    <div>
-                                                                        <Link onClick={(e) => handleOnSenderClick(e, messageData?.data[key])} to="#">{messageData?.data[key].sender_name}</Link>
-                                                                    </div>
+                                                                    {
+                                                                        messageData?.data[key].has_read === false && (
+                                                                            <>
+                                                                                <div className="flex flex-col mb-2">
+                                                                                    <div className="flex flex-row">
+                                                                                        <div className="text-grey-text mr-2">
+                                                                                            From
+                                                                                        </div>
+                                                                                        <div>
+                                                                                            {messageData?.data[key].sender_name}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <Link onClick={(e) => handleOnSenderClick(e, messageData?.data[key])} to="#">{messageData?.data[key].message.slice(0, 18)}...</Link>
+                                                                                    </div>
+                                                                                    <div className="text-xs text-grey-text">
+                                                                                        {messageData?.data[key].event_timestamp}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </>
+                                                                        )
+                                                                    }
                                                                 </div>
                                                             ))
                                                         }
                                                     </div>
                                                 </div>
                                                 <div className="ml-5 flex flex-1">
-                                                    <div className="card">
-                                                        <Message messageData={newMessageData} />
-                                                    </div>
+                                                    {
+                                                        newMessageData && newMessageData !== undefined &&
+                                                        <div>
+                                                            <Message messageData={newMessageData} />
+                                                        </div>
+                                                    }
                                                 </div>
                                             </div>
                                         ) : (

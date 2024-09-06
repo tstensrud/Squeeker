@@ -140,40 +140,44 @@ function SubPagePost(props) {
                                 </div>
                             </div>
                         </div>
+                       
                         {
                             currentUser && idToken && (
                                 <NewComment commentDataRefech={commentDataRefech} subpageUid={subpageUid} postId={postId} subPageName={subPageName} />
                             )
                         }
-                    </>
-                )
-            }
-
-            {
-                commentDataLoading && commentDataLoading === true ? (
-                    <LoadingSpinner text="comments" />
-                ) : (
-                    <>
+                     
                         {
-                            latestCommentData && latestCommentData !== null && latestCommentData !== undefined && (
-                                <Comment isChild={false} key={latestCommentData.data} data={latestCommentData.data} />
+                            commentDataLoading && commentDataLoading === true ? (
+                                <LoadingSpinner text="comments" />
+                            ) : (
+                                <>
+                                    {
+                                        latestCommentData && latestCommentData !== null && latestCommentData !== undefined && (
+                                            <Comment isChild={false} key={latestCommentData.data} data={latestCommentData.data} />
+                                        )
+                                    }
+
+                                    {
+                                        commentData && commentData.data !== undefined && Object.keys(commentData.data).map((key, index) => (
+                                            <div className="flex flex-col bg-tertiary-color rounded-lg w-full mt-5 mb-5 pt-3 pb-3 pl-2 pr-2">
+                                                <Comment isChild={false} key={index} data={commentData.data[key]} />
+                                            </div>
+                                        ))
+                                    }
+
+                                    {
+                                        commentData && commentData.success === false && <>No comments yet :(</>
+                                    }
+                                </>
                             )
                         }
-
-                        {
-                            commentData && commentData.data !== undefined && Object.keys(commentData.data).map((key, index) => (
-                                <div className="flex flex-col bg-tertiary-color rounded-lg w-full mt-5 mb-5 pt-3 pb-3 pl-2 pr-2">
-                                    <Comment isChild={false} key={index} data={commentData.data[key]} />
-                                </div>
-                            ))
-                        }
-
-                        {
-                            commentData && commentData.success === false && <>No comments yet :(</>
-                        }
+                      
                     </>
                 )
             }
+
+
         </>
     );
 }

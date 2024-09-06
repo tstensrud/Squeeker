@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 function Message({ messageData }) {
-    console.log(messageData)
+    
     return (
         <>
             <div className="flex flex-col">

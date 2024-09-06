@@ -47,6 +47,7 @@
     @apply h-10 w-80 bg-secondary-color p-3 text-primary-color rounded-lg border text-sm border-border-color;
   }
 
+
   input:hover {
     @apply border-accent-color;
   }
