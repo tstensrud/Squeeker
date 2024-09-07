@@ -113,13 +113,13 @@ function SubPagePost(props) {
                                 </div>
                                 <div>
                                     <ul className="p-0 m-0 list-none">
-                                        <li className="inline mr-3 text-xs tracking-wide text-grey-text">
+                                        <li className="sm:inline mr-3 text-xs tracking-wide text-grey-text">
                                             Last modified at: {postData?.data?.post_data?.event_timestamp}
                                         </li>
-                                        <li className="inline mr-3 text-xs tracking-wide text-grey-text">
+                                        <li className="sm:inline mr-3 text-xs tracking-wide text-grey-text">
                                             Posted by: {postData?.data?.post_data?.author_name}
                                         </li>
-                                        <li className="inline mr-3 text-xs tracking-wide text-grey-text">
+                                        <li className="sm:inline mr-3 text-xs tracking-wide text-grey-text">
                                             Posted to: <Link to={`/room/${subPageName}`} className="link-card">{subPageName}</Link>
                                         </li>
                                         {
@@ -160,8 +160,8 @@ function SubPagePost(props) {
 
                                     {
                                         commentData && commentData.data !== undefined && Object.keys(commentData.data).map((key, index) => (
-                                            <div className="flex flex-col bg-tertiary-color rounded-lg w-full mt-5 mb-5 pt-3 pb-3 pl-2 pr-2">
-                                                <Comment isChild={false} key={index} data={commentData.data[key]} />
+                                            <div key={index} className="flex flex-col  w-full mt-5 mb-5 pt-3 pb-3 pl-2 pr-2">
+                                                <Comment isChild={false} data={commentData.data[key]} />
                                             </div>
                                         ))
                                     }

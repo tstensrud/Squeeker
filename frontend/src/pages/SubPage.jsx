@@ -33,7 +33,7 @@ function SubPage(props) {
     useEffect(() => {
         setSelectedIndex(props.index);
     }, []);
-    
+    console.log(subpagePostData)
     return (
         <>
             {
@@ -65,6 +65,12 @@ function SubPage(props) {
                                         subpagePostData && subpagePostData.data !== undefined && Object.keys(subpagePostData.data).map((key, index) => (
                                             <Post postData={subpagePostData.data[key]} key={`${subpagePostData.data[key].uid} + ${index}`} />
                                         ))
+                                    }
+                                    {
+                                        subpagePostData?.success === false && 
+                                        <div className="mt-5">
+                                            {subpagePostData?.message}
+                                        </div>
                                     }
                                 </>
                             )

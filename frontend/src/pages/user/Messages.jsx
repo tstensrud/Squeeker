@@ -54,7 +54,7 @@ function Messages(props) {
             markAllUpdatedData({});
         }
     }
-
+    console.log(messageData?.data)
     return (
         <>
             <PageHeader headerText="Your inbox" subheaderText="Messages from other users and perhaps even Mike has something to say" />
@@ -69,18 +69,20 @@ function Messages(props) {
                                     {
                                         messageData?.success === true ? (
                                             <div className="flex flex-row w-full mb-10 ">
-                                                <div className="card w-1/5">
-                                                    <div className="flex flex-col">
-                                                        <h3>New messages</h3>
-                                                        <div className="text-xs mb-3">
-                                                            <Link to="#" onClick={handleMarkAll}>Mark all as read</Link>
-                                                        </div>
-                                                        {
-                                                            messageData?.data && Object.keys(messageData.data).map((key, index) => (
-                                                                <div className="flex flex-row" key={index}>
-                                                                    {
-                                                                        messageData?.data[key].has_read === false && (
-                                                                            <>
+
+                                                <div className="flex flex-col w-1/5">
+
+                                                    <div className="card w-full">
+                                                        <div className="flex flex-col w-full">
+                                                            <h3>New messages</h3>
+                                                            <div className="text-xs mb-3">
+                                                                <Link to="#" onClick={handleMarkAll}>Mark all as read</Link>
+                                                            </div>
+                                                            {
+                                                                messageData?.data && Object.keys(messageData.data).map((key, index) => (
+                                                                    <div className="flex flex-row" key={index}>
+                                                                        {
+                                                                            messageData?.data[key].has_read === false && (
                                                                                 <div className="flex flex-col mb-2">
                                                                                     <div className="flex flex-row">
                                                                                         <div className="text-grey-text mr-2">
@@ -97,14 +99,47 @@ function Messages(props) {
                                                                                         {messageData?.data[key].event_timestamp}
                                                                                     </div>
                                                                                 </div>
-                                                                            </>
-                                                                        )
-                                                                    }
-                                                                </div>
-                                                            ))
-                                                        }
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="card w-full mt-5">
+                                                        <div className="flex flex-col w-full">
+                                                            <h3>Old messages</h3>
+                                                            {
+                                                                messageData?.data && Object.keys(messageData?.data).map((key, index) => (
+                                                                    <div className="flex flex-row" key={index}>
+                                                                        {
+                                                                            messageData?.data[key].has_read === true && (
+                                                                                <div className="flex flex-col mb-2">
+                                                                                    <div className="flex flex-row">
+                                                                                        <div className="text-grey-text mr-2">
+                                                                                            From
+                                                                                        </div>
+                                                                                        <div>
+                                                                                            {messageData?.data[key].sender_name}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <Link onClick={(e) => handleOnSenderClick(e, messageData?.data[key])} to="#">{messageData?.data[key].message.slice(0, 18)}...</Link>
+                                                                                    </div>
+                                                                                    <div className="text-xs text-grey-text">
+                                                                                        {messageData?.data[key].event_timestamp}
+                                                                                    </div>
+                                                                                </div>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
+
                                                 <div className="ml-5 flex flex-1">
                                                     {
                                                         newMessageData && newMessageData !== undefined &&

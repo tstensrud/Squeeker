@@ -58,9 +58,9 @@ function NewComment({ commentDataRefech, postId, subpageUid, subPageName, msgToP
                 <h2 className="text-xl mt-2 mb-2">Leave a comment</h2>
             </span>
             <form onSubmit={handleSubmit}>
-                <textarea ref={commentRef} onChange={handleInputChange} name="comment" className="bg-secondary-color border border-border-color outline-none p-2 w-80 rounded-lg mb-3 hover:border-accent-color focus:border-accent-color focus:h-40 focus:w-1/2" placeholder="Write a comment"></textarea>
+                <textarea ref={commentRef} onChange={handleInputChange} name="comment" className="bg-secondary-color border border-border-color outline-none p-2 w-1/2 rounded-lg mb-3 hover:border-accent-color focus:border-accent-color h-40" placeholder="Write a comment"></textarea>
                 <p>
-                    <button className="standard-button" type="submit">Comment</button>
+                    <button className="pr-2 pl-2" type="submit">Comment</button>
                     {commentWarning}
                     {data?.success === false && data.message}
                     {error && error}

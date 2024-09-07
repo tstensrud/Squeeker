@@ -11,8 +11,7 @@ function NavbarListItem({ setShowSubTree, showSubTree, setSelectedIndex, url, na
             setSelectedIndex(index);
         }
     }
-    //console.log(name, index, selectedIndex)
-
+    
     return (
         <li>
             {
@@ -33,7 +32,7 @@ function NavbarListItem({ setShowSubTree, showSubTree, setSelectedIndex, url, na
                             <div>
                                 {
                                     name === "Messages" && (
-                                        notification === true &&
+                                        notification && notification === true &&
                                         <div className="text-xs bg-navbar-link-active-bg text-primary-color p-1 rounded-lg">
                                             New!
                                         </div>
@@ -60,7 +59,7 @@ function NavbarListItem({ setShowSubTree, showSubTree, setSelectedIndex, url, na
                             <div>
                                 {
                                     name === "Messages" && (
-                                        notification === true &&
+                                        notification && notification === true &&
                                         <div className="text-xs bg-navbar-link-active-bg text-primary-color p-1 rounded-lg">
                                             New!
                                         </div>

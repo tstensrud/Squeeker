@@ -17,12 +17,15 @@ import LoginContainer from './components/LoginContainer';
 import RegisterContainer from './components/RegisterContainer.jsx';
 import NavbarListItem from "./components/NavbarListItem.jsx";
 import SubscribedRoomListItem from "./components/SubscribedRoomListItem.jsx";
+import LogOutNavitem from "./components/LogoutNavItem.jsx";
+import LoginRegister from "./components/LoginRegister.jsx";
 
 // SVG imports
 import AppIcon from '../assets/svg/AppIcon.svg?react'
 
 // widgets
 import LoadingBar from './components/LoadingBar';
+import MobilNavbar from "./components/MobileNavbar.jsx";
 
 function FrontPage() {
   const { currentUser, idToken, dispatch } = useContext(AuthContext);
@@ -44,6 +47,9 @@ function FrontPage() {
     currentUser ? `${BASE_URL}/user/subs/${currentUser.uid}/` : null,
     idToken
   );
+
+  const { data: notificationData, refetch: refetchNotificationData } = useFetch(
+    currentUser ? `${BASE_URL}/messages/notification/${currentUser.uid}/` : null, idToken);
 
   const mainNavbarItems = [
     {
@@ -104,17 +110,11 @@ function FrontPage() {
     },
   ];
 
-  // Handlers
-  const logOut = async (e) => {
-    e.preventDefault();
-    await signOut(auth).then(() => {
-      dispatch({ type: "LOGOUT" });
-      window.location.reload();
-    }).catch((error) => {
-      //console.log(error);
-    });
-  }
+  useEffect(() => {
+    refetchNotificationData();
+  }, [selectedIndex]);
 
+  // Handlers
   const openLoginContainer = () => {
     setShowLoginCointainer(true)
   }
@@ -126,23 +126,29 @@ function FrontPage() {
   const handleSearch = () => {
     navigate("search");
   }
-  
+
   return (
     <>
-      <div className="flex w-full h-full flex-row">
-        {
-          showLoginContainer && showLoginContainer === true && (
-            <LoginContainer setShowLoginCointainer={setShowLoginCointainer} />
-          )
-        }
+      {
+        showLoginContainer && showLoginContainer === true && (
+          <LoginContainer setShowLoginCointainer={setShowLoginCointainer} />
+        )
+      }
 
-        {
-          showRegisterContainer && showRegisterContainer === true && (
-            <RegisterContainer setShowLoginCointainer={setShowLoginCointainer} refetchUserData={refetchUserData} setShowRegisterContainer={setShowRegisterContainer} />
-          )
-        }
+      {
+        showRegisterContainer && showRegisterContainer === true && (
+          <RegisterContainer setShowLoginCointainer={setShowLoginCointainer} refetchUserData={refetchUserData} setShowRegisterContainer={setShowRegisterContainer} />
+        )
+      }
+      <div className="flex-col flex w-full h-full sm:flex-row">
 
-        <div className="flex flex-col bg-secondary-color items-center sticky w-80 border-r border-border-color min-h-20 left-0">
+
+        <div className="w-full flex flex-col sm:hidden">
+          <MobilNavbar mainNavbarItems={mainNavbarItems} loggedInNavbarItems={loggedInNavbarItems} userSubscriptionsData={userSubscriptionsData?.data} openLoginContainer={openLoginContainer} openRegisterContainer={openRegisterContainer} />
+        </div>
+
+        <div className="hidden sm:flex flex-col bg-secondary-color items-center sticky w-80 border-r border-border-color min-h-20 left-0">
+
           <div className="w-full flex justify-center flex-col text-center mt-3">
             <div className="flex items-center justify-center w-full">
               <Link to="/">
@@ -158,7 +164,12 @@ function FrontPage() {
                   <>
                     {
                       item.name === "Subscriptions" ? (
-                        <NavbarListItem key={item.url} setShowSubTree={setShowSubTree} showSubTree={showSubTree} url={item.url} name={item.name} selectedIndex={selectedIndex} svg={item.svg} index={index} />
+                        <>
+                          {
+                            currentUser && idToken &&
+                            <NavbarListItem key={item.url} setShowSubTree={setShowSubTree} showSubTree={showSubTree} url={item.url} name={item.name} selectedIndex={selectedIndex} svg={item.svg} index={index} />
+                          }
+                        </>
                       ) : (
                         <NavbarListItem key={item.url} setSelectedIndex={setSelectedIndex} url={item.url} name={item.name} selectedIndex={selectedIndex} svg={item.svg} index={index} />
                       )
@@ -167,15 +178,12 @@ function FrontPage() {
                 ))
               }
               <div className={showSubTree ? "max-h-[500px] transition-all duration-700 ease-in-out overflow-y-auto" : "max-h-0 overflow-hidden transition-all duration-700 ease-in-out"}>
-
                 {
                   userSubscriptionsData?.data !== undefined && userSubscriptionsData.data.map((sub, index) =>
                     <SubscribedRoomListItem key={`${sub}+${index}`} name={sub} url={`/room/${sub}/`} />
                   )
                 }
-
               </div>
-
             </ul>
           </div>
 
@@ -185,68 +193,21 @@ function FrontPage() {
                 <ul className="list-none mt-4 mb-4 w-full p-0">
                   {
                     loggedInNavbarItems.map((item, index) => (
-                      <NavbarListItem key={item.url} setSelectedIndex={setSelectedIndex} url={item.url} name={item.name} selectedIndex={selectedIndex} notification={item.notification} svg={item.svg} index={index + mainNavbarItems.length} />
+                      <NavbarListItem key={item.url} setSelectedIndex={setSelectedIndex} url={item.url} name={item.name} selectedIndex={selectedIndex} notification={notificationData?.data?.notification} svg={item.svg} index={index + mainNavbarItems.length} />
                     ))
                   }
-                  <Link to="#" onClick={logOut}>
-                    <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-navbar-link hover:text-primary-color transition-colors duration-200">
-                      <div className="flex flex-row items-center w-full">
-                        <div className="align-middle mr-2 w-6">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link fill-none line group-hover:stroke-primary-color transition-colors duration-200">
-                            <line x1="20" y1="12" x2="4" y2="12"></line>
-                            <polyline points="10 18 4 12 10 6"></polyline>
-                          </svg>
-                        </div>
-                        <div className="flex-1">
-                          Log out
-                        </div>
-                      </div>
-                    </li>
-                  </Link>
+                  <LogOutNavitem />
                 </ul>
               ) : (
-                <ul className="navbar-list">
-                  <Link onClick={openLoginContainer} to="#">
-                    <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-navbar-link hover:text-primary-color">
-                      <div className="flex flex-row items-center w-full">
-                        <div className="align-middle mr-2 w-6">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link fill-none line group-hover:stroke-primary-color transition-colors duration-200">
-                            <path d="M14 22h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-5"></path>
-                            <polyline points="11 16 15 12 11 8"></polyline>
-                            <line x1="15" y1="12" x2="3" y2="12"></line>
-                          </svg>
-                        </div>
-                        <div className="flex-1">
-                          Log in
-                        </div>
-                      </div>
-                    </li>
-                  </Link>
-
-                  <Link to="#" onClick={openRegisterContainer}>
-                    <li className="group flex flex-row mr-3 text-base mt-1 p-1 font-normal text-navbar-link hover:text-primary-color">
-                      <div className="flex flex-row items-center w-full">
-                        <div className="align-middle mr-2 w-6">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stroke-navbar-link fill-none line group-hover:stroke-primary-color transition-colors duration-200">
-                            <path d="M14 22h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-5"></path>
-                            <polyline points="11 16 15 12 11 8"></polyline>
-                            <line x1="15" y1="12" x2="3" y2="12"></line>
-                          </svg>
-                        </div>
-                        <div className="flex-1">
-                          Register
-                        </div>
-                      </div>
-                    </li>
-                  </Link>
-                </ul>
-              )}
-          </div >
+                <LoginRegister openLoginContainer={openLoginContainer} openRegisterContainer={openRegisterContainer} />
+              )
+            }
+          </div>
         </div>
 
         <div className="w-full h-full overflow-y-auto">
 
-          <div className="flex items-center justify-center w-full flex-row sticky overflow-hidden top-0 z-20 bg-secondary-color text-sm border-b border-border-color p-2 m-0">
+          <div className="hidden sm:flex items-center justify-center w-full flex-row sticky overflow-hidden top-0 z-20 bg-secondary-color text-sm border-b border-border-color p-2 m-0">
             <input onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleSearch();

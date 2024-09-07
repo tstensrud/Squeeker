@@ -110,7 +110,7 @@ function CreateSubPage(props) {
                                     </ul>
                                 </div>
                                 <div>
-                                    <button className="standard-button" type="submit">Create!</button>
+                                    <button className="pl-2 pr-2" type="submit">Create!</button>
                                 </div>
                             </form>
 

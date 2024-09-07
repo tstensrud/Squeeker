@@ -1,8 +1,8 @@
 function PostReplyShareDeleteButton(props) {
     return (
-        <button onClick={props.clickFunction} className="bg-tertiary-color text-sm text-grey-text rounded-lg p-0 border-0 hover:text-accent-color">
+        <div onClick={props.clickFunction} className="text-sm cursor-pointer text-grey-text rounded-lg p-0 border-0 mr-2 hover:text-accent-color">
             {props.buttonText}
-        </button>
+        </div>
     );
 }
 

@@ -115,6 +115,10 @@ def get_user_total_comments(uuid: str) -> int:
     else:
         return 0
 
+def get_user_notification_status(uuid: str) -> bool:
+    status = db.session.query(models.User.message_notification).filter(models.User.uuid == uuid).scalar()
+    return status
+
 # Checks if timestamp of current action is not less than 60 seconds to prevent post/comment spam
 def can_user_post_again(uuid: str) -> bool:
     user = get_user(uuid)
@@ -676,7 +680,8 @@ def check_notification_status(uuid: str) -> bool:
                 return True
         return False
     
-def set_notification_status(user: models.User) -> bool:
+def set_notification_status(user_uid: str) -> bool:
+    user = get_user(user_uid)
     unread_messages = check_notification_status(user.uuid)
     if unread_messages is True:
         user.message_notification = True

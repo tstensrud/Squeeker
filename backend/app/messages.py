@@ -73,6 +73,11 @@ def mark_all_read(uuid):
         return jsonify({"success": True, "message": "All messages marked as read"})
     return jsonify({"success": False, "message": "No messages marked as read"})
     
+@messages.route('/notification/<uuid>/', methods=['GET'])
+def get_notification(uuid):
+    notification_status = db.get_user_notification_status(uuid)
+    notification = {"notification": notification_status}
+    return jsonify({"success": True, "data": notification})
 
 @messages.route('/test/', methods=['GET'])
 def message_test():

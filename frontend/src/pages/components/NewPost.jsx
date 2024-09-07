@@ -75,12 +75,12 @@ function NewPost(props) {
                         <input onChange={handleInputChange} className="mr-3" id="title" type="text" placeholder="Post title" /> {warningTitleMessage}
                     </div>
                     <div className="flex flex-col">
-                        <textarea className="bg-secondary-color border border-border-color outline-none p-2 h-40 w-96 rounded-lg mb-3 mr-3 hover:border-accent-color focus:border-accent-color" onChange={handleInputChange} id="content" placeholder="Write something here.."></textarea>
+                        <textarea className="bg-secondary-color border border-border-color outline-none p-2 h-40 sm:w-80 w-full rounded-lg mb-3 mr-3 hover:border-accent-color focus:border-accent-color" onChange={handleInputChange} id="content" placeholder="Write something here.."></textarea>
                         <span>{warniningContentMessage}</span>
                     </div>
 
                     <div>
-                        <button className="standard-button mr-3" type="submit">Post</button>
+                        <button className="pl-2 pr-2" type="submit">Post</button>
                         {data?.success === false && data.message}
                         {error && error}
                     </div>

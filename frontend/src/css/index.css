@@ -36,7 +36,7 @@
   }
 
   button {
-    @apply bg-secondary-color text-primary-color cursor-pointer border rounded-lg border-border-color h-8 w-20 transition duration-200 ease-in-out;
+    @apply bg-secondary-color text-primary-color cursor-pointer border rounded-lg border-border-color h-8 transition duration-200 ease-in-out;
   }
 
   button:hover {

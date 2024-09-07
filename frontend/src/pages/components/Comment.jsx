@@ -117,58 +117,59 @@ function Comment({ isChild, data }) {
                                     <strong>{totalCommentVotes}</strong> pts.
                                 </div>
                                 <div className="mr-3">
-                                    Commented at: {data?.data?.timestamp}
+                                    {data?.data?.timestamp}
                                 </div>
                                 <div className="mr-3">
                                     by: <Link to="#">{data?.data?.author_name}</Link>
                                 </div>
 
                             </div>
-                            <div className="mb-1 mt-1">
+                            <div className="mb-1 mt-1 text-sm">
                                 {commentIsDeleted === true ? "Your comment was deleted.." : <>{data?.data?.comment}</>}
                                 {deleteResponse?.success === false && <p>{deleteResponse?.message}</p>}
                             </div>
 
-                            <div className="flex flex-col w-full">
+                            <div className="flex flex-col">
                                 <div className="flex flex-row">
                                     <div className="flex flex-row mr-4">
                                         <VoteboxComment deleted={data?.data?.deleted} totalCommentVotes={totalCommentVotes} setTotalCommentVotes={setTotalCommentVotes} voteStatus={data?.has_voted} postData={commentUid} />
                                     </div>
                                     <div className="flex flex-row">
-                                        <div>
-                                            {
-                                                currentUser && idToken ? (
-                                                    <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Leave reply" />
-                                                ) : (<></>)
-                                            }
-                                        </div>
-                                        <div>
-                                            <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
-                                            {
-                                                currentUser?.uid === data?.data?.author_uuid && (
-                                                    <>
-                                                        {
-                                                            data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
-                                                        }
-                                                    </>
-                                                )
-                                            }
-                                        </div>
+
+                                        {
+                                            currentUser && idToken ? (
+                                                <PostReplyShareDeleteButton clickFunction={toggleReplySection} buttonText="Reply" />
+                                            ) : (<></>)
+                                        }
+
+                                        <PostReplyShareDeleteButton /*clickFunction={}*/ buttonText="Share" />
+                                        {
+                                            currentUser?.uid === data?.data?.author_uuid && (
+                                                <>
+                                                    {
+                                                        data?.data?.deleted !== true && <PostReplyShareDeleteButton clickFunction={handleDeleteComment} buttonText="Delete" />
+                                                    }
+                                                </>
+                                            )
+                                        }
+
                                     </div>
                                 </div>
                                 {
                                     showReplyContainer === true && (
-                                        <div className="flex p-3 flex-col bg-tertiary-color w-full">
-                                            <form onSubmit={submitReply} className="flex flex-col">
-                                                <textarea name="comment" onChange={handleReplyChange} className="bg-secondary-color border outline-none rounded-lg border-border-color text-base leading-5 p-1 w-96 mb-3 hover:border-accent-color focus:border-accent-color focus:h-32" placeholder="Leave a reply"></textarea>
-                                                <span>
-                                                    <button className="mr-3 bg-tertiary-color text-grey-text rounded-lg p-0 border-0 hover:text-accent-color">Reply</button>
-                                                    <button className="mr-3 bg-tertiary-color text-grey-text rounded-lg p-0 border-0 hover:text-accent-color" onClick={toggleReplySection}>Cancel</button>
-                                                </span>
-                                                <span>{replyWarning}</span>
-                                                <p>
+                                        <div className="flex p-3 flex-col w-full">
+                                            <form className="flex flex-col">
+                                                <textarea name="comment" onChange={handleReplyChange} className="bg-secondary-color border outline-none rounded-lg border-border-color text-base leading-5 p-1 h-32 w-96 mb-3 hover:border-accent-color focus:border-accent-color" placeholder="Leave a reply"></textarea>
+                                                <div className="flex flex-row">
+                                                    <button onClick={submitReply} className="cursor-pointer text-grey-text mr-2 rounded-lg p-0 border-0 text-sm hover:text-accent-color">Reply</button>
+                                                    <button onClick={toggleReplySection} className="cursor-pointer text-grey-text rounded-lg p-0 border-0 text-sm hover:text-accent-color">Cancel</button>
+                                                </div>
+                                                <div>
+                                                    {replyWarning}
+                                                </div>
+                                                <div>
                                                     {replyData?.success === false && replyData.message}
-                                                </p>
+                                                </div>
                                             </form>
                                         </div>
                                     )

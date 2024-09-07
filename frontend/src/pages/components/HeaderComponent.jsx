@@ -51,7 +51,8 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
     }
 
     return (
-        <div className="flex flex-row mb-5 mt-5">
+        <div className="flex flex-col sm:flex-row mb-5 mt-5">
+            
             <div className="flex flex-col">
                 <h2>Welcome to {subpageData?.name}!</h2>
                 <p className="text-grey-text">
@@ -59,14 +60,13 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
                 </p>
             </div>
 
-            <div className="flex flex-1 flex-col items-end text-center justify-end h-full mt-2">
+            <div className="flex flex-1 flex-col items-start text-center sm:items-end sm:justify-end h-full mt-2">
                 <div>
                     {
                         currentUser && idToken && (
                             <>
                                 {
                                     isSubbed === false ? (
-
                                         <ul className="p-0 list-none m-0">
                                             <li className="inline mr-3 text-base tracking-wide">
                                                 You are not subscribed.
@@ -75,9 +75,7 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
                                                 <Link to="#" onClick={handleSubscribe}>Subscribe</Link>
                                             </li>
                                         </ul>
-
                                     ) : (
-
                                         <ul className="p-0 list-none m-0">
                                             <li className="inline mr-3 text-base tracking-wide">
 
@@ -86,7 +84,6 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
                                                 <Link to="#" onClick={handleSubscribe}>Unsubscribe</Link>
                                             </li>
                                         </ul>
-
                                     )
                                 }
                             </>

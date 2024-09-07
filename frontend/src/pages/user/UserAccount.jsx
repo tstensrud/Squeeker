@@ -48,8 +48,10 @@ function UserAccount(props) {
     // Other fetches
     const { data: commentData, loading: commentDataLoading, error: commentDataError, fetchData: fetchCommentData } = useFetchDemand(
         currentUser ? `${BASE_URL}/user/comments/${currentUser.uid}/` : null, idToken);
-    const { data: upvoteData, loading: upvoteDataLoading, error: upvoteDataError, fetchData: fetchUpvoteData } = useFetchDemand(`${BASE_URL}/user/upvoted/posts/${currentUser.uid}/`, idToken);
-    const { data: downVoteData, loading: downVoteDataLoading, error: downVoteDataError, fetchData: fetchDownVoteData } = useFetchDemand(`${BASE_URL}/user/downvoted/posts/${currentUser.uid}/`, idToken);
+    const { data: upvoteData, loading: upvoteDataLoading, error: upvoteDataError, fetchData: fetchUpvoteData } = useFetchDemand(
+        currentUser ? `${BASE_URL}/user/upvoted/posts/${currentUser.uid}/`: null, idToken);
+    const { data: downVoteData, loading: downVoteDataLoading, error: downVoteDataError, fetchData: fetchDownVoteData } = useFetchDemand(
+        currentUser ? `${BASE_URL}/user/downvoted/posts/${currentUser.uid}/` : null, idToken);
 
 
     const navbarItems = [

@@ -1,8 +1,5 @@
 import { Link } from 'react-router-dom';
 
-// Hooks and globals
-import useFetch from '../../hooks/useFetch';
-
 function Post({ postData }) {
 
     return (
@@ -22,23 +19,23 @@ function Post({ postData }) {
                 </div>
                 <div className="w-full text-xs text-grey-text">
                     <ul className="p-0 list-none m-0">
-                        <li className="inline mr-3 tracking-wide">
+                        <li className="sm:inline mr-3 tracking-wide">
                             <span className="grey-info-text">Last modified at: {postData.event_timestamp}</span>
                         </li>
-                        <li className="inline mr-3 tracking-wide">
+                        <li className="sm:inline mr-3 tracking-wide">
                             <span className="grey-info-text">Posted by: {postData.author_name}</span>
                         </li>
-                        <li className="inline mr-3 tracking-wide">
+                        <li className="sm:inline mr-3 tracking-wide">
                             <span className="grey-info-text">Posted to: <Link to={`/room/${postData.subpage_name}`}>{postData.subpage_name}</Link></span>
                         </li>
                     </ul>
                 </div>
                 <div className="w-full text-xs text-grey-text">
                     <ul className="p-0 list-none m-0">
-                        <li className="inline mr-3 tracking-wide">
+                        <li className="sm:inline mr-3 tracking-wide">
                             <Link to={`/room/${postData.subpage_name}/post/${postData.uid}/`}> {postData.comment_count} comments</Link>
                         </li>
-                        <li className="inline mr-3 tracking-wide">
+                        <li className="sm:inline mr-3 tracking-wide">
                             <Link to="">Share</Link>
                         </li>
                     </ul>
