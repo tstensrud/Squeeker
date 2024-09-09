@@ -18,11 +18,14 @@ function Messages(props) {
     const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
 
+    // Endpoints
     const { data: messageData, loading: messageLoading, error: messageError, refetch: refetchMessageData } = useFetch(
         currentUser ? `${BASE_URL}/messages/inbox/${currentUser.uid}/` : null, idToken)
 
     const { data, loading, error, updateData } = usePatch(`${BASE_URL}/messages/read/`, idToken);
     const { data: markAllResponse, updateData: markAllUpdatedData } = usePatch(currentUser ? `${BASE_URL}/messages/markall/${currentUser.uid}/` : null, idToken);
+    
+    // useStates
     const [newMessageData, setNewMessageData] = useState();
 
     // useEffects
@@ -54,7 +57,7 @@ function Messages(props) {
             markAllUpdatedData({});
         }
     }
-    console.log(messageData?.data)
+    
     return (
         <>
             <PageHeader headerText="Your inbox" subheaderText="Messages from other users and perhaps even Mike has something to say" />
@@ -144,7 +147,7 @@ function Messages(props) {
                                                     {
                                                         newMessageData && newMessageData !== undefined &&
                                                         <div>
-                                                            <Message messageData={newMessageData} />
+                                                            <Message messageData={newMessageData} refetchMessageData={refetchMessageData}/>
                                                         </div>
                                                     }
                                                 </div>

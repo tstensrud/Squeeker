@@ -63,7 +63,7 @@ function NewPost(props) {
         await subpagePost(postContent);
         //navigate to the new post, with the uid receved from this method
     }
-
+    
     return (
         <div className="card">
             <div className="w-full p-2 text-base">

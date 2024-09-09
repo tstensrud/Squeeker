@@ -126,11 +126,11 @@ def can_user_post_again(uuid: str) -> bool:
         timestamp = user.last_action
         if timestamp is None:
             return True
-        print(f"Timestamp for last actio: {timestamp}")
+        #print(f"Timestamp for last actio: {timestamp}")
         timestamp_now = get_timestamp()
-        print(f"Timestamp now: {timestamp_now}")
+        #print(f"Timestamp now: {timestamp_now}")
         time_since_last_entry = int(timestamp_now) - int(timestamp)
-        print(f"Seconds since last entry by user: {time_since_last_entry}")
+        #print(f"Seconds since last entry by user: {time_since_last_entry}")
         if time_since_last_entry < 60:
             return False
         else:
@@ -274,7 +274,7 @@ def get_all_subpages() -> list[str]:
     else:
         return None
     
-def get_subpage(subpage_name, subpage_uid) -> models.Subpage:
+def get_subpage(subpage_name=None, subpage_uid=None) -> models.Subpage:
     
     if subpage_uid is None:
         subpage = db.session.query(models.Subpage).filter(models.Subpage.name == subpage_name).first()
@@ -637,7 +637,13 @@ def get_frontpage_posts_logged_in(user_uid: str, limit: int) -> dict:
 #############################
 # MESSAGES                  #
 #############################
-def get_all_user_messages(uuid: str) -> models.UserMessage:
+def get_message(msg_uid: str) -> models.UserMessage:
+    message = db.session.query(models.UserMessage).filter(models.UserMessage.uid == msg_uid).first()
+    if message:
+        return message
+    return None
+
+def get_all_user_messages(uuid: str) -> list[models.UserMessage]:
     messages = db.session.query(models.UserMessage).filter(models.UserMessage.recipient_uid == uuid).all()
     if messages:
         return messages
@@ -734,4 +740,17 @@ def send_message_on_comment_reply(message: str, commentor_uid: str, parent_comme
     parent_comment_author = parent_comment.author
     commentor = get_user(commentor_uid)
     message = f"{commentor.username} has replied to your comment: {message}"
-    send_message_to_single_user(message, commentor_uid, receiver_uid=parent_comment_author, comment_uid=parent_comment_uid)
+    send_message_to_single_user(message, commentor_uid, receiver_uid=parent_comment_author, post_uid=parent_comment.post_uid, comment_uid=parent_comment_uid)
+
+def delete_message(message_uid: str) -> bool:
+    message = get_message(message_uid)
+    if message:
+        try:
+            db.session.delete(message)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+            return False
+    return False

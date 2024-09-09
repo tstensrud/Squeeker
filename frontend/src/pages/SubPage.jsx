@@ -33,7 +33,7 @@ function SubPage(props) {
     useEffect(() => {
         setSelectedIndex(props.index);
     }, []);
-    console.log(subpagePostData)
+    
     return (
         <>
             {
@@ -51,7 +51,7 @@ function SubPage(props) {
 
                         {
                             idToken && currentUser && idToken !== null && currentUser !== null ? (
-                            <NewPost refetchSubpageData={refetchSubpageData} author={currentUser} subPageName={subPageName} subPageUid={subpageData?.subpage_data?.data?.uid} />
+                            <NewPost refetchSubpageData={refetchSubpageData} author={currentUser} subPageName={subPageName} subPageUid={subpageData?.data?.subpage_data?.uid} />
                         ) : ("")
                         }
 

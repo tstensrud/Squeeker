@@ -32,7 +32,14 @@ def inbox(uuid):
     if messages:
         message_data = {}
         for message in messages:
-            message_data[message.uid] = message.to_json()
+            message_json = message.to_json()
+            
+            post = db.get_post(message.post_uid)
+            if post:
+                subpage = db.get_subpage(subpage_uid=post.subpage_uid)
+                subpage_name = subpage.name
+                message_json["subpage_name"] = subpage_name
+            message_data[message.uid] = message_json
         return jsonify({"success": True, "message": "Messages", "data": message_data})
     return jsonify({"success": False, "message": "No messages found"})
 
@@ -74,10 +81,19 @@ def mark_all_read(uuid):
     return jsonify({"success": False, "message": "No messages marked as read"})
     
 @messages.route('/notification/<uuid>/', methods=['GET'])
+@firebase_auth_required
 def get_notification(uuid):
     notification_status = db.get_user_notification_status(uuid)
     notification = {"notification": notification_status}
     return jsonify({"success": True, "data": notification})
+
+@messages.route('/delete_message/<message_uid>/', methods=['DELETE'])
+@firebase_auth_required
+def delete_message(message_uid):
+    deleted_message = db.delete_message(message_uid)
+    if deleted_message:
+        return jsonify({"success": True, "message": "Message deleted"})
+    return jsonify({"success": False, "message": "Could not delete message"})
 
 @messages.route('/test/', methods=['GET'])
 def message_test():
