@@ -56,7 +56,7 @@ function LoginContainer({ setShowLoginCointainer }) {
                             <input className="h-10 w-80  p-3 rounded-lg border text-sm " onChange={handlePasswordChange} type="password" placeholder="Password" />
                         </div>
                         <div className="mb-4">
-                            <button type="submit">Log in</button>
+                            <button type="submit" className="pr-2 pl-2">Log in</button>
                         </div>
                     </form>
 

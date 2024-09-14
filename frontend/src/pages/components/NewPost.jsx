@@ -1,9 +1,13 @@
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
+// Hooks and utils
 import { BASE_URL } from '../../utils/globalVariables';
 import useSubpagePost from '../../hooks/useSubpagePost';
 import { useNavigate } from 'react-router-dom';
+
+// Compoennts
+import Card from '../components/Card.jsx'
 
 function NewPost(props) {
 
@@ -65,7 +69,7 @@ function NewPost(props) {
     }
     
     return (
-        <div className="card">
+        <Card>
             <div className="w-full p-2 text-base">
                 <h3>Create new discussion topic</h3>
             </div>
@@ -86,7 +90,7 @@ function NewPost(props) {
                     </div>
                 </div>
             </form>
-        </div>
+        </Card>
     );
 }
 

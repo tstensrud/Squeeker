@@ -1,4 +1,5 @@
 from . import db
+from datetime import datetime
 from sqlalchemy import func, and_, or_, asc, desc, Index
 
 class User(db.Model):
@@ -51,6 +52,11 @@ class UserMessage(db.Model):
 
     def to_json(self):
         sender_name = self.sender.username
+        if self.timestamp:
+            timestamp_in_seconds = int(self.timestamp) / 1000
+            timestamp = datetime.fromtimestamp(timestamp_in_seconds)
+        else:
+            timestamp = 0
         return {
             "id": self.id,
             "uid": self.uid,
@@ -58,7 +64,7 @@ class UserMessage(db.Model):
             "sender_uid": self.sender_uid,
             "sender_name": sender_name,
             "message": self.message,
-            "timestamp": self.timestamp,
+            "timestamp": timestamp,
             "has_read": self.has_read,
             "event_timestamp": self.event_timestamp,
             "post_uid": self.post_uid,
@@ -78,11 +84,16 @@ class UserSubscription(db.Model):
     )
 
     def to_json(self):
+        if self.timestamp:
+            timestamp_in_seconds = int(self.timestamp) / 1000
+            timestamp = datetime.fromtimestamp(timestamp_in_seconds)
+        else:
+            timestamp = 0
         return {
             "id": self.id,
             "user_uid": self.user_uid,
             "subpage_uid": self.subpage_uid,
-            "timestamp": self.timestamp,
+            "timestamp": timestamp,
             "event_timestamp": self.event_timestamp
         }
 
@@ -139,6 +150,11 @@ class Post(db.Model):
     )
 
     def to_json(self):
+        if self.timestamp:
+            timestamp_in_seconds = int(self.timestamp) / 1000
+            timestamp = datetime.fromtimestamp(timestamp_in_seconds)
+        else:
+            timestamp = 0
         return {
             'id': self.id,
             'uid': self.uid,
@@ -148,7 +164,7 @@ class Post(db.Model):
             'author_name': self.author_name,
             'title': self.title,
             'post': self.post,
-            'timestamp': self.timestamp,
+            'timestamp': timestamp,
             'total_votes': self.total_votes,
             'upvotes': self.upvotes,
             'downvotes': self.downvotes,
@@ -185,7 +201,11 @@ class Comment(db.Model):
         author_name = author_object.username
         post = db.session.query(Post).filter(Post.uid == self.post_uid).first()
         subpage_name = post.subpage_name
-
+        if self.timestamp:
+            timestamp_in_seconds = int(self.timestamp) / 1000
+            timestamp = datetime.fromtimestamp(timestamp_in_seconds)
+        else:
+            timestamp = 0
         return {
             'id': self.id,
             'uid': self.uid,
@@ -194,7 +214,7 @@ class Comment(db.Model):
             'post_uid': self.post_uid,
             "subpage_name": subpage_name,
             'parent_comment_uid': self.parent_comment_uid,
-            'timestamp': self.timestamp,
+            'timestamp': timestamp,
             "comment": self.comment,
             'total_votes': self.total_votes,
             'upvotes': self.upvotes,

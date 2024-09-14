@@ -28,7 +28,7 @@ def firebase_auth_required(f):
 @messages.route('/inbox/<uuid>/', methods=['GET'])
 @firebase_auth_required
 def inbox(uuid):
-    messages = db.get_all_user_messages(uuid)
+    messages = db.get_all_user_messages(uuid, unread=True)
     if messages:
         message_data = {}
         for message in messages:
@@ -41,23 +41,55 @@ def inbox(uuid):
                 message_json["subpage_name"] = subpage_name
             message_data[message.uid] = message_json
         return jsonify({"success": True, "message": "Messages", "data": message_data})
+    return jsonify({"success": False, "message": "Your inbox is empty"})
+
+@messages.route('/inbox/old/<uuid>/', methods=['GET'])
+@firebase_auth_required
+def inbox_old_messages(uuid: str):
+    old_messages = db.get_all_user_messages(uuid, unread=False)
+    if old_messages:
+        message_data = {}
+        for message in old_messages:
+            message_json = message.to_json()
+            
+            post = db.get_post(message.post_uid)
+            if post:
+                subpage = db.get_subpage(subpage_uid=post.subpage_uid)
+                subpage_name = subpage.name
+                message_json["subpage_name"] = subpage_name
+            message_data[message.uid] = message_json
+        return jsonify({"success": True, "message": "Messages", "data": message_data})
     return jsonify({"success": False, "message": "No messages found"})
 
-@messages.route('/send/<recipient>/', methods=["POST"])
+@messages.route('/sent/<uuid>/', methods=['GET'])
 @firebase_auth_required
-def send_messag(recipient):
+def sent(uuid: str):
+    messages = db.get_all_user_sent_messages(uuid)
+    if messages:
+        message_data = {}
+        for message in messages:
+            if (message.comment_uid == None and message.post_uid == None):
+                message_data[message.uid] = message.to_json()
+        return jsonify({"success": True, "data": message_data})
+    else:
+        return jsonify({"success": False, "message": "No sent messages found"})
+
+@messages.route('/send/', methods=["POST"])
+@firebase_auth_required
+def send_message():
     data = request.get_json()
     if data:
-        sender = request.user
-        if sender:
-            sender_uid = sender.uid
-            message = db.send_message_to_single_user(sender_uid, recipient, message)
-            if message:
-                return jsonify({"success": False, "message": "Message sent"})
-            else:
-                return jsonify({"success": False, "message": "Could not send message"})
+        sender_uid = data["sender_uid"]
+        message = data["message"]
+        recipient = data["username"].strip()
+        user = db.get_user_by_username(recipient)
+        if user is None:
+            return jsonify({"success": False, "message": f"The user {recipient} does not exists"})
+        send_message = db.send_message_to_single_user(sender_uid=sender_uid, receiver_name=recipient, message=message)
+        if send_message:
+            return jsonify({"success": True, "message": "Message sent"})
         else:
-            return jsonify({"success": False, "message": "Sender not found"})
+            return jsonify({"success": False, "message": "Could not send message"})
     else:
         return jsonify({"success": False, "message": "No message data received"})
         
@@ -68,7 +100,6 @@ def message_read():
     message_uid = data["uid"]
     message_is_read = db.mark_message_read(message_uid)
     if message_is_read:
-
         return jsonify({"success": True, "message": "Message marked as read"})
     return jsonify({"success": False, "message": "Could not mark message as read"})
 
@@ -94,6 +125,14 @@ def delete_message(message_uid):
     if deleted_message:
         return jsonify({"success": True, "message": "Message deleted"})
     return jsonify({"success": False, "message": "Could not delete message"})
+
+@messages.route('/delete_all/<uuid>/', methods=['DELETE'])
+@firebase_auth_required
+def delete_all_messages(uuid: str):
+    deleted_messages = db.delete_all_read_messages(uuid)
+    if deleted_messages is True:
+        return jsonify({"success": True, "message": "Read messages deleted"})
+    return jsonify({"success": False, "message": "No messages deleted"})
 
 @messages.route('/test/', methods=['GET'])
 def message_test():

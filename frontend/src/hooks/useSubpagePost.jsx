@@ -2,11 +2,11 @@ import { useState } from 'react';
 
 const useSubpagePost = (url, idToken) => {
     const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const subpagePost = async (subpageData) => {
-        setLoading(false);
+        setLoading(true);
         setError(null);
             if (!idToken) {
                 setError({"error": "You are not authorized for this action"})

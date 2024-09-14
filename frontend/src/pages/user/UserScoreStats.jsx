@@ -1,11 +1,12 @@
 import LoadingSpinner from "../components/LoadingSpinner";
+import Card from '../components/Card.jsx'
 
 function UserScoreStats({ userDataLoading, username, posts, comments, total_posts, total_comments }) {
 
     return (
         <div className="flex flex-col w-full">
             <h3>{username}</h3>
-            <div className="card">
+            <Card>
                 <h4>Your user statistics</h4>
                 {
                     userDataLoading === true ? (
@@ -53,7 +54,7 @@ function UserScoreStats({ userDataLoading, username, posts, comments, total_post
                         </>
                     )
                 }
-            </div>
+            </Card>
         </div>
     );
 

@@ -1,10 +1,15 @@
 import { useState, useContext, useEffect } from 'react';
+
+// Hooks and utils
 import { AuthContext } from '../context/AuthContext';
 import useRegisterSubpage from '../hooks/useRegisterSubpage';
 import { BASE_URL } from '../utils/globalVariables';
 import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../context/GlobalContext';
+
+// Components
 import PageHeader from './components/PageHeader';
+import Card from './components/Card.jsx'
 
 function CreateSubPage(props) {
     const { currentUser, idToken } = useContext(AuthContext);
@@ -66,7 +71,7 @@ function CreateSubPage(props) {
     return (
         <>
             <PageHeader headerText="Create new room" subheaderText="Here you can create your own new room" />
-            <div className="card">
+            <Card>
                 {
                     idToken ? (
                         <div className="mt-4">
@@ -127,7 +132,7 @@ function CreateSubPage(props) {
                     )
                 }
 
-            </div>
+            </Card>
         </>
     );
 }

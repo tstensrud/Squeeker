@@ -1,11 +1,13 @@
+import Card from './components/Card.jsx'
+
 function ErrorPage() {
 
     return (
-        <div className="card">
+        <Card>
                 Error 404
                     <br />
                 Page not found
-        </div>
+        </Card>
     );
 }
 

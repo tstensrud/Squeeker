@@ -100,7 +100,7 @@ function SubPagePost(props) {
                     <LoadingBar />
                 ) : (
                     <>
-                        <div className="post-title-card">
+                        <div className="flex flex-row border border-tertiary-color rounded-lg mt-5 pt-3 pb-3 pr-3">
                             <div className="flex flex-col pt-1 w-12 justify-start items-center">
                                 <Votebox totalVotes={totalVotes} setTotalVotes={setTotalVotes} voteStatus={postData?.data?.post_data?.has_upvoted} post={true} postData={postData?.data} />
                             </div>

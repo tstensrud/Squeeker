@@ -1,15 +1,11 @@
-import { Link } from "react-router-dom";
+// Hooks and utils
 import { AuthContext } from '../context/AuthContext';
-
-// Hooks
 import useFetch from '../hooks/useFetch';
 import { BASE_URL } from '../utils/globalVariables';
 
 // Components
 import Post from './components/Post.jsx';
-import HeaderComponent from './components/HeaderComponent.jsx';
 import LoadingBar from './components/LoadingBar';
-import LoadingSpinner from './components/LoadingSpinner';
 import { useContext } from "react";
 
 function FrontpageContentLoggedIn() {

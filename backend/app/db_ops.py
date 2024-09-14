@@ -1,14 +1,17 @@
-import datetime
+import time
 from . import models, db
 from sqlalchemy import func, and_, or_, asc, desc
 from uuid import uuid4
 
 def get_timestamp():
-    return datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    return int(time.time() * 1000)
 
 #############################
 # USER RELATED STUFF        #
 #############################
+def get_all_users() -> list[models.User]:
+    users = db.session.query(models.User).all()
+    return users
 
 def register_new_user(uuid: str, username: str, email: str) -> bool:
     new_user = models.User(uuid=uuid,username=username,email=email)
@@ -131,7 +134,7 @@ def can_user_post_again(uuid: str) -> bool:
         #print(f"Timestamp now: {timestamp_now}")
         time_since_last_entry = int(timestamp_now) - int(timestamp)
         #print(f"Seconds since last entry by user: {time_since_last_entry}")
-        if time_since_last_entry < 60:
+        if time_since_last_entry < 60000:
             return False
         else:
             return True
@@ -145,6 +148,7 @@ def add_user_last_action(uuid: str) -> bool:
         user.last_action = timestamp
         try:
             db.session.commit()
+            print(f"Added timestamp {timestamp} to user {uuid}")
             return True
         except Exception as e:
             db.session.rollback()
@@ -155,6 +159,10 @@ def add_user_last_action(uuid: str) -> bool:
 #############################
 # USER SUBSCRIPTIONS        #
 #############################
+def get_all_subs() -> list[models.UserSubscription]:
+    subs = db.session.query(models.UserSubscription).all()
+    return subs
+
 # Returns a list of either subscription names, for viewing on frontend, or list of sub uids for backend handling
 def get_user_subscriptions(user_uid: str, names_only: bool) -> list[str]:
     subs = db.session.query(models.UserSubscription).filter(models.UserSubscription.user_uid == user_uid).all()
@@ -322,6 +330,9 @@ def get_subpage_posts(total_posts: int, subpage_uid: str, order_by: str):
 #############################
 # POST RELATED STUFF        #
 #############################
+def get_all_posts() -> list[models.Post]:
+    posts = db.session.query(models.Post).all()
+    return posts
 
 def new_post(data):
     author_uuid = data["author"]
@@ -332,7 +343,7 @@ def new_post(data):
     subpage_name = data["subpageName"]
     title = data["title"]
     post = data["content"]
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    timestamp = get_timestamp()
 
     new_post = models.Post(uid=uid,
                            subpage_uid=subpage_uid,
@@ -385,10 +396,13 @@ def delete_post(post_uid: str) -> bool:
 #############################
 # COMMENT RELATED STUFF     #
 #############################
+def get_all_comments() -> list[models.Comment]:
+    comments = db.session.query(models.Comment).all()
+    return comments
 
-def new_comment(post_uid: str, author_uuid: str, comment: str, parent_comment_uid: str) -> str:
+def new_comment(post_uid: str, author_uuid: str, comment: str, parent_comment_uid: str) -> bool:
     uid = str(uuid4())
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    timestamp = get_timestamp()
     new_comment = models.Comment(uid=uid,
                              post_uid = post_uid,
                              author=author_uuid,
@@ -405,14 +419,12 @@ def new_comment(post_uid: str, author_uuid: str, comment: str, parent_comment_ui
     except Exception as e:
         print(f"Could not add comment: {e}")
         db.session.rollback()
-        return str(e)
-    
-    vote = set_vote(author_uuid, "1", comment_uid=uid)
-    if vote:
-        add_user_last_action(author_uuid)
-        return uid
-    else:
         return False
+    
+    set_vote(author_uuid, "1", comment_uid=uid)
+    add_user_last_action(author_uuid)
+    
+    return True
 
 def get_comment(comment_uid: str) -> models.Comment:
     comment = db.session.query(models.Comment).filter(models.Comment.uid == comment_uid).first()
@@ -637,14 +649,36 @@ def get_frontpage_posts_logged_in(user_uid: str, limit: int) -> dict:
 #############################
 # MESSAGES                  #
 #############################
+def get_all_messages() -> list[models.UserMessage]:
+    messages = db.session.query(models.UserMessage).all()
+    return messages
+
 def get_message(msg_uid: str) -> models.UserMessage:
     message = db.session.query(models.UserMessage).filter(models.UserMessage.uid == msg_uid).first()
     if message:
         return message
     return None
 
-def get_all_user_messages(uuid: str) -> list[models.UserMessage]:
+def get_all_user_messages(uuid: str, unread=False) -> list[models.UserMessage]:
     messages = db.session.query(models.UserMessage).filter(models.UserMessage.recipient_uid == uuid).all()
+    if messages:
+        if unread:
+            unread_messages = []
+            for message in messages:
+                if message.has_read == False:
+                    unread_messages.append(message)
+        
+            return unread_messages
+        else:
+            read_messages = []
+            for message in messages:
+                if message.has_read == True:
+                    read_messages.append(message)
+            return read_messages
+    return None
+
+def get_all_user_sent_messages(uuid: str) -> list[models.UserMessage]:
+    messages = db.session.query(models.UserMessage).filter(models.UserMessage.sender_uid == uuid).all()
     if messages:
         return messages
     return None
@@ -666,15 +700,17 @@ def mark_message_read(message_uid: str) -> bool:
 def mark_all_messages_as_read(uuid: str) -> bool:
     messages = get_all_user_messages(uuid)
     if messages:
+        user = get_user(uuid)
         for message in messages:
             message.has_read = True
+        user.message_notification = False
         try:
             db.session.commit()
-            return True
         except Exception as e:
             db.session.rollback()
             print(e)
             return False
+            
     return False
         
 def check_notification_status(uuid: str) -> bool:
@@ -752,5 +788,18 @@ def delete_message(message_uid: str) -> bool:
         except Exception as e:
             db.session.rollback()
             print(e)
+            return False
+    return False
+
+def delete_all_read_messages(uuid: str) -> bool:
+    messages = get_all_user_messages(uuid, unread=False)
+    if messages:
+        for message in messages:
+            db.session.delete(message)
+        try:
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
             return False
     return False

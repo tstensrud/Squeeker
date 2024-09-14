@@ -2,6 +2,8 @@ import { useContext, useEffect } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 
 import PageHeader from './components/PageHeader';
+import Card from './components/Card.jsx'
+
 function About(props) {
     const { setSelectedIndex } = useContext(GlobalContext);
     
@@ -12,7 +14,7 @@ function About(props) {
     return (
         <>  
         <PageHeader headerText="Welcome to The lodge" subheaderText="" />
-            <div className="card">
+            <Card>
                 <p>
                     This is a personal project and an attempt to make a reddit-clone. Most likely no one will ever use this
                     site, but I had a lot of fun making it. 
@@ -21,7 +23,7 @@ function About(props) {
                 <p>
                     Sincerely, the Magician who longs to see.
                 </p>
-            </div>
+            </Card>
         </>
     );
 }

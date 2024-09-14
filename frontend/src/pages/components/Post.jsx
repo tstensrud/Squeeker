@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 function Post({ postData }) {
 
     return (
-        <div className="post-card">
+        <div className="flex flex-row bg-tertiary-color rounded-lg pt-2 pb-3 mt-3 mb-3">
             <div className="flex flex-col w-16 pt-3 items-center">
                 <div>{postData.total_votes}</div>
                 <div>pts</div>

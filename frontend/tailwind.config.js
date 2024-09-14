@@ -21,7 +21,21 @@ export default {
       'accent-color' : "#00FFA7",
     } ,
 
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Roboto', 'sans-serif'],
+      },
+      keyframes: {
+        slide: {
+          '0%' : {left: '-30%'},
+          '50%': {left: '50%'},
+          '100%': {left: '100%'},
+        }
+      },
+      animation: {
+        slide: 'slide 3.0s linear infinite',
+      }
+    },
   },
   plugins: [],
 }

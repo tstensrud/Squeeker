@@ -89,7 +89,7 @@ function RegisterContainer({ setShowLoginCointainer, setShowRegisterContainer })
                                         <input id="username" onChange={handleInputChange} type="text" placeholder="Username" tabIndex="4" />
                                     </div>
                                     <div className="mb-4">
-                                        <button type="submit" tabIndex="5">Register</button>
+                                        <button type="submit" className="pr-2 pl-2" tabIndex="5">Register</button>
                                     </div>
                                 </form>
 

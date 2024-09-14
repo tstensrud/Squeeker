@@ -9,6 +9,7 @@ import { BASE_URL } from '../utils/globalVariables';
 import LoadingSpinner from './components/LoadingSpinner';
 import useFetchNoLogin from '../hooks/useFetchNoLogin';
 import PageHeader from './components/PageHeader';
+import Card from './components/Card.jsx'
 
 function Subpages(props) {
     const { currentUser, idToken } = useContext(AuthContext);
@@ -33,7 +34,7 @@ function Subpages(props) {
                         <>
                             {
                                 subpageData ? (
-                                    <div className="card">
+                                    <Card>
                                         <p className="text-xl mb-3">Most populare rooms</p>
                                         <div className="flex flex-col w-full">
                                             {
@@ -49,7 +50,7 @@ function Subpages(props) {
                                                 ))
                                             }
                                         </div>
-                                    </div>
+                                    </Card>
                                 ) : (
                                     <>
                                         No data :(

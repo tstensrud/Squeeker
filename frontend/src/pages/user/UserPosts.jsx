@@ -1,6 +1,7 @@
 
 // Components
 import Posts from "./Posts.jsx";
+import Card from '../components/Card.jsx'
 
 // widgets
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
@@ -10,9 +11,9 @@ function UserPosts({postDataLoading, postData}) {
         <>
             {
                 postDataLoading && postDataLoading === true ? (
-                    <div className="card">
+                    <Card>
                         <LoadingSpinner />
-                    </div>
+                    </Card>
                 ) : (
                     <>
 

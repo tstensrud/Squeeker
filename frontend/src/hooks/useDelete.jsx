@@ -2,11 +2,10 @@ import { useState } from 'react';
 
 const useDelete = (url, idToken) => {
     const [response, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const deleteEntry = async (deleteData) => {
-        setLoading(false);
         setError(null);
             if (!idToken) {
                 setError({"error": "You are not authorized for this action"})
@@ -15,6 +14,7 @@ const useDelete = (url, idToken) => {
 
            //console.log("ID TOKEN: ", idToken)
             try {
+                setLoading(true);
                 const response = await fetch(url, {
                     method: "DELETE",
                     headers: {

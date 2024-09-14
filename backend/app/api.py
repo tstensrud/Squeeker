@@ -2,6 +2,8 @@ from flask import  Blueprint, request, jsonify
 from firebase_admin import auth
 from functools import wraps
 from . import db_ops as db
+#from . import db as database
+import time
 
 api = Blueprint("api", __name__)
 
@@ -43,6 +45,38 @@ def optional_auth(f):
             request.user_uid = None
         return f(*args, **kwargs)
     return decorated_function
+
+""" @api.route('/time/', methods=['GET'])
+def timestamp():
+    timestamp = int(time.time() * 1000)
+    
+    users = db.get_all_users()
+    for user in users:
+        user.last_action = timestamp
+
+    comments = db.get_all_comments()
+    for comment in comments:
+        comment.timestamp = timestamp
+
+    messages = db.get_all_messages()
+    for message in messages:
+        message.timestamp = timestamp
+    
+    subs = db.get_all_subs()
+    for sub in subs:
+        sub.timestamp = timestamp
+    
+    posts = db.get_all_posts()
+    for post in posts:
+        post.timestamp = timestamp
+
+    try:
+        database.session.commit()
+        return jsonify({"success": True, "message": "Timestamps changed"})
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Could not change timestamps {str(e)}"}) """
+    
+        
 
 # Front page for logged in user
 @api.route('/frontpage/<uuid>/', methods=['GET'])
@@ -370,7 +404,7 @@ def new_reply():
         
         if new_comment is not False:
             db.send_message_on_comment_reply(comment, author_uuid, parent_comment_uid)
-            return jsonify({"success": True, "message": "Reply added", "data": new_comment})
+            return jsonify({"success": True, "message": "Reply added"})
         else:
             return jsonify({"success": False, "message": "Could not add reply"})
     else:

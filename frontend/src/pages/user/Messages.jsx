@@ -6,58 +6,78 @@ import { AuthContext } from '../../context/AuthContext';
 import { BASE_URL } from '../../utils/globalVariables';
 import usePatch from "../../hooks/usePatch";
 import useFetch from '../../hooks/useFetch';
+import useFetchDemand from '../../hooks/useFetchDemand';
 
 // components
-import Message from './Message';
 import PageHeader from "../components/PageHeader";
 
 // Widgets
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
+import NewMessages from './NewMessages.jsx';
+import OldMessages from './OldMessages.jsx';
+import SentMessages from './SentMessages.jsx'
+import SendNewMessage from './SendNewMessage.jsx';
 
 function Messages(props) {
     const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
 
+    // States
+    const [hasFetchedOld, setHasFetchedOld] = useState(false);
+    const [hasFetchedSent, setHasFetchedSent] = useState(false);
+    const [navbarIndex, setNavbarIndex] = useState(0);
+
     // Endpoints
     const { data: messageData, loading: messageLoading, error: messageError, refetch: refetchMessageData } = useFetch(
         currentUser ? `${BASE_URL}/messages/inbox/${currentUser.uid}/` : null, idToken)
 
-    const { data, loading, error, updateData } = usePatch(`${BASE_URL}/messages/read/`, idToken);
+    const { error, updateData: updateReadStatus } = usePatch(`${BASE_URL}/messages/read/`, idToken);
     const { data: markAllResponse, updateData: markAllUpdatedData } = usePatch(currentUser ? `${BASE_URL}/messages/markall/${currentUser.uid}/` : null, idToken);
-    
-    // useStates
-    const [newMessageData, setNewMessageData] = useState();
+    const { data: oldMessageData, loading: oldMessageDataLoading, error: oldMessageDataError, fetchData: oldMessageDataFetch } = useFetchDemand(
+        currentUser ? `${BASE_URL}/messages/inbox/old/${currentUser.uid}/` : null, idToken
+    );
 
+    const { data: sentMessageData, loading: sentMessageDataLoading, error: sentMessageDataError, fetchData: sentMessageDataFetch} = useFetchDemand(
+        currentUser ? `${BASE_URL}/messages/sent/`: null, idToken
+    );
+
+    
     // useEffects
     useEffect(() => {
         setSelectedIndex(props.index);
     }, []);
-
-    useEffect(() => {
-        if (newMessageData?.has_read === false) {
-            updateData(newMessageData);
-        }
-    }, [newMessageData]);
-
+    
     useEffect(() => {
         if (markAllResponse?.success === true) {
             refetchMessageData();
         }
     }, [markAllResponse])
-
+    
     // Handlers
-    const handleOnSenderClick = (e, messageData) => {
-        e.preventDefault();
-        setNewMessageData(messageData);
-    }
-
-    const handleMarkAll = (e) => {
+    const handleMarkAll = async (e) => {
         e.preventDefault();
         if (currentUser) {
-            markAllUpdatedData({});
+            await markAllUpdatedData({});
         }
     }
     
+    const handleNavbarClick = (index) => {
+        if (navbarItems[index].hasFetched !== null && navbarItems[index].setFetched !== null && navbarItems[index].fetch !== null) {
+            if (!navbarItems[index].hasFetched) {
+                navbarItems[index].fetch();
+                navbarItems[index].setFetched(true);
+            }
+        }
+        setNavbarIndex(index);
+    }
+
+    const navbarItems = [
+        { text: "Inbox", hasFetched: null, setFetched: null, fetch: null, component: <NewMessages updateReadStatus={updateReadStatus} handleMarkAll={handleMarkAll} messageLoading={messageLoading} messageData={messageData && messageData} currentUser={currentUser.uid} idToken={idToken} /> },
+        { text: "Old messages", hasFetched: hasFetchedOld, setFetched: setHasFetchedOld, fetch: oldMessageDataFetch, component: <OldMessages oldMessageDataLoading={oldMessageDataLoading} oldMessageData={oldMessageData && oldMessageData} currentUser={currentUser.uid} idToken={idToken}/> },
+        { text: "Sent", hasFetched: hasFetchedSent, setFetched: setHasFetchedSent, fetch: sentMessageDataFetch, component: <SentMessages sentMessageDataLoading={sentMessageDataLoading} sentMessageData={sentMessageData}  /> },
+        { text: "Send new message", hasFetched: null, setFetched: null, fetch: null, component: <SendNewMessage currentUser={currentUser.uid} idToken={idToken} /> }
+    ]
+
     return (
         <>
             <PageHeader headerText="Your inbox" subheaderText="Messages from other users and perhaps even Mike has something to say" />
@@ -65,101 +85,25 @@ function Messages(props) {
                 currentUser && idToken ? (
                     <>
                         {
-                            messageLoading && messageLoading ? (
-                                <LoadingSpinner />
-                            ) : (
-                                <>
+                            <>
+                                <div className="flex flex-row w-full mt-6">
                                     {
-                                        messageData?.success === true ? (
-                                            <div className="flex flex-row w-full mb-10 ">
-
-                                                <div className="flex flex-col w-1/5">
-
-                                                    <div className="card w-full">
-                                                        <div className="flex flex-col w-full">
-                                                            <h3>New messages</h3>
-                                                            <div className="text-xs mb-3">
-                                                                <Link to="#" onClick={handleMarkAll}>Mark all as read</Link>
-                                                            </div>
-                                                            {
-                                                                messageData?.data && Object.keys(messageData.data).map((key, index) => (
-                                                                    <div className="flex flex-row" key={index}>
-                                                                        {
-                                                                            messageData?.data[key].has_read === false && (
-                                                                                <div className="flex flex-col mb-2">
-                                                                                    <div className="flex flex-row">
-                                                                                        <div className="text-grey-text mr-2">
-                                                                                            From
-                                                                                        </div>
-                                                                                        <div>
-                                                                                            {messageData?.data[key].sender_name}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <Link onClick={(e) => handleOnSenderClick(e, messageData?.data[key])} to="#">{messageData?.data[key].message.slice(0, 18)}...</Link>
-                                                                                    </div>
-                                                                                    <div className="text-xs text-grey-text">
-                                                                                        {messageData?.data[key].event_timestamp}
-                                                                                    </div>
-                                                                                </div>
-                                                                            )
-                                                                        }
-                                                                    </div>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="card w-full mt-5">
-                                                        <div className="flex flex-col w-full">
-                                                            <h3>Old messages</h3>
-                                                            {
-                                                                messageData?.data && Object.keys(messageData?.data).map((key, index) => (
-                                                                    <div className="flex flex-row" key={index}>
-                                                                        {
-                                                                            messageData?.data[key].has_read === true && (
-                                                                                <div className="flex flex-col mb-2">
-                                                                                    <div className="flex flex-row">
-                                                                                        <div className="text-grey-text mr-2">
-                                                                                            From
-                                                                                        </div>
-                                                                                        <div>
-                                                                                            {messageData?.data[key].sender_name}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <Link onClick={(e) => handleOnSenderClick(e, messageData?.data[key])} to="#">{messageData?.data[key].message.slice(0, 18)}...</Link>
-                                                                                    </div>
-                                                                                    <div className="text-xs text-grey-text">
-                                                                                        {messageData?.data[key].event_timestamp}
-                                                                                    </div>
-                                                                                </div>
-                                                                            )
-                                                                        }
-                                                                    </div>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="ml-5 flex flex-1">
-                                                    {
-                                                        newMessageData && newMessageData !== undefined &&
-                                                        <div>
-                                                            <Message messageData={newMessageData} refetchMessageData={refetchMessageData}/>
-                                                        </div>
-                                                    }
+                                        navbarItems.map((item, index) => (
+                                            <div key={index} className="mr-3">
+                                                <div onClick={() => handleNavbarClick(index)} className={navbarIndex === index ? "border cursor-pointer pl-3 pr-3 pt-1 pb-1 rounded-md border-accent-color mb-2 text-center" : "border cursor-pointer pl-3 pr-3 pt-1 pb-1 rounded-md border-secondary-color mb-2 text-center hover:border-accent-color"}>
+                                                    {item.text}
                                                 </div>
                                             </div>
-                                        ) : (
-                                            <>
-                                                {messageData?.message}
-                                            </>
-                                        )
+                                        ))
                                     }
-                                </>
-                            )
+                                </div>
+
+                                <div className="flex flex-col w-full">
+                                    {
+                                        navbarItems[navbarIndex].component
+                                    }
+                                </div>
+                            </>
                         }
                     </>
                 ) : (
