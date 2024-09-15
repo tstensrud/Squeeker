@@ -263,6 +263,7 @@ def new_subpage_post(subpage_uid):
         return jsonify({"success": False, "message": "No data received"})
 
 @api.route('/subpage/post/delete/<post_uid>/', methods=['DELETE'])
+@firebase_auth_required
 def delete_post(post_uid):
     data = request.get_json()
     if data:

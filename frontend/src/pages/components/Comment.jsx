@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import useFetchDemand from '../../hooks/useFetchDemand';
-import useSubpagePost from '../../hooks/useSubpagePost';
+import useFetchRequest from '../../hooks/useFetchRequest';
+import useSubmit from '../../hooks/useSubmit';
 import useFetch from '../../hooks/useFetch';
 
 import { BASE_URL } from '../../utils/globalVariables';
@@ -22,7 +22,6 @@ function Comment({ isChild, data }) {
     const [showReplyContainer, setShowReplyContainer] = useState(false);
     const [reply, setReply] = useState({});
     const [replyWarning, setReplyWarning] = useState("");
-    const [deleteData, setDeleteData] = useState({})
     const [totalCommentVotes, setTotalCommentVotes] = useState(data?.data?.total_votes);
     const [collapse, setCollapse] = useState(false);
     const [commentIsDeleted, setCommentIsDeleted] = useState(false);
@@ -31,8 +30,8 @@ function Comment({ isChild, data }) {
     const [showLatestReply, setShowLatestReply] = useState(false);
 
     // Fetch and posts
-    const { loading, data: replyData, error: replyError, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/reply/new/`, idToken);
-    const { response: deleteResponse, loading: deleteLoading, error: deleteError, deleteEntry } = useDelete(`${BASE_URL}/api/subpage/comment/delete/${commentUid}/`, idToken);
+    const { loading, data: replyData, error: replyError, subpagePost } = useSubmit(`api/subpage/comment/reply/new/`);
+    const { response: deleteResponse, setData: setDeleteData, loading: deleteLoading, error: deleteError, deleteEntry } = useDelete(`api/subpage/comment/delete/${commentUid}/`);
 
     useEffect(() => {
         setDeleteData({ author_uuid: currentUser?.uid });
@@ -87,7 +86,7 @@ function Comment({ isChild, data }) {
 
     const handleDeleteComment = async (e) => {
         e.preventDefault();
-        await deleteEntry(deleteData);
+        await deleteEntry();
     }
     const handleCollapse = () => {
         setCollapse(!collapse);

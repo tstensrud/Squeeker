@@ -2,8 +2,7 @@ import { useState, useContext, useEffect } from 'react';
 
 // Hooks and utils
 import { AuthContext } from '../context/AuthContext';
-import useRegisterSubpage from '../hooks/useRegisterSubpage';
-import { BASE_URL } from '../utils/globalVariables';
+import useSubmit from '../hooks/useSubmit';
 import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../context/GlobalContext';
 
@@ -15,7 +14,7 @@ function CreateSubPage(props) {
     const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
 
-    const { data, loading, error, registerSubpage } = useRegisterSubpage(`${BASE_URL}/api/subpage/create/`, idToken);
+    const { response, loading, error, submitData } = useSubmit(`api/subpage/create/`);
 
     const [pageData, setPageData] = useState({ "public": true, "nsfw": false });
     const [creationError, setCreationError] = useState("");
@@ -29,12 +28,12 @@ function CreateSubPage(props) {
     },);
 
     useEffect(() => {
-        if (data?.success === true) {
-            navigate(`/room/${data?.data}`);
+        if (response?.success === true) {
+            navigate(`/room/${response?.data}`);
         } else {
-            setCreationError(data?.message);
+            setCreationError(response?.message);
         }
-    }, [data]);
+    }, [response]);
 
     // Handlers
     const handleInputChange = (e) => {
@@ -65,7 +64,7 @@ function CreateSubPage(props) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await registerSubpage(pageData);
+        await submitData(pageData);
     }
 
     return (

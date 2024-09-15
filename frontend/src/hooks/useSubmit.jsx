@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import api from '../utils/axios';
 
-const usePatch = (endpoint) => {
+const useSubmit = (endpoint) => {
+    const [response, setResponse] = useState(null)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [response, setResponse] = useState(null);
 
-    const updateData = async (updatedData) => {
+    const submitData = async (newData) => {
         if (!endpoint) {
             return;
         }
@@ -14,7 +14,7 @@ const usePatch = (endpoint) => {
         setLoading(true);
         
         try {
-          const res = await api.patch(endpoint, updatedData);
+          const res = await api.post(endpoint, newData);
           setResponse(res.data);
           setLoading(false);
         } catch (err) {
@@ -23,7 +23,7 @@ const usePatch = (endpoint) => {
         }
       };
         
-    return { response, loading, error, updateData};
+    return {response, loading, error, submitData};
 }
 
-export default usePatch;
+export default useSubmit;

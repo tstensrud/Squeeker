@@ -1,10 +1,8 @@
 import { useEffect, useState, useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // Hooks
 import usePatch from '../../hooks/usePatch';
-import useFetch from '../../hooks/useFetch';
-import { BASE_URL } from '../../utils/globalVariables';
 import { AuthContext } from '../../context/AuthContext';
 
 // SVG import
@@ -19,9 +17,9 @@ function Votebox({ totalVotes, voteStatus, setTotalVotes, post, postData }) {
     const [currentDownvotestatus, setCurrentDownvoteStatus] = useState();
 
     // Fetches and patches
-    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData.post_data.uid}/1/`, idToken);
-    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData.post_data.uid}/-1/`, idToken);
-    const { data: resetVote, error: resetVoteError, updateData: resetVoteData } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData.post_data.uid}/0/`, idToken);
+    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`api/subpage/post/vote/${postData.post_data.uid}/1/`);
+    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`api/subpage/post/vote/${postData.post_data.uid}/-1/`);
+    const { data: resetVote, error: resetVoteError, updateData: resetVoteData } = usePatch(`api/subpage/post/vote/${postData.post_data.uid}/0/`);
 
     // useEffects
     useEffect(() => {

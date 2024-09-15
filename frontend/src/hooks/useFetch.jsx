@@ -1,54 +1,47 @@
 import { useState, useEffect, useCallback } from 'react';
+import api from '../utils/axios';
 
-function useFetch(url, idToken) {
+function useFetch(url, method = 'GET', body = null) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const fetchData = useCallback(async () => {
         if (!url) {
-            //console.log("Url was not provided", url)
             setLoading(false);
             return;
         }
-/*         console.log("URL:", url)
-        console.log("ID TOKEN:", idToken) */
-        setLoading(true);
+
         setError(null);
+
         try {
-            let response;
-            if (!idToken) {
-                response = await fetch(url, {
-                    method: "GET",
-                });
-
-            } else {
-                response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${idToken}`,
-                    },
-                });
-            }
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            setData(result);
+            const response = await api({
+                url,
+                method,
+                data: body,
+            });
+            setData(response.data);
         } catch (error) {
-            setError(error.message);
+            if (error.response) {
+                setError(`Error: ${error.response.status} ${error.response.statusText}`);
+            } else if (error.request) {
+                setError('Error: no response from server');
+            } else {
+                setError(`Error: ${error.message}`);
+            }
         } finally {
             setLoading(false);
         }
-    }, [url, idToken]);
 
+    }, [url, method, body]);
+    
     useEffect(() => {
         fetchData();
-    }, [url, idToken, fetchData]);
+    }, [fetchData]);
 
     return { data, loading, error, refetch: fetchData };
+
 }
 
 export default useFetch;
+

@@ -1,44 +1,36 @@
 import { useState } from 'react';
+import api from '../utils/axios';
 
-const useDelete = (url, idToken) => {
-    const [response, setData] = useState(null);
+const useDeleteData = (endpoint) => {
+    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
 
-    const deleteEntry = async (deleteData) => {
+    const deleteEntry = async () => {
+      if (!endpoint) {
+        return;
+      }
+        setLoading(true);
         setError(null);
-            if (!idToken) {
-                setError({"error": "You are not authorized for this action"})
-                return;
-            }
+        try {
+          const config = {
+            headers: {
+              "Content-type": "application/json"
+            },
+            data: data,
+          }
+          const res = await api.delete(endpoint, config);
+          setResponse(res.data);
+        } catch (err) {
+          setError(err);
+        }
+        finally {
+          setLoading(false)
+        }
+      };
 
-           //console.log("ID TOKEN: ", idToken)
-            try {
-                setLoading(true);
-                const response = await fetch(url, {
-                    method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${idToken}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(deleteData),
-                });
-                //console.log("Response: ", response);
-                if (!response.ok) {
-                    throw new Error (`Error: ${response.statusText}`);
-                }
-                const result = await response.json();
-                //console.log("Result: ", result);
-                setData(result);
-                //console.log(result);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        
-    return {response, setData, loading, error, deleteEntry};
-}
+      return { setData, response, loading, error, deleteEntry};
+};
 
-export default useDelete;
+export default useDeleteData;

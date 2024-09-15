@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 
 import { GlobalContext } from '../../context/GlobalContext';
 import { AuthContext } from '../../context/AuthContext';
-import { BASE_URL } from '../../utils/globalVariables';
 import usePatch from "../../hooks/usePatch";
 import useFetch from '../../hooks/useFetch';
-import useFetchDemand from '../../hooks/useFetchDemand';
+import useFetchRequest from '../../hooks/useFetchRequest.jsx';
 
 // components
 import PageHeader from "../components/PageHeader";
@@ -29,17 +28,14 @@ function Messages(props) {
 
     // Endpoints
     const { data: messageData, loading: messageLoading, error: messageError, refetch: refetchMessageData } = useFetch(
-        currentUser ? `${BASE_URL}/messages/inbox/${currentUser.uid}/` : null, idToken)
+        currentUser ? `messages/inbox/${currentUser.uid}/` : null)
 
-    const { error, updateData: updateReadStatus } = usePatch(`${BASE_URL}/messages/read/`, idToken);
-    const { data: markAllResponse, updateData: markAllUpdatedData } = usePatch(currentUser ? `${BASE_URL}/messages/markall/${currentUser.uid}/` : null, idToken);
-    const { data: oldMessageData, loading: oldMessageDataLoading, error: oldMessageDataError, fetchData: oldMessageDataFetch } = useFetchDemand(
-        currentUser ? `${BASE_URL}/messages/inbox/old/${currentUser.uid}/` : null, idToken
-    );
+    const { data: markAllResponse, updateData: markAllUpdatedData } = usePatch(currentUser ? `messages/markall/${currentUser.uid}/` : null);
+    const { data: oldMessageData, loading: oldMessageDataLoading, error: oldMessageDataError, fetchData: oldMessageDataFetch } = useFetchRequest(
+        currentUser ? `messages/inbox/old/${currentUser.uid}/` : null);
 
-    const { data: sentMessageData, loading: sentMessageDataLoading, error: sentMessageDataError, fetchData: sentMessageDataFetch} = useFetchDemand(
-        currentUser ? `${BASE_URL}/messages/sent/`: null, idToken
-    );
+    const { data: sentMessageData, loading: sentMessageDataLoading, error: sentMessageDataError, fetchData: sentMessageDataFetch} = useFetchRequest(
+        currentUser ? `messages/sent/${currentUser.uid}/`: null);
 
     
     // useEffects
@@ -71,12 +67,12 @@ function Messages(props) {
         setNavbarIndex(index);
     }
 
-    const navbarItems = [
-        { text: "Inbox", hasFetched: null, setFetched: null, fetch: null, component: <NewMessages updateReadStatus={updateReadStatus} handleMarkAll={handleMarkAll} messageLoading={messageLoading} messageData={messageData && messageData} currentUser={currentUser.uid} idToken={idToken} /> },
-        { text: "Old messages", hasFetched: hasFetchedOld, setFetched: setHasFetchedOld, fetch: oldMessageDataFetch, component: <OldMessages oldMessageDataLoading={oldMessageDataLoading} oldMessageData={oldMessageData && oldMessageData} currentUser={currentUser.uid} idToken={idToken}/> },
+    const navbarItems = currentUser ? [
+        { text: "Inbox", hasFetched: null, setFetched: null, fetch: null, component: <NewMessages messageLoading={messageLoading} messageData={messageData && messageData} currentUser={currentUser.uid} idToken={idToken} /> },
+        { text: "Old messages", hasFetched: hasFetchedOld, setFetched: setHasFetchedOld, fetch: oldMessageDataFetch, component: <OldMessages oldMessageDataLoading={oldMessageDataLoading} oldMessageData={oldMessageData && oldMessageData} currentUser={currentUser.uid}/> },
         { text: "Sent", hasFetched: hasFetchedSent, setFetched: setHasFetchedSent, fetch: sentMessageDataFetch, component: <SentMessages sentMessageDataLoading={sentMessageDataLoading} sentMessageData={sentMessageData}  /> },
         { text: "Send new message", hasFetched: null, setFetched: null, fetch: null, component: <SendNewMessage currentUser={currentUser.uid} idToken={idToken} /> }
-    ]
+    ] : null;
 
     return (
         <>

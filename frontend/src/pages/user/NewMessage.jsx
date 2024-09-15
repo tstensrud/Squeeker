@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
+
+import usePatch from "../../hooks/usePatch";
 
 // Components
 import Card from '../components/Card.jsx'
 import ReplyContainer from './ReplyContainer.jsx';
 
-function NewMessage({ messageData, handleMarkRead, idToken, currentUser }) {
-
+function NewMessage({ messageData, idToken, currentUser }) {
+    const { response, loading, error, updateData } = usePatch(`messages/read/`);
     const [showReplyContainer, setShowReplyContainer] = useState(false);
     const [markedAsRead, setMarkedAsRead] = useState(false);
+
+    useEffect(() => {
+        if (response?.success === true) {
+            setMarkedAsRead(true);
+        }
+    }, [response]);
 
     const handleShowReplyContainer = (e) => {
         e.preventDefault();
@@ -16,8 +24,7 @@ function NewMessage({ messageData, handleMarkRead, idToken, currentUser }) {
     }
 
     const setMessageAsRead = async () => {
-        await handleMarkRead(messageData.uid);
-        setMarkedAsRead(true);
+        await updateData({uid: messageData.uid});
     }
 
     return (
@@ -33,7 +40,7 @@ function NewMessage({ messageData, handleMarkRead, idToken, currentUser }) {
                                     </div>
                                     <div className="flex flex-1 text-xs justify-end text-accent-color">
                                         <span className="cursor-pointer" onClick={setMessageAsRead}>
-                                            Mark as read
+                                            Mark as read {response?.success === false && <>{response.message}</>}
                                         </span>
                                     </div>
                                 </div>

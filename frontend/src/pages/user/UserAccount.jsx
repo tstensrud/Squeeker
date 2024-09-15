@@ -5,13 +5,9 @@ import { GlobalContext } from "../../context/GlobalContext.jsx";
 
 // Hooks ++
 import useFetch from '../../hooks/useFetch.jsx';
-import useFetchDemand from '../../hooks/useFetchDemand.jsx';
-import { BASE_URL } from '../../utils/globalVariables.jsx';
+import useFetchRequest from '../../hooks/useFetchRequest.jsx';
 
 // widgets
-
-import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import Comments from "./Comments.jsx";
 import UserScoreStats from "./UserScoreStats.jsx";
 import UserPosts from "./UserPosts.jsx";
 import UserComments from "./UserComments.jsx";
@@ -33,25 +29,19 @@ function UserAccount(props) {
 
     // Initial fetch
     const { data: userData, loading: userDataLoading, error: userDataError } = useFetch(
-        currentUser ? `${BASE_URL}/user/${currentUser.uid}/` : null,
-        idToken
-    );
+        currentUser ? `user/${currentUser.uid}/` : null);
     const { data: postData, loading: postDataLoading, error: postDataError } = useFetch(
-        currentUser ? `${BASE_URL}/user/posts/${currentUser.uid}/` : null,
-        idToken
-    );
+        currentUser ? `user/posts/${currentUser.uid}/` : null);
     const { data: scoreData, loading: scoreDataLoading, error: scoreDataError } = useFetch(
-        currentUser ? `${BASE_URL}/user/stats/${currentUser.uid}/` : null,
-        idToken
-    );
+        currentUser ? `user/stats/${currentUser.uid}/` : null);
 
     // Other fetches
-    const { data: commentData, loading: commentDataLoading, error: commentDataError, fetchData: fetchCommentData } = useFetchDemand(
-        currentUser ? `${BASE_URL}/user/comments/${currentUser.uid}/` : null, idToken);
-    const { data: upvoteData, loading: upvoteDataLoading, error: upvoteDataError, fetchData: fetchUpvoteData } = useFetchDemand(
-        currentUser ? `${BASE_URL}/user/upvoted/posts/${currentUser.uid}/`: null, idToken);
-    const { data: downVoteData, loading: downVoteDataLoading, error: downVoteDataError, fetchData: fetchDownVoteData } = useFetchDemand(
-        currentUser ? `${BASE_URL}/user/downvoted/posts/${currentUser.uid}/` : null, idToken);
+    const { data: commentData, loading: commentDataLoading, error: commentDataError, fetchData: fetchCommentData } = useFetchRequest(
+        currentUser ? `user/comments/${currentUser.uid}/` : null);
+    const { data: upvoteData, loading: upvoteDataLoading, error: upvoteDataError, fetchData: fetchUpvoteData } = useFetchRequest(
+        currentUser ? `user/upvoted/posts/${currentUser.uid}/`: null);
+    const { data: downVoteData, loading: downVoteDataLoading, error: downVoteDataError, fetchData: fetchDownVoteData } = useFetchRequest(
+        currentUser ? `user/downvoted/posts/${currentUser.uid}/` : null);
 
 
     const navbarItems = [

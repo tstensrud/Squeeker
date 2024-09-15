@@ -1,7 +1,6 @@
 // Hooks and utils
 import { AuthContext } from '../context/AuthContext';
 import useFetch from '../hooks/useFetch';
-import { BASE_URL } from '../utils/globalVariables';
 
 // Components
 import Post from './components/Post.jsx';
@@ -9,8 +8,8 @@ import LoadingBar from './components/LoadingBar';
 import { useContext } from "react";
 
 function FrontpageContentLoggedIn() {
-    const { currentUser, idToken } = useContext(AuthContext);
-    const { data, loading, error } = useFetch(`${BASE_URL}/api/frontpage/${currentUser.uid}/50/`, idToken);
+    const { currentUser, idToken, loading: authLoading } = useContext(AuthContext);
+    const { data, loading, error } = useFetch(!authLoading && currentUser ? `api/frontpage/${currentUser.uid}/50/` : null);
 
     return (
         <>

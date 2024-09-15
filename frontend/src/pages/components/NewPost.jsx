@@ -3,7 +3,7 @@ import { AuthContext } from '../../context/AuthContext';
 
 // Hooks and utils
 import { BASE_URL } from '../../utils/globalVariables';
-import useSubpagePost from '../../hooks/useSubpagePost';
+import useSubmit from '../../hooks/useSubmit';
 import { useNavigate } from 'react-router-dom';
 
 // Compoennts
@@ -16,7 +16,7 @@ function NewPost(props) {
     const [warniningContentMessage, setWarningContentMessage] = useState("");
     const [postContent, setPostContent] = useState("");
     const subpageUid = props.subPageUid;
-    const { loading, data, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/${subpageUid}/new_post/`, idToken);
+    const { loading, data, error, subpagePost } = useSubmit(`api/subpage/${subpageUid}/new_post/`);
     const navigate = useNavigate();
     const subpageName = props.subPageName;
 

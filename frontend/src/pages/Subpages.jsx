@@ -7,14 +7,13 @@ import { BASE_URL } from '../utils/globalVariables';
 
 // Components
 import LoadingSpinner from './components/LoadingSpinner';
-import useFetchNoLogin from '../hooks/useFetchNoLogin';
+import useFetch from '../hooks/useFetch';
 import PageHeader from './components/PageHeader';
 import Card from './components/Card.jsx'
 
 function Subpages(props) {
-    const { currentUser, idToken } = useContext(AuthContext);
     const { setSelectedIndex } = useContext(GlobalContext);
-    const { data, loading, error } = useFetchNoLogin(`${BASE_URL}/api/subpage/all/`, idToken)
+    const { data, loading, error } = useFetch(`api/subpage/all/`)
     const subpageData = data && data.data || null;
 
     useEffect(() => {

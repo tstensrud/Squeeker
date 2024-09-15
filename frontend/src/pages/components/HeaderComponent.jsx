@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 
 import { AuthContext } from '../../context/AuthContext';
 import { BASE_URL } from '../../utils/globalVariables';
-import useSubpagePost from '../../hooks/useSubpagePost';
+import useSubmit from '../../hooks/useSubmit';
 
 function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
     const { currentUser, idToken } = useContext(AuthContext);
@@ -15,7 +15,7 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
 
 
     // Fetches and posts
-    const { loading, data, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/subscribe/`, idToken);
+    const { loading, response, error, submitData } = useSubmit(`api/subpage/subscribe/`);
 
     const [isSubbed, setIsSubbed] = useState();
     const [subscribeData, setSubscribeData] = useState({});
@@ -32,7 +32,7 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
     }, []);
 
     useEffect(() => {
-        if (data?.success === true) {
+        if (response?.success === true) {
             userSubscriptionsRefetch();
             if (isSubbed) {
                 setTotalSubsCounter(totalSubsCounter - 1);
@@ -42,12 +42,12 @@ function HeaderComponent({ totalSubs, isSubscribed, subpageData }) {
             setIsSubbed(!isSubbed);
 
         }
-    }, [data]);
+    }, [response]);
 
     // Handlers
     const handleSubscribe = async (e) => {
         e.preventDefault();
-        await subpagePost(subscribeData);
+        await submitData(subscribeData);
     }
 
     return (

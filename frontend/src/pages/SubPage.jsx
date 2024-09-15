@@ -5,8 +5,6 @@ import { AuthContext } from '../context/AuthContext';
 
 // Hooks and globals
 import useFetch from '../hooks/useFetch';
-import useFetchNoLogin from '../hooks/useFetchNoLogin';
-import { BASE_URL } from '../utils/globalVariables';
 
 // Components
 import HeaderComponent from './components/HeaderComponent';
@@ -23,12 +21,10 @@ function SubPage(props) {
     const { setSelectedIndex } = useContext(GlobalContext);
 
     // Initial fetches
-    const { data: subpageData, loading: subpageDataLoading, error, refetch: refetchSubpageData } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
+    const { data: subpageData, loading: subpageDataLoading, error, refetch: refetchSubpageData } = useFetch(`api/subpage/${subPageName}/`);
 
     const { data: subpagePostData, loading: subpagePostDataLoading, error: subpagePostDataError } = useFetch(
-        subpageData?.data?.subpage_data ? `${BASE_URL}/api/subpage/${subpageData.data.subpage_data.uid}/posts/` : null,
-        idToken
-    );
+        subpageData?.data?.subpage_data ? `api/subpage/${subpageData.data.subpage_data.uid}/posts/` : null);
 
     useEffect(() => {
         setSelectedIndex(props.index);

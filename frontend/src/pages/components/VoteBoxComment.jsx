@@ -16,9 +16,9 @@ function VoteboxComment({ deleted, totalCommentVotes, setTotalCommentVotes, vote
     const [currentDownvotestatus, setCurrentDownvoteStatus] = useState();
 
     // Fetches and patches
-    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData}/1/`, idToken);
-    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData}/-1/`, idToken);
-    const { data: resetVote, error: resetVoteError, updateData: resetVoteData } = usePatch(`${BASE_URL}/api/subpage/post/vote/${postData}/0/`, idToken);
+    const { data: upvoteData, error: upVoteError, updateData: upvote } = usePatch(`api/subpage/post/vote/${postData}/1/`);
+    const { data: downvoteData, error: downvoteError, updateData: downvote } = usePatch(`api/subpage/post/vote/${postData}/-1/`);
+    const { data: resetVote, error: resetVoteError, updateData: resetVoteData } = usePatch(`api/subpage/post/vote/${postData}/0/`);
 
     // useEffects
     useEffect(() => {

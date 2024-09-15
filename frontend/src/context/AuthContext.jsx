@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useState } from "react";
 import {  onAuthStateChanged, onIdTokenChanged } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import AuthReducer from "./AuthReducer";
@@ -12,12 +12,17 @@ export const AuthContext = createContext(INITIAL_STATE);
 
 export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+    const [loading, setLoading ] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        //const unsubscribe = onIdTokenChanged(auth, async (user) => {
+        //const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        const unsubscribe = onIdTokenChanged(auth, async (user) => {
             if (user) {
-                localStorage.setItem("user", JSON.stringify(user));
+                const userInfo = {
+                    uid: user.uid,
+                    email: user.email,
+                }
+                localStorage.setItem("user", JSON.stringify(userInfo));
                 const idToken = await user.getIdToken();
                 //console.log("ID Token:", idToken);
                 dispatch({ type: "LOGIN", payload: {user, idToken} });
@@ -26,13 +31,14 @@ export const AuthContextProvider = ({ children }) => {
                 localStorage.removeItem("user");
                 dispatch({ type: "LOGOUT" });
             }
+            setLoading(false);
         });
         return () => unsubscribe();
     }, []);
 
     return (
-        <AuthContext.Provider value={{currentUser: state.currentUser, idToken: state.idToken, dispatch}}>
-            {children}
+        <AuthContext.Provider value={{currentUser: state.currentUser, idToken: state.idToken, dispatch, loading }}>
+            {!loading && children}
         </AuthContext.Provider>
     )
 }

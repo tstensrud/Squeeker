@@ -4,31 +4,27 @@ import { AuthContext } from '../context/AuthContext';
 import { GlobalContext } from "../context/GlobalContext.jsx";
 
 // Firebase
-import { signOut } from "firebase/auth";
-import { auth } from '../utils/firebase';
 
 // Hooks ++
 import useFetch from '../hooks/useFetch';
-import useFetchDemand from '../hooks/useFetchDemand';
-import { BASE_URL } from '../utils/globalVariables';
 
 // Components
 import LoginContainer from './components/LoginContainer';
 import RegisterContainer from './components/RegisterContainer.jsx';
-import NavbarListItem from "./components/NavbarListItem.jsx";
-import SubscribedRoomListItem from "./components/SubscribedRoomListItem.jsx";
-import LogOutNavitem from "./components/LogoutNavItem.jsx";
-import LoginRegister from "./components/LoginRegister.jsx";
+import NavbarListItem from "./components/navbar/NavbarListItem.jsx";
+import SubscribedRoomListItem from "./components/navbar/SubscribedRoomListItem.jsx";
+import LogOutNavitem from "./components/navbar/LogoutNavItem.jsx";
+import LoginRegister from "./components/navbar/LoginRegister.jsx";
 
 // SVG imports
 import AppIcon from '../assets/svg/AppIcon.svg?react'
 
 // widgets
 import LoadingBar from './components/LoadingBar';
-import MobilNavbar from "./components/MobileNavbar.jsx";
+import MobilNavbar from "./components/navbar/MobileNavbar.jsx";
 
 function FrontPage() {
-  const { currentUser, idToken, dispatch } = useContext(AuthContext);
+  const { currentUser, idToken, dispatch, loading: authLoading } = useContext(AuthContext);
   const { selectedIndex, setSelectedIndex } = useContext(GlobalContext);
   const navigate = useNavigate();
 
@@ -39,17 +35,13 @@ function FrontPage() {
 
   // Initial fetch
   const { data: userData, loading: userDataLoading, error: userDataError, refetch: refetchUserData } = useFetch(
-    currentUser ? `${BASE_URL}/user/${currentUser.uid}/` : null,
-    idToken
-  );
+    !authLoading && currentUser ? `user/${currentUser.uid}/` : null);
 
   const { data: userSubscriptionsData, loading: userSubscriptionsLoading, error: userSubscriptionsError, refetch: userSubscriptionsRefetch } = useFetch(
-    currentUser ? `${BASE_URL}/user/subs/${currentUser.uid}/` : null,
-    idToken
-  );
+    !authLoading && currentUser ? `user/subs/${currentUser.uid}/` : null);
 
   const { data: notificationData, refetch: refetchNotificationData } = useFetch(
-    currentUser ? `${BASE_URL}/messages/notification/${currentUser.uid}/` : null, idToken);
+    !authLoading && currentUser ? `messages/notification/${currentUser.uid}/` : null);
 
   const mainNavbarItems = [
     {
@@ -93,7 +85,7 @@ function FrontPage() {
     }
   ];
 
-  const loggedInNavbarItems = [
+  const loggedInNavbarItems = currentUser ? [
     {
       name: userData?.data !== undefined && userData?.data?.username, notification: null, url: "account", svg:
         <>
@@ -108,7 +100,7 @@ function FrontPage() {
           </path>
         </>
     },
-  ];
+  ] : null;
 
   useEffect(() => {
     refetchNotificationData();
@@ -122,11 +114,11 @@ function FrontPage() {
   const openRegisterContainer = () => {
     setShowRegisterContainer(true);
   }
-
+  
   const handleSearch = () => {
     navigate("search");
   }
-
+  
   return (
     <>
       {
@@ -147,7 +139,7 @@ function FrontPage() {
           <MobilNavbar mainNavbarItems={mainNavbarItems} loggedInNavbarItems={loggedInNavbarItems} userSubscriptionsData={userSubscriptionsData?.data} openLoginContainer={openLoginContainer} openRegisterContainer={openRegisterContainer} />
         </div>
 
-        <div className="hidden sm:flex flex-col bg-secondary-color items-center sticky w-80 border-r border-border-color min-h-20 left-0">
+        <div className="hidden sm:flex flex-col bg-gradient-to-tr from-secondary-color to-tertiary-color items-center sticky w-80 border-r border-border-color min-h-20 left-0">
 
           <div className="w-full flex justify-center flex-col text-center mt-3">
             <div className="flex items-center justify-center w-full">

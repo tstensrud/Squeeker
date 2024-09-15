@@ -6,19 +6,26 @@ import useDelete from '../../hooks/useDelete.jsx';
 import Card from '../components/Card.jsx'
 import { useEffect, useState } from "react";
 
-function OldMessage({ oldMessageData, idToken }) {
-    const { response, deleteEntry } = useDelete(`${BASE_URL}/messages/delete_message/${oldMessageData.uid}/`, idToken);
+function OldMessage({ oldMessageData, currentUser }) {
+    const { response: deleteResponse, setData: setDeleteData, loading, error: deleteError, deleteEntry } = useDelete(`messages/delete_message/`);
 
     const [deletedMessage, setDeletedMessage] = useState(false);
 
     useEffect(() => {
-        if (response?.success === true) {
+        if (deleteResponse?.success === true) {
             setDeletedMessage(true);
         }
-    }, [response]);
+    }, [deleteResponse]);
+
+    useEffect(() => {
+        setDeleteData({
+            uuid: currentUser,
+            message_uid: oldMessageData.uid
+        });
+    },[]);
 
     const handleDeleteMessage = async () => {
-        await deleteEntry({});
+        await deleteEntry();
     }
     
     return (

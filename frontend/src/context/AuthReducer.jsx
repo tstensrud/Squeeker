@@ -1,27 +1,3 @@
-/* const AuthReducer = (state, action) => {
-
-    switch(action.type) {
-        case "LOGIN": {
-            return {
-                ...state,
-                currentUser: action.payload.user,
-                idToken: action.payload.idToken,
-            };
-        }
-        case "LOGOUT": {
-            return {
-                ...state,
-                currentUser: null,
-                idToken: null,
-            };
-        }
-        default:
-            return state;
-    }
-}
-
-export default AuthReducer; */
-
 const AuthReducer = (state, action) => {   
     switch (action.type) {
         case "LOGIN":

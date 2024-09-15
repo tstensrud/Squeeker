@@ -1,20 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 
 // Hooks and utils
-import { BASE_URL } from '../../utils/globalVariables';
-import useSubpagePost from "../../hooks/useSubpagePost";
+import useSubmit from "../../hooks/useSubmit";
 
 // Components
 import Card from "../components/Card";
 function SendNewMessage({currentUser, idToken}) {
 
     // Hooks
-    const {data, loading: messageLoading, error: messageError, subpagePost: sendMessage } = useSubpagePost(
-        currentUser ? `${BASE_URL}/messages/send/` : null, idToken);
+    const {response, loading: messageLoading, error: messageError, submitData: sendMessage } = useSubmit(
+        currentUser ? `messages/send/` : null);
 
     // States
     const [messageData, setMessageData] = useState();
-    const [ response, setResponse ] = useState(null) 
     
     // Refs
     const usernameRef = useRef(null);
@@ -28,13 +26,12 @@ function SendNewMessage({currentUser, idToken}) {
     },[]);
 
     useEffect(() => {
-        setResponse(data?.message && data.message);
-        if (data?.success === true) {
+        if (response?.success === true) {
             usernameRef.current.value = '';
             messageRef.current.value = '';
             setMessageData({});
         }
-    },[data]);
+    },[response]);
 
     // Handlers
     const handleChange = (e) => {
@@ -69,7 +66,7 @@ function SendNewMessage({currentUser, idToken}) {
                         </div>
                         <div>
                             {
-                                response && response
+                                response && response?.message
                             }
                         </div>
                     </div>

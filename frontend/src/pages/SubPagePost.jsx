@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { AuthContext } from '../context/AuthContext';
 import { GlobalContext } from '../context/GlobalContext';
-import useFetchDemand from '../hooks/useFetchDemand';
+import useFetchRequest from '../hooks/useFetchRequest';
 import useFetch from '../hooks/useFetch';
 import { BASE_URL } from '../utils/globalVariables';
 
@@ -23,32 +23,31 @@ function SubPagePost(props) {
 
 
     // Initial fetches
-    const { data: subpageData, loading: subpageDataLoading, error: subpageDataError } = useFetch(`${BASE_URL}/api/subpage/${subPageName}/`, idToken);
+    const { data: subpageData, loading: subpageDataLoading, error: subpageDataError } = useFetch(`api/subpage/${subPageName}/`);
 
     const { data: commentData, loading: commentDataLoading, error: commentDataError, refetch: commentDataRefech } = useFetch(
-        postId ? `${BASE_URL}/api/subpage/post/all_comments/${postId}/` : null, idToken);
+        postId ? `api/subpage/post/all_comments/${postId}/` : null);
 
     const { data: postData, loading: postDataLoading, error: postDataError, refetch: refetchPostData } = useFetch(
-        postId ? `${BASE_URL}/api/subpage/post/${postId}/` : null, idToken);
+        postId ? `api/subpage/post/${postId}/` : null);
 
     // useStates
     const [subpageUid, setSubpageUid] = useState("");
     const [newCommentUid, setNewCommentUid] = useState(null);
-    const [deleteData, setDeleteData] = useState({});
     const [deletePostError, setDeleteError] = useState("");
     const [totalVotes, setTotalVotes] = useState();
 
 
     // To refetch the uers latest comment
-    const { data: latestCommentData, loading: latestCommentLoading, error: latestCommentError, fetchData } = useFetchDemand(
-        newCommentUid ? `${BASE_URL}/api/subpage/get_comment/${newCommentUid}/` : null, idToken);
+    const { data: latestCommentData, loading: latestCommentLoading, error: latestCommentError, fetchData } = useFetchRequest(
+        newCommentUid ? `api/subpage/get_comment/${newCommentUid}/` : null);
 
     // Delete post content
-    const { response: deleteResponse, error: deleteError, deleteEntry } = useDelete(`${BASE_URL}/api/subpage/post/delete/${postId}/`, idToken);
+    const { response: deleteResponse, error: deleteError, setData, deleteEntry } = useDelete(`api/subpage/post/delete/${postId}/`);
 
     // useEffects
     useEffect(() => {
-        setDeleteData({ author_uuid: postData?.data?.post_data?.author_uuid });
+        setData({ author_uuid: postData?.data?.post_data?.author_uuid });
     }, [postData]);
 
     useEffect(() => {
@@ -90,7 +89,7 @@ function SubPagePost(props) {
 
     const handleDeletePost = async (e) => {
         e.preventDefault();
-        await deleteEntry(deleteData);
+        await deleteEntry();
     }
 
     return (

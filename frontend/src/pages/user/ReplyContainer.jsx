@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 
 // Hooks and utils
-import { BASE_URL } from '../../utils/globalVariables';
-import useSubpagePost from "../../hooks/useSubpagePost";
+import useSubmit from "../../hooks/useSubmit";
 
 // Widgets
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -13,8 +12,8 @@ function ReplyContainer({ setShowReplyContainer, showReplyContainer, name, curre
     const [warning, setWarning] = useState("");
 
     // Hooks
-    const { data: replyResponse, loading: replyLoading, error: messageError, subpagePost: sendMessage } = useSubpagePost(
-        currentUser ? `${BASE_URL}/messages/send/` : null, idToken);
+    const { response: replyResponse, loading: replyLoading, error: messageError, submitData } = useSubmit(
+        currentUser ? `messages/send/` : null);
 
     // useEffects
     useEffect(() => {
@@ -45,7 +44,7 @@ function ReplyContainer({ setShowReplyContainer, showReplyContainer, name, curre
             setWarning("Message can not be empty")
             return;
         } else {
-            await sendMessage(messageData);
+            await submitData(messageData);
             setWarning("");
         }
     }

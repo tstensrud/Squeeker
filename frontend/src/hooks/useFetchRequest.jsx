@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useCallback} from 'react';
 import api from '../utils/axios';
 
-const usePatch = (endpoint) => {
+const useFetchRequest = (endpoint) => {
+    const [data, setData] = useState(null)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [response, setResponse] = useState(null);
 
-    const updateData = async (updatedData) => {
+    const fetchData = async () => {
         if (!endpoint) {
             return;
         }
@@ -14,8 +14,8 @@ const usePatch = (endpoint) => {
         setLoading(true);
         
         try {
-          const res = await api.patch(endpoint, updatedData);
-          setResponse(res.data);
+          const res = await api.get(endpoint);
+          setData(res.data);
           setLoading(false);
         } catch (err) {
           setError(err);
@@ -23,7 +23,7 @@ const usePatch = (endpoint) => {
         }
       };
         
-    return { response, loading, error, updateData};
+    return { data, loading, error, fetchData};
 }
 
-export default usePatch;
+export default useFetchRequest;

@@ -1,24 +1,27 @@
 import { useEffect, useState } from 'react';
-import { BASE_URL } from '../../utils/globalVariables';
 import useDelete from '../../hooks/useDelete.jsx';
 
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import OldMessage from "./OldMessage.jsx";
 
 
-function OldMessages({ oldMessageDataLoading, oldMessageData, idToken, currentUser }) {
-    const { response, loading, error, deleteEntry } = useDelete(`${BASE_URL}/messages/delete_all/${currentUser}/`, idToken);
+function OldMessages({ oldMessageDataLoading, oldMessageData, currentUser }) {
+    const { response: deleteResponse, setData: setDeleteData, loading, error: deleteError, deleteEntry } = useDelete(`messages/delete_all/`);
     const [allDeleted, setAllDeleted] = useState(false)
 
     useEffect(() => {
-        if (response?.success === true) {
+        if (deleteResponse?.success === true) {
             setAllDeleted(true);
         }
-    }, [response])
+    }, [deleteResponse]);
+
+    useEffect(() => {
+        setDeleteData({uuid: currentUser});
+    },[])
 
     // Handlers
     const handleDeleteAll = async () => {
-        await deleteEntry({});
+        await deleteEntry();
     }
 
     return (
@@ -47,13 +50,13 @@ function OldMessages({ oldMessageDataLoading, oldMessageData, idToken, currentUs
                                                             <>
                                                                 {
                                                                     oldMessageData?.data && Object.keys(oldMessageData.data).map((key, index) => (
-                                                                        <OldMessage idToken={idToken} key={index} oldMessageData={oldMessageData.data[key]} />
+                                                                        <OldMessage currentUser={currentUser} key={index} oldMessageData={oldMessageData.data[key]} />
                                                                     ))
                                                                 }
                                                             </>
                                                         ) : (
                                                             <>
-                                                                {oldMessageData.message}
+                                                                {oldMessageData?.message}
                                                             </>
                                                         )
                                                     }

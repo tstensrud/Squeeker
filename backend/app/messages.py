@@ -97,6 +97,7 @@ def send_message():
 @firebase_auth_required
 def message_read():
     data = request.get_json()
+    print(data)
     message_uid = data["uid"]
     message_is_read = db.mark_message_read(message_uid)
     if message_is_read:
@@ -118,20 +119,38 @@ def get_notification(uuid):
     notification = {"notification": notification_status}
     return jsonify({"success": True, "data": notification})
 
-@messages.route('/delete_message/<message_uid>/', methods=['DELETE'])
+@messages.route('/delete_message/', methods=['DELETE'])
 @firebase_auth_required
-def delete_message(message_uid):
-    deleted_message = db.delete_message(message_uid)
-    if deleted_message:
-        return jsonify({"success": True, "message": "Message deleted"})
+def delete_message():
+    data = request.get_json()
+    if data:
+        print(data)
+        uuid = data["uuid"]
+        try:
+            user = auth.get_user(uuid)
+        except Exception as e:
+            return jsonify({"success": False, "message": "User not recognized"})
+        if uuid == user.uid:
+            message_uid = data["message_uid"]
+            deleted_message = db.delete_message(message_uid)
+            if deleted_message:
+                return jsonify({"success": True, "message": "Message deleted"})
     return jsonify({"success": False, "message": "Could not delete message"})
 
-@messages.route('/delete_all/<uuid>/', methods=['DELETE'])
+@messages.route('/delete_all/', methods=['DELETE'])
 @firebase_auth_required
-def delete_all_messages(uuid: str):
-    deleted_messages = db.delete_all_read_messages(uuid)
-    if deleted_messages is True:
-        return jsonify({"success": True, "message": "Read messages deleted"})
+def delete_all_messages():
+    data = request.get_json()
+    if data:
+        uuid = data["uuid"]
+        try:
+            user = auth.get_user(uuid)
+        except Exception as e:
+            return jsonify({"success": False, "message": "User not recognized"})
+        if uuid == user.uid:
+            deleted_messages = db.delete_all_read_messages(uuid)
+            if deleted_messages is True:
+                return jsonify({"success": True, "message": "Read messages deleted"})
     return jsonify({"success": False, "message": "No messages deleted"})
 
 @messages.route('/test/', methods=['GET'])

@@ -1,11 +1,11 @@
 // Firebase
 import { signOut } from "firebase/auth";
-import { auth } from '../../utils/firebase';
+import { auth } from '../../../utils/firebase';
 
 import { useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { AuthContext } from '../../context/AuthContext';
-import { GlobalContext } from "../../context/GlobalContext.jsx";
+import { AuthContext } from '../../../context/AuthContext';
+import { GlobalContext } from "../../../context/GlobalContext.jsx";
 
 function LogOutNavitem() {
     const { currentUser, idToken, dispatch } = useContext(AuthContext);

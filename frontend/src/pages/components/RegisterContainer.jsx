@@ -1,9 +1,6 @@
 import { useState, useContext, useEffect } from "react";
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../utils/firebase';
 
-import useRegister from '../../hooks/useRegister';
-import { BASE_URL } from '../../utils/globalVariables';
+import useSubmit from '../../hooks/useSubmit';
 import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 
@@ -14,19 +11,18 @@ function RegisterContainer({ setShowLoginCointainer, setShowRegisterContainer })
     const [passwordMatch, setPasswordMatch] = useState("");
     const { currentUser, idToken } = useContext(AuthContext);
 
-    //const { data, loading, error: registerError, registerUser } = useRegister(`${BASE_URL}/api/register/${firebaseUserData.uuid}/`);
-    const { data, loading, error: registerError, registerUser } = useRegister(`${BASE_URL}/user/register/`);
+    const { response, loading, error: registerError, submitData} = useSubmit(`user/register/`);
 
 
     useEffect(() => {
-        if (data?.success === false) {
-            setError(data.message);
+        if (response?.success === false) {
+            setError(response.message);
         }
-        if (data?.success === true) {
+        if (response?.success === true) {
             setShowRegisterContainer(false);
             setShowLoginCointainer(true);
         }
-    }, [data])
+    }, [response])
 
 
     // Handlers
@@ -47,7 +43,7 @@ function RegisterContainer({ setShowLoginCointainer, setShowRegisterContainer })
     const handleRegister = async (e) => {
         e.preventDefault();
         if (checkPasswordMatch()) {
-            registerUser(userData);
+            submitData(userData);
         } else {
             setPasswordMatch("Passwords does not match")
         }

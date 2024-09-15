@@ -1,24 +1,23 @@
 import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
-import { BASE_URL } from '../../utils/globalVariables';
-import useSubpagePost from '../../hooks/useSubpagePost';
+import useSubmit from '../../hooks/useSubmit';
 
-function NewComment({ commentDataRefech, postId, subpageUid, subPageName, msgToParent }) {
+function NewComment({ commentDataRefech, postId, subpageUid, subPageName }) {
 
     const { currentUser, idToken } = useContext(AuthContext);
     const [comment, setComment] = useState("");
     const [commentWarning, setCommentWarning] = useState("");
-    const { loading, data, error, subpagePost } = useSubpagePost(`${BASE_URL}/api/subpage/comment/new/`, idToken);
+    const {response, loading, error, submitData} = useSubmit(`api/subpage/comment/new/`);
 
     useEffect(() => {
-        if (data !== null && data !== undefined) {
-            if (data.success !== false) {
+        if (response !== null && response !== undefined) {
+            if (response?.success !== false) {
                 commentDataRefech();
             }
             commentRef.current.value = "";
         }
-    }, [data]);
+    }, [response]);
 
     // Handlers
     const handleSubmit = async (e) => {
@@ -27,8 +26,7 @@ function NewComment({ commentDataRefech, postId, subpageUid, subPageName, msgToP
             setCommentWarning("Comments can not be empty");
             return;
         }
-        await subpagePost(comment);
-        //console.log(comment);
+        await submitData(comment);
     }
 
     const handleInputChange = (e) => {
@@ -62,9 +60,9 @@ function NewComment({ commentDataRefech, postId, subpageUid, subPageName, msgToP
                 <p>
                     <button className="pr-2 pl-2" type="submit">Comment</button>
                     {commentWarning}
-                    {data?.success === false && data.message}
+                    {response?.success === false && response.message}
                     {error && error}
-                    {data?.error && data.error}
+                    {response?.error && response.error}
                 </p>
             </form>
         </div>
